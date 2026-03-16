@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
@@ -19,17 +16,19 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['ADMIN', 'INSTRUCTOR', 'STUDENT']);
             $table->boolean('status')->default(true);
+
+            // relación con fichas
+            $table->foreignId('ficha_id')
+                  ->nullable()
+                  ->constrained('fichas')
+                  ->nullOnDelete();
+
             $table->timestamp('created_at')->useCurrent();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
     }
 };

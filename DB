@@ -2,12 +2,12 @@
 -- CREATE DATABASE
 -- ============================================
 
-DROP DATABASE IF EXISTS project_management_system;
-CREATE DATABASE project_management_system
+DROP DATABASE IF EXISTS sigpro;
+CREATE DATABASE sigpro
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
-USE project_management_system;
+USE sigpro;
 
 -- ============================================
 -- TABLE: USERS
@@ -141,6 +141,65 @@ CREATE TABLE project_history (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLE: REGIONAL
+-- ============================================
+
+CREATE TABLE regional (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    code VARCHAR(10) UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLE: CENTROS
+-- ============================================
+
+CREATE TABLE centros (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    code VARCHAR(20),
+    regional_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_centro_regional
+        FOREIGN KEY (regional_id)
+        REFERENCES regional(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLE: FICHAS
+-- ============================================
+
+CREATE TABLE fichas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ficha_number VARCHAR(20) NOT NULL UNIQUE,
+    program_name VARCHAR(150),
+    centro_id INT NOT NULL,
+    start_date DATE,
+    end_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_ficha_centro
+        FOREIGN KEY (centro_id)
+        REFERENCES centros(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+ALTER TABLE users
+ADD COLUMN ficha_id INT NULL;
+
+ALTER TABLE users
+ADD CONSTRAINT fk_user_ficha
+FOREIGN KEY (ficha_id)
+REFERENCES fichas(id)
+ON DELETE SET NULL
+ON UPDATE CASCADE;
 
 -- ============================================
 -- INDEXES FOR PERFORMANCE
