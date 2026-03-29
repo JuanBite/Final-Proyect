@@ -212,7 +212,7 @@
                 <p>
                     <a href="mailto:soporte@sigpro.edu.co" class="hover:text-gray-400 transition">soporte@sigpro.edu.co</a>
                     <span class="mx-2">·</span>
-                    <a href="#" class="hover:text-gray-400 transition">Política de privacidad</a>
+                    <a href="#" class="hover:text-gray-400 transition">Política de pol</a>
                 </p>
             </div>
         </div>
