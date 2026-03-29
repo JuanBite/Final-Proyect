@@ -18,9 +18,9 @@ return new class extends Migration
             $table->boolean('status')->default(true);
 
             // relación con fichas
-            $table->foreignId('ficha_id')
+            $table->foreignId('cohort_id')
                   ->nullable()
-                  ->constrained('fichas')
+                  ->constrained('cohorts')
                   ->nullOnDelete();
 
             $table->timestamp('created_at')->useCurrent();

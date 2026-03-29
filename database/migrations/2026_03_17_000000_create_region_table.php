@@ -8,22 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('centros', function (Blueprint $table) {
+        Schema::create('region', function (Blueprint $table) {
             $table->id();
             $table->string('name',150);
-            $table->string('code',20)->nullable();
-
-            $table->foreignId('regional_id')
-                ->constrained('regional')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
+            $table->string('code',10)->unique()->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('centros');
+        Schema::dropIfExists('region');
     }
 };
