@@ -18,9 +18,11 @@ class Project extends Model
         "status",
         "cohort_id ",
     ];
+
+    // Relations
     public function projects()
     {
-        return $this->belongsToMany(Project::class, 'projects_menbers')
+        return $this->belongsToMany(Project::class, 'projects_members')
                     ->withPivot('project_role');
     }  
     public function cohort()
