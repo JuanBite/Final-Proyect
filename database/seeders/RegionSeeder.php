@@ -17,13 +17,10 @@ class RegionSeeder extends Seeder
             ['name' => 'Región de Los Lagos', 'code' => 'LAG'],
             ['name' => 'Región de Antofagasta', 'code' => 'ANT'],
             ['name' => 'Región de Coquimbo', 'code' => 'COQ'],
-            ['name' => 'Región de O\'Higgins', 'code' => 'OHI'],
+            ['name' => 'Región de Higgins', 'code' => 'OHI'],
             ['name' => 'Región del Maule', 'code' => 'MAU'],
             ['name' => 'Región de Arica y Parinacota', 'code' => 'ARI'],
         ];
 
-        foreach ($regions as $region) {
-            Region::create($region);
-        }
     }
 }
