@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Task extends Model
 {
     use HasFactory;
-    public $timestamps = false; // NO tiene updated_at
 
     protected $fillable = [
         'project_id',

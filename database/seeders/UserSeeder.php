@@ -32,50 +32,125 @@ class UserSeeder extends Seeder
         $user->save();
 
         // Usuarios INSTRUCTOR
-        $instructors = [
-            ['Carlos', 'Rodríguez', 'carlos.rodriguez@sigpro.com'],
-            ['Ana', 'Martínez', 'ana.martinez@sigpro.com'],
-            ['Luis', 'Sánchez', 'luis.sanchez@sigpro.com'],
-            ['Patricia', 'López', 'patricia.lopez@sigpro.com'],
-            ['Roberto', 'Fernández', 'roberto.fernandez@sigpro.com'],
-        ];
+        $user = new User;
+        $user->first_name = 'Carlos';
+        $user->last_name = 'Rodríguez';
+        $user->email = 'carlos.rodriguez@sigpro.com';
+        $user->password = Hash::make('instructor123');
+        $user->role = 'INSTRUCTOR';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->save();
 
-        foreach ($instructors as $instructor) {
-            $user = new User;
-            $user->first_name = $instructor[0];
-            $user->last_name = $instructor[1];
-            $user->email = $instructor[2];
-            $user->password = Hash::make('instructor123');
-            $user->role = 'INSTRUCTOR';
-            $user->status = 1;
-            $user->cohort_id = null;
-            $user->save();
-        }
+        $user = new User;
+        $user->first_name = 'Ana';
+        $user->last_name = 'Martínez';
+        $user->email = 'ana.martinez@sigpro.com';
+        $user->password = Hash::make('instructor123');
+        $user->role = 'INSTRUCTOR';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Luis';
+        $user->last_name = 'Sánchez';
+        $user->email = 'luis.sanchez@sigpro.com';
+        $user->password = Hash::make('instructor123');
+        $user->role = 'INSTRUCTOR';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Patricia';
+        $user->last_name = 'López';
+        $user->email = 'patricia.lopez@sigpro.com';
+        $user->password = Hash::make('instructor123');
+        $user->role = 'INSTRUCTOR';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Roberto';
+        $user->last_name = 'Fernández';
+        $user->email = 'roberto.fernandez@sigpro.com';
+        $user->password = Hash::make('instructor123');
+        $user->role = 'INSTRUCTOR';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->save();
 
         // Usuarios STUDENT
-        $students = [
-            ['Andrés', 'Silva', 'andres.silva@student.com', 1],
-            ['Camila', 'Torres', 'camila.torres@student.com', 1],
-            ['Felipe', 'Reyes', 'felipe.reyes@student.com', 1],
-            ['Daniela', 'Castro', 'daniela.castro@student.com', 2],
-            ['Sebastián', 'Morales', 'sebastian.morales@student.com', 2],
-            ['Valentina', 'Ortiz', 'valentina.ortiz@student.com', 3],
-            ['Nicolás', 'Flores', 'nicolas.flores@student.com', 3],
-            ['Francisca', 'Navarro', 'francisca.navarro@student.com', 4],
-            ['Cristóbal', 'Rojas', 'cristobal.rojas@student.com', 4],
-            ['Isidora', 'Contreras', 'isidora.contreras@student.com', 5],
-        ];
+        $user = new User;
+        $user->first_name = 'Andrés';
+        $user->last_name = 'Silva';
+        $user->email = 'andres.silva@student.com';
+        $user->password = Hash::make('student123');
+        $user->role = 'STUDENT';
+        $user->status = 1;
+        $user->cohort_id = 1;
+        $user->save();
 
-        foreach ($students as $student) {
-            $user = new User;
-            $user->first_name = $student[0];
-            $user->last_name = $student[1];
-            $user->email = $student[2];
-            $user->password = Hash::make('student123');
-            $user->role = 'STUDENT';
-            $user->status = 1;
-            $user->cohort_id = $student[3];
-            $user->save();
-        }
+        $user = new User;
+        $user->first_name = 'Camila';
+        $user->last_name = 'Torres';
+        $user->email = 'camila.torres@student.com';
+        $user->password = Hash::make('student123');
+        $user->role = 'STUDENT';
+        $user->status = 1;
+        $user->cohort_id = 1;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Felipe';
+        $user->last_name = 'Reyes';
+        $user->email = 'felipe.reyes@student.com';
+        $user->password = Hash::make('student123');
+        $user->role = 'STUDENT';
+        $user->status = 1;
+        $user->cohort_id = 1;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Daniela';
+        $user->last_name = 'Castro';
+        $user->email = 'daniela.castro@student.com';
+        $user->password = Hash::make('student123');
+        $user->role = 'STUDENT';
+        $user->status = 1;
+        $user->cohort_id = 2;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Sebastián';
+        $user->last_name = 'Morales';
+        $user->email = 'sebastian.morales@student.com';
+        $user->password = Hash::make('student123');
+        $user->role = 'STUDENT';
+        $user->status = 1;
+        $user->cohort_id = 2;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Valentina';
+        $user->last_name = 'Ortiz';
+        $user->email = 'valentina.ortiz@student.com';
+        $user->password = Hash::make('student123');
+        $user->role = 'STUDENT';
+        $user->status = 1;
+        $user->cohort_id = 3;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Nicolás';
+        $user->last_name = 'Flores';
+        $user->email = 'nicolas.flores@student.com';
+        $user->password = Hash::make('student123');
+        $user->role = 'STUDENT';
+        $user->status = 1;
+        $user->cohort_id = 3;
+        $user->save();
     }
 }
