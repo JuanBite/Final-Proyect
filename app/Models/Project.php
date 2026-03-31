@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Project extends Model
 {
     use HasFactory;
-    
+    public $timestamps = false; // NO tiene updated_at
     protected $fillable = [
         "first_name",
         "last_name",
