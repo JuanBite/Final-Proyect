@@ -2,52 +2,74 @@
 
 namespace Database\Seeders;
 
-use App\Models\Project;
-use App\Models\User;
-use App\Models\ProjectHistory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ProjectHistorySeeder extends Seeder
 {
     public function run(): void
     {
-        $projects = Project::all();
-        $users = User::all();
+        DB::table('project_history')->insert([
+            // Proyecto 1
+            [
+                'project_id' => 1,
+                'action' => 'Proyecto creado',
+                'performed_by' => 3,
+                'created_at' => '2024-03-01 09:00:00',
+            ],
+            [
+                'project_id' => 1,
+                'action' => 'Líder asignado: Carlos Rodríguez',
+                'performed_by' => 3,
+                'created_at' => '2024-03-01 09:05:00',
+            ],
+            [
+                'project_id' => 1,
+                'action' => 'Tarea completada: Diseño de base de datos',
+                'performed_by' => 8,
+                'created_at' => '2024-03-14 15:30:00',
+            ],
+            [
+                'project_id' => 1,
+                'action' => 'Progreso actualizado al 75%',
+                'performed_by' => 3,
+                'created_at' => '2024-04-21 10:00:00',
+            ],
+            // Proyecto 3 (completado)
+            [
+                'project_id' => 3,
+                'action' => 'Proyecto creado',
+                'performed_by' => 5,
+                'created_at' => '2024-02-01 09:00:00',
+            ],
+            [
+                'project_id' => 3,
+                'action' => 'Estado actualizado a COMPLETADO',
+                'performed_by' => 5,
+                'created_at' => '2024-03-31 10:00:00',
+            ],
+            [
+                'project_id' => 3,
+                'action' => 'Entrega final evaluada con nota 85.5',
+                'performed_by' => 5,
+                'created_at' => '2024-04-01 09:00:00',
+            ],
+            // Proyecto 6 (DELAYED)
+            [
+                'project_id' => 6,
+                'action' => 'Proyecto creado',
+                'performed_by' => 4,
+                'created_at' => '2024-03-25 09:00:00',
+            ],
+            [
+                'project_id' => 6,
+                'action' => 'Estado actualizado a DELAYED',
+                'performed_by' => 4,
+                'created_at' => '2024-04-20 14:00:00',
+            ],
+        ]);
         
-        $actions = [
-            'Proyecto creado',
-            'Líder asignado',
-            'Miembros agregados al proyecto',
-            'Estado actualizado a EN PROGRESO',
-            'Tarea completada: Diseño de base de datos',
-            'Progreso actualizado',
-            'Entrega parcial realizada',
-            'Revisión de avance',
-            'Estado actualizado a COMPLETADO',
-            'Entrega final evaluada',
-            'Retroalimentación proporcionada',
-        ];
-        
-        foreach ($projects as $project) {
-            // Crear historial para cada proyecto
-            $numHistory = rand(3, 8);
-            $startDate = $project->created_at;
-            
-            for ($i = 0; $i < $numHistory; $i++) {
-                $actionDate = $startDate->copy()->addDays(rand(1, 30 * $i));
-                
-                ProjectHistory::create([
-                    'project_id' => $project->id,
-                    'action' => $actions[array_rand($actions)],
-                    'performed_by' => $users->random()->id,
-                    'created_at' => $actionDate,
-                ]);
-            }
-        }
-        
-        // Crear historial adicional con factory
-        if (env('APP_ENV') !== 'production') {
-            ProjectHistory::factory(50)->create();
-        }
+        $this->command->info('Historial insertado: ' . DB::table('project_history')->count());
     }
 }

@@ -2,136 +2,80 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Cohort;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
         // Usuarios ADMIN
-        $admins = [
-            [
-                'first_name' => 'Juan',
-                'last_name' => 'Pérez',
-                'email' => 'admin@sigpro.com',
-                'password' => Hash::make('admin123'),
-                'role' => 'ADMIN',
-                'status' => 1,
-                'cohort_id' => null,
-            ],
-            [
-                'first_name' => 'María',
-                'last_name' => 'González',
-                'email' => 'superadmin@sigpro.com',
-                'password' => Hash::make('admin123'),
-                'role' => 'ADMIN',
-                'status' => 1,
-                'cohort_id' => null,
-            ],
-        ];
+        $user = new User;
+        $user->first_name = 'Juan';
+        $user->last_name = 'Pérez';
+        $user->email = 'admin@sigpro.com';
+        $user->password = Hash::make('admin123');
+        $user->role = 'ADMIN';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->save();
 
-        foreach ($admins as $admin) {
-            User::create($admin);
-        }
+        $user = new User;
+        $user->first_name = 'María';
+        $user->last_name = 'González';
+        $user->email = 'superadmin@sigpro.com';
+        $user->password = Hash::make('admin123');
+        $user->role = 'ADMIN';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->save();
 
         // Usuarios INSTRUCTOR
         $instructors = [
-            [
-                'first_name' => 'Carlos',
-                'last_name' => 'Rodríguez',
-                'email' => 'carlos.rodriguez@sigpro.com',
-                'password' => Hash::make('instructor123'),
-                'role' => 'INSTRUCTOR',
-                'status' => 1,
-                'cohort_id' => null,
-            ],
-            [
-                'first_name' => 'Ana',
-                'last_name' => 'Martínez',
-                'email' => 'ana.martinez@sigpro.com',
-                'password' => Hash::make('instructor123'),
-                'role' => 'INSTRUCTOR',
-                'status' => 1,
-                'cohort_id' => null,
-            ],
-            [
-                'first_name' => 'Luis',
-                'last_name' => 'Sánchez',
-                'email' => 'luis.sanchez@sigpro.com',
-                'password' => Hash::make('instructor123'),
-                'role' => 'INSTRUCTOR',
-                'status' => 1,
-                'cohort_id' => null,
-            ],
-            [
-                'first_name' => 'Patricia',
-                'last_name' => 'López',
-                'email' => 'patricia.lopez@sigpro.com',
-                'password' => Hash::make('instructor123'),
-                'role' => 'INSTRUCTOR',
-                'status' => 1,
-                'cohort_id' => null,
-            ],
-            [
-                'first_name' => 'Roberto',
-                'last_name' => 'Fernández',
-                'email' => 'roberto.fernandez@sigpro.com',
-                'password' => Hash::make('instructor123'),
-                'role' => 'INSTRUCTOR',
-                'status' => 1,
-                'cohort_id' => null,
-            ],
+            ['Carlos', 'Rodríguez', 'carlos.rodriguez@sigpro.com'],
+            ['Ana', 'Martínez', 'ana.martinez@sigpro.com'],
+            ['Luis', 'Sánchez', 'luis.sanchez@sigpro.com'],
+            ['Patricia', 'López', 'patricia.lopez@sigpro.com'],
+            ['Roberto', 'Fernández', 'roberto.fernandez@sigpro.com'],
         ];
 
         foreach ($instructors as $instructor) {
-            User::create($instructor);
+            $user = new User;
+            $user->first_name = $instructor[0];
+            $user->last_name = $instructor[1];
+            $user->email = $instructor[2];
+            $user->password = Hash::make('instructor123');
+            $user->role = 'INSTRUCTOR';
+            $user->status = 1;
+            $user->cohort_id = null;
+            $user->save();
         }
 
-        // Usuarios STUDENT - Crear estudiantes para cada cohorte
-        $cohorts = Cohort::all();
-        $studentNames = [
-            ['first_name' => 'Andrés', 'last_name' => 'Silva'],
-            ['first_name' => 'Camila', 'last_name' => 'Torres'],
-            ['first_name' => 'Felipe', 'last_name' => 'Reyes'],
-            ['first_name' => 'Daniela', 'last_name' => 'Castro'],
-            ['first_name' => 'Sebastián', 'last_name' => 'Morales'],
-            ['first_name' => 'Valentina', 'last_name' => 'Ortiz'],
-            ['first_name' => 'Nicolás', 'last_name' => 'Flores'],
-            ['first_name' => 'Francisca', 'last_name' => 'Navarro'],
-            ['first_name' => 'Cristóbal', 'last_name' => 'Rojas'],
-            ['first_name' => 'Isidora', 'last_name' => 'Contreras'],
-            ['first_name' => 'Matías', 'last_name' => 'Herrera'],
-            ['first_name' => 'Javiera', 'last_name' => 'Guzmán'],
-            ['first_name' => 'Benjamín', 'last_name' => 'Vargas'],
-            ['first_name' => 'Antonia', 'last_name' => 'Muñoz'],
-            ['first_name' => 'Vicente', 'last_name' => 'Fuentes'],
+        // Usuarios STUDENT
+        $students = [
+            ['Andrés', 'Silva', 'andres.silva@student.com', 1],
+            ['Camila', 'Torres', 'camila.torres@student.com', 1],
+            ['Felipe', 'Reyes', 'felipe.reyes@student.com', 1],
+            ['Daniela', 'Castro', 'daniela.castro@student.com', 2],
+            ['Sebastián', 'Morales', 'sebastian.morales@student.com', 2],
+            ['Valentina', 'Ortiz', 'valentina.ortiz@student.com', 3],
+            ['Nicolás', 'Flores', 'nicolas.flores@student.com', 3],
+            ['Francisca', 'Navarro', 'francisca.navarro@student.com', 4],
+            ['Cristóbal', 'Rojas', 'cristobal.rojas@student.com', 4],
+            ['Isidora', 'Contreras', 'isidora.contreras@student.com', 5],
         ];
 
-        $studentCounter = 1;
-        foreach ($cohorts as $cohort) {
-            // Asignar 5-8 estudiantes por cohorte
-            $studentsPerCohort = rand(5, 8);
-            for ($i = 0; $i < $studentsPerCohort && $studentCounter <= count($studentNames); $i++) {
-                $name = $studentNames[$studentCounter - 1];
-                User::create([
-                    'first_name' => $name['first_name'],
-                    'last_name' => $name['last_name'],
-                    'email' => strtolower($name['first_name'] . '.' . $name['last_name'] . '@student.com'),
-                    'password' => Hash::make('student123'),
-                    'role' => 'STUDENT',
-                    'status' => 1,
-                    'cohort_id' => $cohort->id,
-                ]);
-                $studentCounter++;
-            }
-        }
-        
-        // Crear estudiantes adicionales con factory si se necesitan más
-        if (env('APP_ENV') !== 'production') {
-            User::factory(20)->student()->create();
+        foreach ($students as $student) {
+            $user = new User;
+            $user->first_name = $student[0];
+            $user->last_name = $student[1];
+            $user->email = $student[2];
+            $user->password = Hash::make('student123');
+            $user->role = 'STUDENT';
+            $user->status = 1;
+            $user->cohort_id = $student[3];
+            $user->save();
         }
     }
 }

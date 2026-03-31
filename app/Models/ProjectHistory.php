@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ProjectHistory extends Model
 {
     use HasFactory;
-
+public $timestamps = false; // NO tiene updated_at
     protected $fillable = [
         'project_id',
         'action',
