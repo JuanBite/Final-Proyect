@@ -36,7 +36,7 @@
         </svg>
         Inicio
       </a>
-      <a href="sigpro-tarjetas.html"
+      <a href="{{ url('projects') }}"
         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#8AAABB] text-[13.5px] border border-transparent hover:bg-[#00C853]/6 hover:text-[#E8F4FF] hover:border-[#00C853]/15 transition-all">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <rect x="3" y="3" width="7" height="7" />

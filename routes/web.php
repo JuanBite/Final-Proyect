@@ -11,7 +11,7 @@ Route::get('/dashboard', function () {
 });
 
 Route::get('/projects', function () {
-    return view('index');
+    return view('projects.index');
 });
 
 
