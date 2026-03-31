@@ -2,45 +2,74 @@
 
 namespace Database\Seeders;
 
-use App\Models\Project;
-use App\Models\User;
-use App\Models\ProjectMember;
 use Illuminate\Database\Seeder;
+use App\Models\ProjectMember;
 
 class ProjectMemberSeeder extends Seeder
 {
     public function run(): void
     {
-        $projects = Project::all();
-        $students = User::where('role', 'STUDENT')->get();
-        
-        foreach ($projects as $project) {
-            // Agregar al líder como miembro
-            ProjectMember::create([
-                'project_id' => $project->id,
-                'user_id' => $project->leader_id,
-                'project_role' => 'LEADER',
-            ]);
-            
-            // Seleccionar estudiantes aleatorios para el proyecto
-            $projectStudents = $students->random(min(5, $students->count()));
-            
-            foreach ($projectStudents as $student) {
-                // Verificar que no sea el líder
-                if ($student->id != $project->leader_id) {
-                    ProjectMember::firstOrCreate([
-                        'project_id' => $project->id,
-                        'user_id' => $student->id,
-                    ], [
-                        'project_role' => 'MEMBER',
-                    ]);
-                }
-            }
-        }
-        
-        // Agregar miembros adicionales con factory
-        if (env('APP_ENV') !== 'production') {
-            ProjectMember::factory(30)->create();
-        }
+        // Proyecto 1: Sistema de Gestión de Tareas
+        $member = new ProjectMember;
+        $member->project_id = 1;
+        $member->user_id = 3; // Carlos Rodríguez (líder)
+        $member->project_role = 'LEADER';
+        $member->save();
+
+        $member = new ProjectMember;
+        $member->project_id = 1;
+        $member->user_id = 8; // Andrés Silva
+        $member->project_role = 'MEMBER';
+        $member->save();
+
+        $member = new ProjectMember;
+        $member->project_id = 1;
+        $member->user_id = 9; // Camila Torres
+        $member->project_role = 'MEMBER';
+        $member->save();
+
+        $member = new ProjectMember;
+        $member->project_id = 1;
+        $member->user_id = 10; // Felipe Reyes
+        $member->project_role = 'MEMBER';
+        $member->save();
+
+        // Proyecto 2: E-commerce de Productos Digitales
+        $member = new ProjectMember;
+        $member->project_id = 2;
+        $member->user_id = 4; // Ana Martínez (líder)
+        $member->project_role = 'LEADER';
+        $member->save();
+
+        $member = new ProjectMember;
+        $member->project_id = 2;
+        $member->user_id = 11; // Daniela Castro
+        $member->project_role = 'MEMBER';
+        $member->save();
+
+        $member = new ProjectMember;
+        $member->project_id = 2;
+        $member->user_id = 12; // Sebastián Morales
+        $member->project_role = 'MEMBER';
+        $member->save();
+
+        // Proyecto 3: API REST para Aplicación Móvil
+        $member = new ProjectMember;
+        $member->project_id = 3;
+        $member->user_id = 5; // Luis Sánchez (líder)
+        $member->project_role = 'LEADER';
+        $member->save();
+
+        $member = new ProjectMember;
+        $member->project_id = 3;
+        $member->user_id = 13; // Valentina Ortiz
+        $member->project_role = 'MEMBER';
+        $member->save();
+
+        $member = new ProjectMember;
+        $member->project_id = 3;
+        $member->user_id = 14; // Nicolás Flores
+        $member->project_role = 'MEMBER';
+        $member->save();
     }
 }
