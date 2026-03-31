@@ -9,6 +9,9 @@ class CenterSeeder extends Seeder
 {
     public function run(): void
     {
+
+    // Centros
+    
         $center = new Center;
         $center->name = 'Centro de Formación Santiago';
         $center->code = 'CFS001';
