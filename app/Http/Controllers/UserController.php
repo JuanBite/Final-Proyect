@@ -24,22 +24,22 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validation = $request->validate([
-            'first_name' => ['required', 'string'],
-            'last_name' => ['required', 'string'],
-            'email' => ['required', 'lowercase', 'email', 'unique:' . User::class],
-            'password' => ['required', 'confirmed'],
-            'role' => ['required', new Enum(RoleEnum::class)],
-            'status' => ['required', 'boolean'],
-            'cohort_id' => ['required', 'exists:cohorts,id'],
+            'first_name'    => ['required', 'string'],
+            'last_name'     => ['required', 'string'],
+            'email'         => ['required', 'lowercase', 'email', 'unique:' . User::class],
+            'password'      => ['required', 'confirmed'],
+            'role'          => ['required', new Enum(RoleEnum::class)],
+            'status'        => ['required', 'boolean'],
+            'cohort_id'     => ['required', 'exists:cohorts,id'],
         ]);
         $user = new User();
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->email = $request->email;
-        $user->password = bcrypt($request->password);
-        $user->role = $request->role;
-        $user->status = $request->boolean('status');
-        $user->cohort_id = $request->cohort_id;
+        $user->first_name = $request       ->first_name;
+        $user->last_name  = $request       ->last_name;
+        $user->email      = $request       ->email;
+        $user->password   = bcrypt($request->password);
+        $user->role       = $request       ->role;
+        $user->status     = $request       ->boolean('status');
+        $user->cohort_id  = $request       ->cohort_id;
 
         if ($user->save()) {
             return redirect('users')->with('success', 'User ' . $user->first_name . $user->last_name . ' was successfully added.');
@@ -77,5 +77,5 @@ class UserController extends Controller
             return redirect('users')->with('success', 'User ' . $user->first_name . ' ' . $user->last_name . ' was successfully deleted.');
         }
     }
-    
+
 }
