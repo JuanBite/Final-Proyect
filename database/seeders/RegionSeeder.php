@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Region;
+use Carbon\Carbon;
 
 class RegionSeeder extends Seeder
 {

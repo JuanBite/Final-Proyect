@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Cohort extends Model
 {
     use HasFactory;
-
+public $timestamps = true; // Tiene created_at y updated_at
     protected $fillable = [
         'cohort_number',
         'program_name',
