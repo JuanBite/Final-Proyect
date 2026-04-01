@@ -8,13 +8,6 @@
 <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden hover:border-[#00C853]/35 hover:shadow-2xl hover:shadow-black/30 transition-all relative">
     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-sky-400 rounded-t-2xl"></div>
 
-    <!-- Banner -->
-    <div class="h-28 relative overflow-hidden" style="background:linear-gradient(135deg,#0e1a2d 0%,#111d30 50%,#0e1a2d 100%)">
-        <div class="absolute inset-0" style="background:radial-gradient(ellipse at 20% 50%,rgba(0,200,83,0.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 30%,rgba(56,189,248,0.08) 0%,transparent 50%)"></div>
-        <div class="absolute inset-0" style="background-image:linear-gradient(rgba(0,200,83,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,83,0.04) 1px,transparent 1px);background-size:32px 32px"></div>
-        <div class="absolute right-8 top-1/2 -translate-y-1/2 font-black text-6xl tracking-widest pointer-events-none select-none" style="font-family:'Syne',sans-serif;color:rgba(255,255,255,0.025)">SIGPRO</div>
-    </div>
-
     <!-- Body -->
     <div class="px-8 pb-7 flex items-end gap-6 -mt-9 relative z-10">
         <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-700 to-emerald-400 border-4 border-[#1C2A40] flex items-center justify-center font-black text-3xl text-slate-900 shrink-0 shadow-xl shadow-emerald-500/20" style="font-family:'Syne',sans-serif">LM</div>
@@ -379,3 +372,7 @@
 </div>
 
 @endsection
+
+
+
+
