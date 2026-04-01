@@ -13,7 +13,7 @@
             <h2 class="font-syne font-extrabold text-2xl">Editar <span class="text-[#FFD740]">Proyecto</span></h2>
             <p class="text-sm text-[#8AAABB] mt-0.5">Modifica los datos del proyecto seleccionado</p>
         </div>
-        <div class="flex items-center gap-2 bg-[rgba(255,215,64,0.08)] border border-[rgba(255,215,64,0.2)] rounded-lg px-3 py-1.5 text-xs text-[#FFD740] shrink-0">
+        <div class="flex items-center gap-2 bg-[rgba(255,215,64,0.08)] border border-[rgba(255,215,64,0.2)] rounded-lg px-10 py-1.5 text-xs text-[#FFD740] shrink-0">
             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="8" x2="12" y2="12" />
@@ -21,7 +21,6 @@
             </svg>
             Modo edición
         </div>
-        <!-- Botón cerrar - USANDO DISPATCH COMO EL OTRO -->
         <button @click="$dispatch('close-modal')" class="absolute top-5 right-5 w-9 h-9 bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-lg flex items-center justify-center text-[#8AAABB] hover:text-[#E8F4FF] transition">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <line x1="18" y1="6" x2="6" y2="18" />
@@ -32,8 +31,7 @@
 
     <!-- Body - Con scroll -->
     <div class="px-8 py-7 overflow-y-auto flex-1" style="max-height: calc(90vh - 140px);">
-        <div class="space-y-6">
-
+        <form class="space-y-6">
             <!-- Sección: Información básica -->
             <div>
                 <div class="flex items-center gap-2 mb-4">
@@ -42,39 +40,48 @@
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-[11px] uppercase tracking-wide text-[#8AAABB] font-medium mb-1.5">Nombre del
-                            proyecto <span class="text-[#00C853]">*</span></label>
-                        <input type="text" value="Sigpro Académico" class="w-full bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-4 py-2.5 text-[13.5px] text-[#E8F4FF] placeholder:text-[rgba(138,170,187,0.4)] focus:border-[rgba(255,215,64,0.5)] focus:bg-[rgba(255,215,64,0.02)] outline-none transition">
+                        <label class="block text-[11px] uppercase tracking-wide text-[#8AAABB] font-medium mb-1.5">Nombre del proyecto <span class="text-[#00C853]">*</span></label>
+                        <input type="text" name="nombre_proyecto" value="Sigpro Académico" class="w-full bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-4 py-2.5 text-[13.5px] text-[#E8F4FF] placeholder:text-[rgba(138,170,187,0.4)] focus:border-[rgba(255,215,64,0.5)] focus:bg-[rgba(255,215,64,0.02)] outline-none transition">
                     </div>
                     <div>
                         <label class="block text-[11px] uppercase tracking-wide text-[#8AAABB] font-medium mb-1.5">Descripción</label>
-                        <textarea rows="3" class="w-full bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-4 py-2.5 text-[13.5px] text-[#E8F4FF] placeholder:text-[rgba(138,170,187,0.4)] focus:border-[rgba(255,215,64,0.5)] focus:bg-[rgba(255,215,64,0.02)] outline-none resize-y">Sistema de seguimiento y gestión educativa institucional para el Ministerio de Educación Nacional.</textarea>
+                        <textarea name="descripcion" rows="3" class="w-full bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-4 py-2.5 text-[13.5px] text-[#E8F4FF] placeholder:text-[rgba(138,170,187,0.4)] focus:border-[rgba(255,215,64,0.5)] focus:bg-[rgba(255,215,64,0.02)] outline-none resize-y">Sistema de seguimiento y gestión educativa institucional para el Ministerio de Educación Nacional.</textarea>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[11px] uppercase tracking-wide text-[#8AAABB] font-medium mb-1.5">Fecha inicio
-                                <span class="text-[#00C853]">*</span></label>
-                            <input type="date" value="2026-02-12" class="w-full bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-4 py-2.5 text-[13.5px] text-[#E8F4FF] focus:border-[rgba(255,215,64,0.5)] outline-none">
+                            <label class="block text-[11px] uppercase tracking-wide text-[#8AAABB] font-medium mb-1.5">Fecha inicio <span class="text-[#00C853]">*</span></label>
+                            <input type="date" name="fecha_inicio" value="2026-02-12" class="w-full bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-4 py-2.5 text-[13.5px] text-[#E8F4FF] focus:border-[rgba(255,215,64,0.5)] outline-none">
                         </div>
                         <div>
-                            <label class="block text-[11px] uppercase tracking-wide text-[#8AAABB] font-medium mb-1.5">Fecha entrega
-                                <span class="text-[#00C853]">*</span></label>
-                            <input type="date" value="2027-02-15" class="w-full bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-4 py-2.5 text-[13.5px] text-[#E8F4FF] focus:border-[rgba(255,215,64,0.5)] outline-none">
+                            <label class="block text-[11px] uppercase tracking-wide text-[#8AAABB] font-medium mb-1.5">Fecha entrega <span class="text-[#00C853]">*</span></label>
+                            <input type="date" name="fecha_entrega" value="2027-02-15" class="w-full bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-4 py-2.5 text-[13.5px] text-[#E8F4FF] focus:border-[rgba(255,215,64,0.5)] outline-none">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Estado del proyecto -->
+            <!-- Estado del proyecto - Radio buttons puros -->
             <div>
                 <div class="flex items-center gap-2 mb-4">
                     <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Estado del proyecto</span>
                     <div class="flex-1 h-px bg-[rgba(0,200,83,0.15)]"></div>
                 </div>
                 <div class="grid grid-cols-3 gap-2">
-                    <button data-status="active" class="status-option flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border border-[rgba(0,200,83,0.15)] bg-[#182236] text-[#8AAABB] text-xs transition-all"><span class="text-lg">●</span>Activo</button>
-                    <button data-status="progress" class="status-option flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border border-[rgba(0,200,83,0.15)] bg-[#182236] text-[#8AAABB] text-xs transition-all"><span class="text-lg">◑</span>En progreso</button>
-                    <button data-status="delay" class="status-option flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border border-[rgba(0,200,83,0.15)] bg-[#182236] text-[#8AAABB] text-xs transition-all"><span class="text-lg">⚠</span>Con retraso</button>
+                    <label class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border-2 cursor-pointer bg-[rgba(0,200,83,0.1)] border-[rgba(0,200,83,0.35)] text-[#00C853]">
+                        <input type="radio" name="estado" value="activo" class="hidden" checked>
+                        <span class="text-lg">●</span>
+                        <span class="text-xs">Activo</span>
+                    </label>
+                    <label class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border border-[rgba(0,200,83,0.15)] cursor-pointer bg-[#182236] text-[#8AAABB]">
+                        <input type="radio" name="estado" value="progreso" class="hidden">
+                        <span class="text-lg">◑</span>
+                        <span class="text-xs">En progreso</span>
+                    </label>
+                    <label class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border border-[rgba(0,200,83,0.15)] cursor-pointer bg-[#182236] text-[#8AAABB]">
+                        <input type="radio" name="estado" value="retraso" class="hidden">
+                        <span class="text-lg">⚠</span>
+                        <span class="text-xs">Con retraso</span>
+                    </label>
                 </div>
             </div>
 
@@ -84,7 +91,7 @@
                     <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Líder del proyecto</span>
                     <div class="flex-1 h-px bg-[rgba(0,200,83,0.15)]"></div>
                 </div>
-                <select class="w-full bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-4 py-2.5 text-[13.5px] text-[#E8F4FF] focus:border-[rgba(255,215,64,0.5)] outline-none">
+                <select name="lider" class="w-full bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-4 py-2.5 text-[13.5px] text-[#E8F4FF] focus:border-[rgba(255,215,64,0.5)] outline-none">
                     <option value="1" selected class="bg-[#111D30]">Luis Miguel Muñoz</option>
                     <option value="2" class="bg-[#111D30]">Sebastián Grijalva</option>
                     <option value="3" class="bg-[#111D30]">Juan David Quinchia</option>
@@ -94,58 +101,64 @@
                 </select>
             </div>
 
-            <!-- Equipo participante -->
+            <!-- Equipo participante - Checkboxes puros -->
             <div>
                 <div class="flex items-center gap-2 mb-4">
                     <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Equipo participante</span>
                     <div class="flex-1 h-px bg-[rgba(0,200,83,0.15)]"></div>
                 </div>
-                <div class="flex flex-wrap gap-2" id="membersContainer">
-                    <div data-member="LM" class="member-chip flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#182236] border border-[rgba(0,200,83,0.15)] cursor-pointer transition-all">
+                <div class="flex flex-wrap gap-2">
+                    <!-- LM - Seleccionado -->
+                    <label class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl cursor-pointer bg-[rgba(0,200,83,0.1)] border border-[rgba(0,200,83,0.35)]">
+                        <input type="checkbox" name="equipo[]" value="LM" class="hidden" checked>
                         <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#00963E] to-[#00C853] flex items-center justify-center font-syne font-extrabold text-[9px] text-[#0A1628]">LM</div>
                         <span class="text-xs text-[#E8F4FF]">Luis Miguel</span>
-                        <div class="w-4 h-4 rounded border-2 border-[rgba(138,170,187,0.3)] flex items-center justify-center ml-1">
-                            <svg class="check-svg w-3 h-3 hidden" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
+                        <div class="w-4 h-4 rounded-full bg-[#00C853] flex items-center justify-center">
+                            <svg class="w-3 h-3" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
                                 <polyline points="20 6 9 17 4 12" />
                             </svg>
                         </div>
-                    </div>
-                    <div data-member="SG" class="member-chip flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#182236] border border-[rgba(0,200,83,0.15)] cursor-pointer transition-all">
+                    </label>
+                    
+                    <!-- SG - Seleccionado -->
+                    <label class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl cursor-pointer bg-[rgba(0,200,83,0.1)] border border-[rgba(0,200,83,0.35)]">
+                        <input type="checkbox" name="equipo[]" value="SG" class="hidden" checked>
                         <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#0088CC] to-[#40C4FF] flex items-center justify-center font-syne font-extrabold text-[9px] text-white">SG</div>
                         <span class="text-xs text-[#E8F4FF]">Sebastián</span>
-                        <div class="w-4 h-4 rounded border-2 border-[rgba(138,170,187,0.3)] flex items-center justify-center ml-1">
-                            <svg class="check-svg w-3 h-3 hidden" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
+                        <div class="w-4 h-4 rounded-full bg-[#00C853] flex items-center justify-center">
+                            <svg class="w-3 h-3" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
                                 <polyline points="20 6 9 17 4 12" />
                             </svg>
                         </div>
-                    </div>
-                    <div data-member="JD" class="member-chip flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#182236] border border-[rgba(0,200,83,0.15)] cursor-pointer transition-all">
+                    </label>
+                    
+                    <!-- JD - Seleccionado -->
+                    <label class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl cursor-pointer bg-[rgba(0,200,83,0.1)] border border-[rgba(0,200,83,0.35)]">
+                        <input type="checkbox" name="equipo[]" value="JD" class="hidden" checked>
                         <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#6C3DBF] to-[#9B59B6] flex items-center justify-center font-syne font-extrabold text-[9px] text-white">JD</div>
                         <span class="text-xs text-[#E8F4FF]">Juan David</span>
-                        <div class="w-4 h-4 rounded border-2 border-[rgba(138,170,187,0.3)] flex items-center justify-center ml-1">
-                            <svg class="check-svg w-3 h-3 hidden" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
+                        <div class="w-4 h-4 rounded-full bg-[#00C853] flex items-center justify-center">
+                            <svg class="w-3 h-3" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
                                 <polyline points="20 6 9 17 4 12" />
                             </svg>
                         </div>
-                    </div>
-                    <div data-member="SM" class="member-chip flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#182236] border border-[rgba(0,200,83,0.15)] cursor-pointer transition-all">
+                    </label>
+                    
+                    <!-- SM - No seleccionado -->
+                    <label class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl cursor-pointer bg-[#182236] border border-[rgba(0,200,83,0.15)]">
+                        <input type="checkbox" name="equipo[]" value="SM" class="hidden">
                         <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#E67E22] to-[#F39C12] flex items-center justify-center font-syne font-extrabold text-[9px] text-white">SM</div>
                         <span class="text-xs text-[#E8F4FF]">Sara M.</span>
-                        <div class="w-4 h-4 rounded border-2 border-[rgba(138,170,187,0.3)] flex items-center justify-center ml-1">
-                            <svg class="check-svg w-3 h-3 hidden" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div data-member="CR" class="member-chip flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#182236] border border-[rgba(0,200,83,0.15)] cursor-pointer transition-all">
+                        <div class="w-4 h-4 rounded border-2 border-[rgba(138,170,187,0.3)]"></div>
+                    </label>
+                    
+                    <!-- CR - No seleccionado -->
+                    <label class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl cursor-pointer bg-[#182236] border border-[rgba(0,200,83,0.15)]">
+                        <input type="checkbox" name="equipo[]" value="CR" class="hidden">
                         <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#16A085] to-[#1ABC9C] flex items-center justify-center font-syne font-extrabold text-[9px] text-white">CR</div>
                         <span class="text-xs text-[#E8F4FF]">Camilo R.</span>
-                        <div class="w-4 h-4 rounded border-2 border-[rgba(138,170,187,0.3)] flex items-center justify-center ml-1">
-                            <svg class="check-svg w-3 h-3 hidden" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                    </div>
+                        <div class="w-4 h-4 rounded border-2 border-[rgba(138,170,187,0.3)]"></div>
+                    </label>
                 </div>
             </div>
 
@@ -158,27 +171,25 @@
                 <div>
                     <label class="block text-[11px] uppercase tracking-wide text-[#8AAABB] font-medium mb-1.5">Porcentaje de avance</label>
                     <div class="flex items-center gap-3">
-                        <input type="number" id="progressInput" min="0" max="100" value="50" class="w-24 bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-3 py-2 text-center text-[13.5px] text-[#E8F4FF] focus:border-[rgba(255,215,64,0.5)] outline-none">
+                        <input type="number" name="avance" min="0" max="100" value="50" class="w-24 bg-[#182236] border border-[rgba(0,200,83,0.15)] rounded-xl px-3 py-2 text-center text-[13.5px] text-[#E8F4FF] focus:border-[rgba(255,215,64,0.5)] outline-none">
                         <div class="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
-                            <div id="progressFill" class="h-full bg-gradient-to-r from-[#00963E] to-[#00C853] rounded-full" style="width: 50%"></div>
+                            <div class="h-full bg-gradient-to-r from-[#00963E] to-[#00C853] rounded-full" style="width: 50%"></div>
                         </div>
                         <span class="text-sm text-[#8AAABB]">%</span>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-
 
     <!-- Footer - Fijo -->
     <div class="px-8 py-5 border-t border-[rgba(0,200,83,0.15)] flex flex-wrap items-center justify-between gap-4 shrink-0 bg-[#111D30]">
         <div class="text-[11px] text-[#8AAABB]">Última modificación: <b class="text-[#FFD740]">Hoy, 3:42 PM</b></div>
         <div class="flex gap-2">
-            <!-- Botón Cancelar con onclick directo -->
-            <button @click="$dispatch('close-modal')" class="btn-ghost flex items-center gap-2 px-6 py-[11px] rounded-xl text-[13.5px] font-medium text-[#8AAABB] bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all">
+            <button @click="$dispatch('close-modal')" class="flex items-center gap-2 px-6 py-[11px] rounded-xl text-[13.5px] font-medium text-[#8AAABB] bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all">
                 Cancelar
             </button>
-            <button id="saveBtn" class="px-5 py-2.5 rounded-xl bg-[#00C853] text-[#0A1628] text-sm font-semibold hover:bg-[#00E060] shadow-md transition flex items-center gap-2">
+            <button type="submit" form="project-form" class="px-5 py-2.5 rounded-xl bg-[#00C853] text-[#0A1628] text-sm font-semibold hover:bg-[#00E060] shadow-md transition flex items-center gap-2">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <polyline points="20 6 9 17 4 12" />
                 </svg>
@@ -187,106 +198,3 @@
         </div>
     </div>
 </div>
-<script>
-    // Status selector
-    const statusBtns = document.querySelectorAll('.status-option');
-    statusBtns.forEach((btn) => {
-        btn.addEventListener('click', function() {
-            statusBtns.forEach(b => {
-                b.classList.remove('bg-[rgba(0,200,83,0.1)]', 'border-[rgba(0,200,83,0.35)]', 'text-[#00C853]'
-                    , 'bg-[rgba(255,215,64,0.1)]', 'border-[rgba(255,215,64,0.35)]', 'text-[#FFD740]'
-                    , 'bg-[rgba(255,82,82,0.1)]', 'border-[rgba(255,82,82,0.35)]', 'text-[#FF5252]');
-                b.classList.add('bg-[#182236]', 'border-[rgba(0,200,83,0.15)]', 'text-[#8AAABB]');
-            });
-            if (btn.getAttribute('data-status') === 'active') {
-                btn.classList.add('bg-[rgba(0,200,83,0.1)]', 'border-[rgba(0,200,83,0.35)]', 'text-[#00C853]');
-            } else if (btn.getAttribute('data-status') === 'progress') {
-                btn.classList.add('bg-[rgba(255,215,64,0.1)]', 'border-[rgba(255,215,64,0.35)]', 'text-[#FFD740]');
-            } else if (btn.getAttribute('data-status') === 'delay') {
-                btn.classList.add('bg-[rgba(255,82,82,0.1)]', 'border-[rgba(255,82,82,0.35)]', 'text-[#FF5252]');
-            }
-        });
-    });
-
-    // Activar estado activo por defecto
-    const defaultActive = document.querySelector('[data-status="active"]');
-    if (defaultActive) defaultActive.click();
-
-    // Member chips
-    function updateMemberUI(chip) {
-        const isSelected = chip.classList.contains('selected');
-        const checkSvg = chip.querySelector('.check-svg');
-        if (isSelected) {
-            chip.classList.remove('selected');
-            chip.classList.remove('bg-[rgba(0,200,83,0.1)]', 'border-[rgba(0,200,83,0.35)]');
-            chip.classList.add('bg-[#182236]', 'border-[rgba(0,200,83,0.15)]');
-            if (checkSvg) checkSvg.classList.add('hidden');
-        } else {
-            chip.classList.add('selected');
-            chip.classList.add('bg-[rgba(0,200,83,0.1)]', 'border-[rgba(0,200,83,0.35)]');
-            chip.classList.remove('bg-[#182236]', 'border-[rgba(0,200,83,0.15)]');
-            if (checkSvg) checkSvg.classList.remove('hidden');
-        }
-    }
-
-    const members = document.querySelectorAll('.member-chip');
-    members.forEach((chip) => {
-        const memberId = chip.getAttribute('data-member');
-        if (memberId === 'LM' || memberId === 'SG' || memberId === 'JD') {
-            chip.classList.add('selected');
-            chip.classList.add('bg-[rgba(0,200,83,0.1)]', 'border-[rgba(0,200,83,0.35)]');
-            chip.classList.remove('bg-[#182236]', 'border-[rgba(0,200,83,0.15)]');
-            const checkSvg = chip.querySelector('.check-svg');
-            if (checkSvg) checkSvg.classList.remove('hidden');
-        }
-        chip.addEventListener('click', (e) => {
-            e.stopPropagation();
-            updateMemberUI(chip);
-        });
-    });
-
-    // Progress
-    const progressInput = document.getElementById('progressInput');
-    const progressFill = document.getElementById('progressFill');
-
-    function updateProgress(value) {
-        let v = Math.min(100, Math.max(0, parseInt(value) || 0));
-        if (progressFill) progressFill.style.width = v + '%';
-        if (progressInput) progressInput.value = v;
-    }
-
-    if (progressInput) {
-        progressInput.addEventListener('input', (e) => updateProgress(e.target.value));
-    }
-    updateProgress(50);
-
-    // Toast
-    const toast = document.getElementById('toast');
-    const toastMsg = document.getElementById('toastMsg');
-
-    function showToast(message) {
-        if (toastMsg) toastMsg.innerText = message;
-        if (toast) {
-            toast.classList.remove('translate-y-24', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            setTimeout(() => {
-                toast.classList.add('translate-y-24', 'opacity-0');
-                toast.classList.remove('translate-y-0', 'opacity-100');
-            }, 2500);
-        }
-    }
-
-    // Save - Cierra después de guardar
-const saveBtn = document.getElementById('saveBtn');
-
-if (saveBtn) {
-    saveBtn.addEventListener('click', () => {
-        showToast("✓ Cambios guardados correctamente");
-
-        setTimeout(() => {
-            document.dispatchEvent(new CustomEvent('close-modal'));
-        }, 1500);
-    });
-}
-
-</script>

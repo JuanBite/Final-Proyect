@@ -159,7 +159,7 @@
     <!-- Footer - Fijo -->
     <div class="px-8 py-5 border-t border-[#00C853]/15 flex justify-end gap-2.5 shrink-0 bg-[#111D30]">
         <!-- Botón Cancelar con onclick directo -->
-        <button onclick="if(window.closeProjectModal) window.closeProjectModal()" class="btn-ghost flex items-center gap-2 px-6 py-[11px] rounded-xl text-[13.5px] font-medium text-[#8AAABB] bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all">
+        <button  onclick="if(window.closeProjectModal) window.closeProjectModal()" class="btn-ghost flex items-center gap-2 px-6 py-[11px] rounded-xl text-[13.5px] font-medium text-[#8AAABB] bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all">
             Cancelar
         </button>
         <button class="btn-primary flex items-center gap-2 px-6 py-[11px] rounded-xl text-[13.5px] font-medium bg-[#00C853] text-[#0A1628] cursor-pointer transition-all">
@@ -172,26 +172,3 @@
 
 </div>
 
-<script>
-    
-    // Status selector
-    document.querySelectorAll('.status-opt').forEach((btn, i) => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.status-opt').forEach(b => {
-                b.classList.remove('is-active', 'is-yellow', 'is-red');
-                b.style.color = '#8AAABB';
-                b.style.background = '#182236';
-                b.style.borderColor = 'rgba(0,200,83,0.15)';
-            });
-            if (i === 0) btn.classList.add('is-active');
-            else if (i === 1) btn.classList.add('is-yellow');
-            else btn.classList.add('is-red');
-        });
-    });
-
-    // Member toggle
-    document.querySelectorAll('.member-chip').forEach(chip => {
-        chip.addEventListener('click', () => chip.classList.toggle('selected'));
-    });
-
-</script>

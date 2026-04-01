@@ -1,33 +1,27 @@
-<div class="bg-[#111D30] border border-green-500/20 rounded-3xl w-[560px] max-w-full shadow-2xl overflow-hidden">
+<div x-data="editUserForm()" @load-user-data.window="loadUserData($event.detail.userId)" class="bg-[#111D30] border border-green-500/20 rounded-3xl w-[560px] max-w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
 
     <!-- HEADER -->
-    <div class="relative flex items-center gap-4 p-7 border-b border-green-500/20 bg-green-500/5">
-
+    <div class="relative flex items-center gap-4 p-7 border-b border-green-500/20 bg-green-500/5 shrink-0">
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-blue-400"></div>
-
-        <div class="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center justify-center text-green-400">
+        <div class="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center justify-center text-green-400 text-2xl">
             ✏️
         </div>
-
         <div>
             <div class="font-syne text-xl font-extrabold">
                 Editar <span class="text-green-400">Usuario</span>
             </div>
             <div class="text-sm text-gray-400">Modifica el perfil y permisos del usuario</div>
         </div>
-
         <div class="ml-auto mr-10 flex items-center gap-2 bg-green-500/10 border border-green-500/30 px-3 py-1 rounded text-xs text-green-400">
             ● Modo edición
         </div>
-
-        <div class="absolute top-5 right-5 w-8 h-8 bg-[#182236] border border-green-500/20 rounded flex items-center justify-center text-gray-400 cursor-pointer">
+        <button @click="$dispatch('close-edit-modal'); document.body.style.overflow='';"  class="absolute top-5 right-5 w-8 h-8 bg-[#182236] border border-green-500/20 rounded flex items-center justify-center text-gray-400 hover:text-white transition-all cursor-pointer">
             ✕
-        </div>
+        </button>
     </div>
 
-    <!-- BODY -->
-    <div class="p-6">
-
+    <!-- BODY (scrollable) -->
+    <div class="p-6 overflow-y-auto flex-1">
         <!-- PROFILE -->
         <div class="flex items-center gap-4 bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-6">
             <div class="w-12 h-12 flex items-center justify-center rounded-xl font-bold bg-gradient-to-br from-green-700 to-green-400 text-black">
@@ -48,11 +42,11 @@
         </div>
 
         <div class="grid grid-cols-2 gap-4 mb-6">
-            <input class="col-span-1 bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm" value="Luis Miguel">
-            <input class="col-span-1 bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm" value="Muñoz">
-            <input class="col-span-2 bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm" value="luis.munoz@sigpro.edu.co">
-            <input class="bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm" value="1234567890">
-            <input class="bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm" type="date" value="2026-02-12">
+            <input x-model="formData.nombre" class="col-span-1 bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm focus:border-green-500/50 outline-none" placeholder="Nombre">
+            <input x-model="formData.apellido" class="col-span-1 bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm focus:border-green-500/50 outline-none" placeholder="Apellido">
+            <input x-model="formData.email" class="col-span-2 bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm focus:border-green-500/50 outline-none" placeholder="Correo electrónico">
+            <input x-model="formData.documento" class="bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm focus:border-green-500/50 outline-none" placeholder="Documento">
+            <input x-model="formData.fechaIngreso" class="bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm focus:border-green-500/50 outline-none" type="date">
         </div>
 
         <!-- ESTADO -->
@@ -125,21 +119,22 @@
                 <span class="flex-1 text-sm">Gimnasio</span>
             </div>
         </div>
-
     </div>
 
     <!-- FOOTER -->
-    <div class="flex justify-between items-center p-6 border-t border-green-500/20">
+    <div class="flex justify-between items-center p-6 border-t border-green-500/20 shrink-0">
         <div class="text-xs text-gray-400">
             ID: <b>#001</b> · Ingresó: <b>12/02/2026</b>
         </div>
 
         <div class="flex gap-2">
-            <button class="px-4 py-2 rounded-lg border border-green-500/20 bg-[#182236] text-gray-400">Cancelar</button>
-            <button class="px-4 py-2 rounded-lg border border-red-400/30 bg-red-500/10 text-red-400">Eliminar</button>
-            <button class="px-5 py-2 rounded-lg bg-green-400 text-black font-medium">Guardar</button>
+            <button @click="$dispatch('close-edit-modal'); document.body.style.overflow='';"  class="btn-ghost flex items-center gap-2 px-6 py-[11px] rounded-xl text-[13.5px] font-medium text-[#8AAABB] bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all hover:bg-[#182236]/80">
+                Cancelar
+            </button>
+            <button @click="saveChanges()" class="px-5 py-2 rounded-lg bg-green-400 text-black font-medium hover:bg-green-300 transition-all">
+                Guardar
+            </button>
         </div>
     </div>
 
 </div>
-
