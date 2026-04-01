@@ -3,16 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use App\Enums\EnumStatus;
 use App\Models\Project;
+use App\Enums\EnumStatus;
 use Illuminate\Validation\Rules\Enum;
 
 class ProjectController extends Controller
 {
     //Listing
     public function index() {
-        $projects = User::orderBy("name")->paginate(20);
+        $projects = Project::orderBy("name")->paginate(20);
         return view('projects.index')->with('projects', $projects);
     }
 
@@ -29,7 +28,7 @@ class ProjectController extends Controller
         'start_date'      => ['required','date'],
         'due_date'        => ['required', 'date', 'after_or_equal:start_date'],
         'progress'        => ['required','numeric', 'decimal:0,100'],
-        'leader_id'       => ['nullable', 'exist:users,id'],
+        'leader_id'       => ['required', 'exist:users,id'],
         'status'          => ['required', new Enum(EnumStatus::class)],
 
     ]);
@@ -51,7 +50,7 @@ class ProjectController extends Controller
 
 public function show(Project $Project)
     {
-        return view('projects.details')->with('projects', $Project);
+        return view('projects.details')->with('projects', $Project);     
     }
 
      public function edit(Project $Project)
@@ -67,7 +66,7 @@ public function show(Project $Project)
         'start_date'      => ['required','date'],
         'due_date'        => ['required', 'date', 'after_or_equal:start_date'],
         'progress'        => ['required','numeric', 'decimal:0,100'],
-        'leader_id'       => ['nullable', 'exist:users,id'],
+        'leader_id'       => ['required', 'exist:users,id'],
         'status'          => ['required', new Enum(EnumStatus::class)],
 
     ]);

@@ -11,16 +11,17 @@ use Illuminate\Validation\Rules\Enum;
 class UserController extends Controller
 {
     // Listing
-
     public function index()
     {
         $users = User::orderBy('id', 'desc')->paginate(20);
         return view('users.index')->with('users', $users);
     }
+    // Create
     public function create()
     {
         return view('users.create');
     }
+    // Store
     public function store(Request $request)
     {
         $validation = $request->validate([
@@ -45,14 +46,17 @@ class UserController extends Controller
             return redirect('users')->with('success', 'User ' . $user->first_name . $user->last_name . ' was successfully added.');
         }
     }
+    // Show
     public function show(User $user)
     {
         return view('users.show')->with('user', $user);
     }
+    // Edit
     public function edit(User $user)
     {
         return view('users.edit')->with('user', $user);
     }
+    // Update
     public function update(Request $request, User $user)
     {
         $validation = $request->validate([
@@ -71,6 +75,7 @@ class UserController extends Controller
         return redirect('users')
             ->with('success', 'User ' . $user->first_name . ' ' . $user->last_name . ' was successfully updated.');
     }
+    // Delete
     public function destroy(User $user)
     {
         if ($user->delete()) {
