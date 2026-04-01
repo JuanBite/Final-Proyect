@@ -11,7 +11,7 @@ class ProjectController extends Controller
 {
     //Listing
     public function index() {
-        $projects = Project::orderBy("name")->paginate(20);
+        $projects = Project::orderBy('id', 'desc')->paginate(20);
         return view('projects.index')->with('projects', $projects);
     }
 
@@ -28,7 +28,7 @@ class ProjectController extends Controller
         'start_date'      => ['required','date'],
         'due_date'        => ['required', 'date', 'after_or_equal:start_date'],
         'progress'        => ['required','numeric', 'decimal:0,100'],
-        'leader_id'       => ['required', 'exist:users,id'],
+        'leader_id'       => ['required', 'exists:users,id'],
         'status'          => ['required', new Enum(EnumStatus::class)],
 
     ]);
@@ -66,7 +66,7 @@ public function show(Project $Project)
         'start_date'      => ['required','date'],
         'due_date'        => ['required', 'date', 'after_or_equal:start_date'],
         'progress'        => ['required','numeric', 'decimal:0,100'],
-        'leader_id'       => ['required', 'exist:users,id'],
+        'leader_id'       => ['required', 'exists:users,id'],
         'status'          => ['required', new Enum(EnumStatus::class)],
 
     ]);

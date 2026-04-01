@@ -23,8 +23,8 @@ class Project extends Model
     public function projects()
     {
         return $this->belongsToMany(Project::class, 'projects_members')
-                    ->withPivot('project_role');
-    }  
+            ->withPivot('project_role');
+    }
     public function cohort()
     {
         return $this->belongsTo(Cohort::class);
@@ -33,7 +33,8 @@ class Project extends Model
     {
         return $this->hasMany(Task::class, 'assigned_to');
     }
-
-
-    
+    public function submissions()
+    {
+        return $this->hasMany(Submission::class);
+    }
 }
