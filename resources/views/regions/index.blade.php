@@ -81,13 +81,12 @@
             <div class="flex items-center gap-2 flex-wrap">
 
                 {{-- Buscador --}}
-                <div class="flex items-center gap-2 bg-slate-700 border border-emerald-500/20 rounded-xl px-3 py-2">
+                <div class="flex items-center gap-2 bg-slate-700 border border-emerald-500/20 rounded-xl px-3 py-2 opacity-70">
                     <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <circle cx="11" cy="11" r="8"/>
                         <path d="M21 21l-4.35-4.35"/>
                     </svg>
-                    <input x-model="search" type="text" placeholder="Buscar..."
-                        class="border-none outline-none bg-transparent text-slate-400 text-sm placeholder-slate-500 w-44">
+                    <input type="text" placeholder="Busqueda" class="border-none outline-none text-slate-400 text-sm placeholder-slate-500 w-44 bg-slate-700 ">
                 </div>
 
                 {{-- Tabs como filtros --}}

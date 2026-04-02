@@ -47,7 +47,7 @@
             Gestión
         </a>
 
-        <a href="{{ url('users') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13.5px] border transition-all {{ request()->is('users*') ? 'text-[#00C853] bg-[#00C853]/12 border-[#00C853]/25' : 'text-[#8AAABB] border-transparent hover:bg-[#00C853]/6 hover:text-[#E8F4FF] hover:border-[#00C853]/15' }}">
+        <a href="{{ url('users') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13.5px] border transition-all {{ request()->is('users') ? 'text-[#00C853] bg-[#00C853]/12 border-[#00C853]/25' : 'text-[#8AAABB] border-transparent hover:bg-[#00C853]/6 hover:text-[#E8F4FF] hover:border-[#00C853]/15' }}">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                 <circle cx="12" cy="7" r="4" />

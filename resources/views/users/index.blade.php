@@ -76,7 +76,7 @@
                         <circle cx="11" cy="11" r="8" />
                         <path d="M21 21l-4.35-4.35" />
                     </svg>
-                    <input type="text" placeholder="Busqueda" class="border-none outline-none text-slate-400 text-sm placeholder-slate-500 w-44">
+                    <input type="text" placeholder="Busqueda" class="border-none outline-none text-slate-400 text-sm placeholder-slate-500 w-44 bg-slate-700 ">
                 </div>
                 <!-- Filtros decorativos -->
                 <div class="flex gap-1.5">
