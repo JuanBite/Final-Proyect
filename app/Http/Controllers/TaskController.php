@@ -69,7 +69,7 @@ class TaskController extends Controller
             'description'   => ['required', 'string'],
             'start_date'    => ['required', 'date'],
             'due_date'      => ['required', 'date', 'after_or_equal:start_date'],
-            'status'        => ['required', 'boolean'],
+            'status'        => ['required', new Enum(TaskEnum::class)],
             'assigned_to'   => ['required', 'string'],
         ]);
 
