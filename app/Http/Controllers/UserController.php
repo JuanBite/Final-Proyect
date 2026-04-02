@@ -19,7 +19,7 @@ class UserController extends Controller
     // Create
     public function create()
     {
-        return view('users.create');
+        return view('modals.create.user');
     }
     // Store
     public function store(Request $request)
@@ -49,12 +49,12 @@ class UserController extends Controller
     // Show
     public function show(User $user)
     {
-        return view('users.show')->with('user', $user);
+        return view('users.detail')->with('user', $user);
     }
     // Edit
     public function edit(User $user)
     {
-        return view('users.edit')->with('user', $user);
+        return view('modals.edit.user')->with('user', $user);
     }
     // Update
     public function update(Request $request, User $user)
