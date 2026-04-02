@@ -118,7 +118,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                             </span>
-                            <input type="email" name="email" placeholder="usuario@correo.com" value="{{ old('email') }}" "
+                            <input type="email" name="email" placeholder="usuario@correo.com" value="{{ old('email') }}" 
                 class=" w-full pl-10 pr-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-green-400 outline-none text-sm text-gray-200 placeholder-gray-600 transition">
                             @error('email')
                             <small class="badge badge-outline badge-error w-full h-full">{{ $message }}</small>
@@ -161,12 +161,12 @@
                     </div>
 
                     <!-- Submit -->
-                    <a class="w-full py-3 rounded-lg bg-green-500 hover:bg-green-400 transition font-semibold flex items-center justify-center gap-2 text-[#07121c]" href="">
+                    <button type="submit" class="w-full py-3 rounded-lg bg-green-500 hover:bg-green-400 transition font-semibold flex items-center justify-center gap-2 text-[#07121c]">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                         </svg>
                         Iniciar sesión
-                    </a>
+                    </button>
                 </form>
                 <!-- Footer -->
                 <div class="mt-12 text-center text-xs text-gray-600 space-y-1">
