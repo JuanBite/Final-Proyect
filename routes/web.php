@@ -25,6 +25,9 @@ Route::get('/users', function () {
 Route::get('/users/detail', function () {
     return view('users.detail');
 });
+Route::get('/regions', function () {
+    return view('regions.index');
+});
 
 
 

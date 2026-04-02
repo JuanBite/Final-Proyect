@@ -6,6 +6,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
+@stack('scripts')
 
 <body class="bg-[#0A1628] text-[#E8F4FF]">
 
