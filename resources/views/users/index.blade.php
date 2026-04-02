@@ -67,7 +67,7 @@
 
     <!-- TABLE SECTION -->
     <div x-data="userManager()" x-init="init()">
-        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div class=" flex items-center justify-between mb-4 flex-wrap gap-3">
             <h2 class="font-bold text-xl" style="font-family:'Syne',sans-serif">Gestión de <span class="text-emerald-400">Usuarios</span></h2>
             <div class="flex items-center gap-2 flex-wrap">
                 <!-- Barra de búsqueda -->
@@ -96,7 +96,7 @@
         </div>
 
         <!-- Tabla -->
-        <div class="bg-slate-700 border border-emerald-500/20 rounded-2xl overflow-hidden overflow-x-auto">
+        <div class="bg-[#1C2A40] border border-emerald-500/20 rounded-2xl overflow-hidden overflow-x-auto">
             <table class="w-full border-collapse min-w-[800px]">
                 <thead>
                     <tr class="bg-emerald-500/5 border-b border-emerald-500/15">
