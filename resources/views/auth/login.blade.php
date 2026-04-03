@@ -165,7 +165,7 @@
                     <!-- Remember + Forgot -->
                     <div class="flex justify-between items-center text-sm mb-6">
                         <label class="flex items-center gap-2 text-gray-400 cursor-pointer">
-                            <input type="checkbox" class="accent-green-500 w-4 h-4 rounded">
+                            <input type="checkbox" name="checkbox" {{ old('remember') ? 'checked' : '' }} class="accent-green-500 w-4 h-4 rounded">
                             Recordarme
                         </label>
 
