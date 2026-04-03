@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProjectMember extends Model
 {
+    protected $table = 'project_members';
+    
     Use HasFactory;
     public $timestamps = false; // NO tiene updated_at
     protected $fillable = [

@@ -24,17 +24,26 @@
     <div class="p-6 overflow-y-auto flex-1">
         <!-- PROFILE -->
         <div class="flex items-center gap-4 bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-6">
-            <div class="w-12 h-12 flex items-center justify-center rounded-xl font-bold bg-gradient-to-br from-green-700 to-green-400 text-black">
-                LM
-            </div>
-            <div class="flex-1">
-                <div class="font-syne font-bold">Luis Miguel Muñoz</div>
-                <div class="text-xs text-gray-400">luis.munoz@sigpro.edu.co</div>
-            </div>
-            <div class="text-xs bg-green-500/10 text-green-400 px-3 py-1 rounded-full border border-green-500/30">
-                ● Líder de Proyecto
-            </div>
+    
+    {{-- Avatar con iniciales dinámicas --}}
+    <div class="w-12 h-12 flex items-center justify-center rounded-xl font-bold bg-gradient-to-br from-green-700 to-green-400 text-black"
+        x-text="formData.nombre.charAt(0).toUpperCase() + formData.apellido.charAt(0).toUpperCase()">
+    </div>
+
+    <div class="flex-1">
+        <div class="font-syne font-bold" 
+            x-text="formData.nombre + ' ' + formData.apellido">
         </div>
+        <div class="text-xs text-gray-400" 
+            x-text="formData.email">
+        </div>
+    </div>
+
+    <div class="text-xs bg-green-500/10 text-green-400 px-3 py-1 rounded-full border border-green-500/30">
+        ● <span x-text="formData.role === 'LEADER' ? 'Líder de Proyecto' : formData.role === 'MEMBER' ? 'Miembro' : 'Admin'"></span>
+    </div>
+
+</div>
 
         <!-- DATOS -->
         <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2">
@@ -136,5 +145,29 @@
             </button>
         </div>
     </div>
+    <script>
+        function editUserForm() {
+    return {
+        formData: {
+            id: null,
+            nombre: '',
+            apellido: '',
+            email: '',
+            status: 1,
+            role: ''
+        },
+
+        loadUserData(data) {
+            console.log('Datos recibidos:', data);
+            this.formData.id       = data.userId;
+            this.formData.nombre   = data.nombre;
+            this.formData.apellido = data.apellido;
+            this.formData.email    = data.email;
+            this.formData.status   = data.status;
+            this.formData.role     = data.role;
+        }
+    }
+}
+    </script>
 
 </div>
