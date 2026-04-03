@@ -1,4 +1,4 @@
-<div x-data="editUserForm()" @load-user-data.window="loadUserData($event.detail.userId)" class="bg-[#111D30] border border-green-500/20 rounded-3xl w-[560px] max-w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+<div x-data="editUserForm()" @load-user-data.window="loadUserData($event.detail)" class="bg-[#111D30] border border-green-500/20 rounded-3xl w-[560px] max-w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
 
     <!-- HEADER -->
     <div class="relative flex items-center gap-4 p-7 border-b border-green-500/20 bg-green-500/5 shrink-0">
