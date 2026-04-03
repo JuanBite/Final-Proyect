@@ -29,31 +29,56 @@
             <div class="h-[90px] bg-gradient-to-br from-[#182236] to-[#111D30] border-b border-[#00C853]/15 flex items-center justify-center relative overflow-hidden">
                 <div class="absolute inset-0" style="background: radial-gradient(circle at 30% 50%, rgba(0,200,83,0.12) 0%, transparent 70%)">
                 </div>
-                <span class="font-syne font-extrabold text-[28px] tracking-[3px] text-[#E8F4FF] relative z-10">SIG<span class="text-[#00C853]">PRO</span></span>
+                <span class="text-[20px] text-[#ffffff]">{{ $project->name }}<span class=""></span></span>
             </div>
             <!-- Body -->
             <a href="{{ url('projects/details') }}">
-                <div class="p-5">
-                    <h3 class="font-syne font-bold text-base text-[#E8F4FF] mb-2">Gimnasio</h3>
+                <div class="p-5 flex flex-col">
+                    <h3 class="font-syne font-bold text-base text-[#E8F4FF] mb-2">{{ $project->name }}</h3>
                     <div class="flex flex-col gap-1 mb-4">
-                        <span class="text-xs text-[#8AAABB]">Sebastián Grijalva</span>
-                        <span class="text-xs text-[#8AAABB]">Luis Miguel Muñoz</span>
-                        <span class="text-xs text-[#8AAABB]">Juan David Quinchia</span>
+
+                        @forelse ($project->users as $user)
+
+                        <span class="text-sm text-gray-400">
+                            {{ $user->first_name }} {{ $user->last_name }}
+                        </span>
+
+                        @empty
+
+                        <span class="text-sm text-gray-400">
+                            No se encuentran miembros
+                        </span>
+
+                        @endforelse
+
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="relative w-12 h-12">
-                                <svg width="48" height="48" viewBox="0 0 48 48" style="transform:rotate(-90deg)">
+
+                            <div class="relative w-14 h-14 flex items-center justify-center">
+
+                                <svg class="absolute" width="56" height="56" viewBox="0 0 48 48">
+                                    <!-- Fondo -->
                                     <circle cx="24" cy="24" r="18" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="6" />
-                                    <circle cx="24" cy="24" r="18" fill="none" stroke="#FFD740" stroke-width="6" stroke-dasharray="113.1" stroke-dashoffset="90.48" stroke-linecap="round" />
+                                    <!-- Progreso -->
+                                    <circle cx="24" cy="24" r="18" fill="none" stroke="{{ $project->progress_color }}" stroke-width="6" stroke-dasharray="{{ $project->progress_circumference }}" stroke-dashoffset="{{ $project->progress_offset }}" stroke-linecap="round" transform="rotate(-90 24 24)" />
                                 </svg>
-                                <div class="absolute inset-0 flex items-center justify-center font-syne font-extrabold text-[11px] text-[#FFD740]">
-                                    20%</div>
+
+                                <!-- Texto -->
+                                <span class="text-[12px] font-extrabold" style="color: {{ $project->progress_color }}">
+                                    {{ number_format($project->progress, 0) }}%
+                                </span>
+
                             </div>
-                            <div class="text-[11px] text-[#8AAABB] leading-snug">Avance<br />actual</div>
+
+                            <div class="text-[11px] text-[#8AAABB] leading-snug">
+                                Avance<br />actual
+                            </div>
+
                         </div>
-                        <span class="text-[11px] font-medium px-3 py-1 rounded-full bg-[#FFD740]/12 text-[#FFD740] border border-[#FFD740]/25">En
-                            progreso</span>
+                        <span class="text-[11px] font-medium px-3 py-1 rounded-full bg-[#FFD740]/12 text-[#FFD740] border border-[#FFD740]/25">
+                            {{ ucwords(str_replace('_', ' ', strtolower($project->status))) }}
+                        </span>
                     </div>
                 </div>
             </a>

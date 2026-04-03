@@ -16,15 +16,10 @@ class Project extends Model
         "password",
         "role",
         "status",
-        "cohort_id ",
+        "cohort_id",
     ];
 
     // Relations
-    public function projects()
-    {
-        return $this->belongsToMany(Project::class, 'projects_members')
-            ->withPivot('project_role');
-    }
     public function cohort()
     {
         return $this->belongsTo(Cohort::class);
@@ -37,4 +32,37 @@ class Project extends Model
     {
         return $this->hasMany(Submission::class);
     }
+    public function users()
+    {
+    return $this->belongsToMany(
+        User::class,
+        'project_members',   // tabla intermedia
+        'project_id',        // FK de este modelo
+        'user_id'            // FK del otro modelo
+    )->withPivot('project_role');
+    }
+    public function getProgressColorAttribute()
+{
+    if ($this->progress <= 30) {
+        return '#FF5252';
+    } elseif ($this->progress <= 70) {
+        return '#FFD740';
+    }
+    return '#00C853';
+}
+
+public function getProgressOffsetAttribute()
+{
+    $radius = 18;
+    $circumference = 2 * pi() * $radius;
+
+    return $circumference - ($this->progress / 100) * $circumference;
+}
+
+public function getProgressCircumferenceAttribute()
+{
+    return 2 * pi() * 18;
+}
+
+    
 }

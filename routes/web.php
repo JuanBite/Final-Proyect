@@ -24,9 +24,9 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
     Route::get('/projects', function () {
-        $projects = App\Models\Project::all();
-        return view('projects.index', compact('projects'));
-    });
+    $projects = App\Models\Project::with('users')->get();
+    return view('projects.index', compact('projects'));
+});
 
     Route::get('/projects/details', function () {
         $projects = App\Models\Project::all();
