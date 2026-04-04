@@ -79,63 +79,73 @@
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Seleccionar líder <span class="text-[#00C853]">*</span></label>
-                        <select class="form-input bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all" name="leader_id" required>
-                            <option value="" style="background:#111D30">— Selecciona un líder —</option>
-                            <option value="1" style="background:#111D30">Luis Miguel Muñoz</option>
-                            <option value="2" style="background:#111D30">Sebastián Grijalva</option>
-                            <option value="3" style="background:#111D30">Juan David Quinchia</option>
-                            <option value="4" style="background:#111D30">Sara Martínez</option>
-                            <option value="5" style="background:#111D30">Camilo Restrepo</option>
-                            <option value="6" style="background:#111D30">Daniela Ospina</option>
+                        <select name="leader_id" required class="form-input bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all">
+                            <option value="" style="background:#111D30">
+                                — Selecciona un líder —
+                            </option>
+
+                            @foreach ($users as $user)
+                            <option value="{{ $user->id }}">
+                                {{ $user->first_name }} {{ $user->last_name }}
+                            </option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
 
                 <!-- Sección: Equipo -->
-                {{-- <div>
+                <div>
                     <div class="flex items-center gap-2 mb-4">
                         <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Equipo participante</span>
                         <div class="flex-1 h-px bg-[#00C853]/15"></div>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <!-- Selected -->
-                        <div class="member-chip selected flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all">
-                            <div class="w-[26px] h-[26px] rounded-lg bg-gradient-to-br from-[#00963E] to-[#00C853] flex items-center justify-center font-syne font-extrabold text-[9px] text-[#0A1628]">LM</div>
-                            <span class="text-[12.5px]">Luis Miguel</span>
-                            <div class="mc-check w-4 h-4 rounded border border-[#8AAABB]/30 flex items-center justify-center ml-1">
-                                <svg width="10" height="10" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
-                                    <polyline points="20 6 9 17 4 12" /></svg>
+                        <!-- SELECT -->
+                        <div x-data="teamSelector()">
+
+                            <select @change="addUser($event)" class="form-input w-full mb-3 form-input bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all">
+                                <option value=""> Buscar usuario </option>
+
+                                @foreach ($users as $user)
+                                <option value="{{ $user->id }}" style="background:#111D30; color:white;">
+                                    {{ $user->first_name }} {{ $user->last_name }}
+                                </option>
+                                @endforeach
+                            </select>
+
+                            <!-- INPUTS OCULTOS (LO QUE SE ENVÍA AL BACKEND) -->
+                            <template x-for="id in selected" :key="id">
+                                <input type="hidden" name="team[]" :value="id">
+                            </template>
+
+                            <!-- USUARIOS SELECCIONADOS -->
+                            <div class="flex flex-wrap gap-2">
+
+                                <template x-for="user in selectedUsers" :key="user.id">
+                                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#182236] border border-[#00C853]/15">
+
+                                        <!-- Iniciales -->
+                                        <div class="w-[26px] h-[26px] rounded-lg bg-[#00C853] flex items-center justify-center text-[9px] text-black font-bold" x-text="getInitials(user.first_name + ' ' + user.last_name)">
+                                        </div>
+
+                                        <!-- Nombre -->
+                                        <span class="text-[12.5px]" x-text="user.first_name + ' ' + user.last_name"></span>
+
+                                        <!-- BOTÓN ELIMINAR -->
+                                        <button type="button" @click="removeUser(user.id)" class="ml-2 text-red-400 hover:text-red-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg>
+
+                                        </button>
+                                    </div>
+                                </template>
+
                             </div>
-                        </div>
-                        <div class="member-chip selected flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all">
-                            <div class="w-[26px] h-[26px] rounded-lg bg-gradient-to-br from-[#0088CC] to-[#40C4FF] flex items-center justify-center font-syne font-extrabold text-[9px] text-white">SG</div>
-                            <span class="text-[12.5px]">Sebastián</span>
-                            <div class="mc-check w-4 h-4 rounded border border-[#8AAABB]/30 flex items-center justify-center ml-1">
-                                <svg width="10" height="10" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
-                                    <polyline points="20 6 9 17 4 12" /></svg>
-                            </div>
-                        </div>
-                        <div class="member-chip selected flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all">
-                            <div class="w-[26px] h-[26px] rounded-lg bg-gradient-to-br from-[#6C3DBF] to-[#9B59B6] flex items-center justify-center font-syne font-extrabold text-[9px] text-white">JD</div>
-                            <span class="text-[12.5px]">Juan David</span>
-                            <div class="mc-check w-4 h-4 rounded border border-[#8AAABB]/30 flex items-center justify-center ml-1">
-                                <svg width="10" height="10" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
-                                    <polyline points="20 6 9 17 4 12" /></svg>
-                            </div>
-                        </div>
-                        <!-- Unselected -->
-                        <div class="member-chip flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all">
-                            <div class="w-[26px] h-[26px] rounded-lg bg-gradient-to-br from-[#E67E22] to-[#F39C12] flex items-center justify-center font-syne font-extrabold text-[9px] text-white">SM</div>
-                            <span class="text-[12.5px]">Sara M.</span>
-                            <div class="mc-check w-4 h-4 rounded border border-[#8AAABB]/30 flex items-center justify-center ml-1"></div>
-                        </div>
-                        <div class="member-chip flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all">
-                            <div class="w-[26px] h-[26px] rounded-lg bg-gradient-to-br from-[#16A085] to-[#1ABC9C] flex items-center justify-center font-syne font-extrabold text-[9px] text-white">CR</div>
-                            <span class="text-[12.5px]">Camilo R.</span>
-                            <div class="mc-check w-4 h-4 rounded border border-[#8AAABB]/30 flex items-center justify-center ml-1"></div>
+
                         </div>
                     </div>
-                </div> --}}
+                </div>
 
                 <!-- Sección: Estado -->
                 <div x-data="{ status: 'IN_PROGRESS' }">
@@ -204,3 +214,41 @@
 
     </div>
 </form>
+
+<script>
+    function teamSelector() {
+        return {
+            users: @json($users), // todos los usuarios
+            selected: [], // IDs seleccionados
+
+            get selectedUsers() {
+                return this.users.filter(user => this.selected.includes(user.id));
+            },
+
+            addUser(event) {
+                let id = parseInt(event.target.value);
+
+                if (!id) return;
+
+                if (!this.selected.includes(id)) {
+                    this.selected.push(id);
+                }
+
+                event.target.value = "";
+            },
+
+            removeUser(id) {
+                this.selected = this.selected.filter(u => u !== id);
+            },
+
+            getInitials(name) {
+                return name.split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .substring(0, 2)
+                    .toUpperCase();
+            }
+        }
+    }
+
+</script>
