@@ -138,20 +138,36 @@
                 </div>
 
                 <!-- Sección: Estado -->
-                <div>
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Estado del proyecto</span>
-                        <div class="flex-1 h-px bg-[#00C853]/15"></div>
-                    </div>
-                    <div class="flex gap-2">
-                        <div class="status-opt is-active flex-1 px-3 py-2.5 rounded-xl border border-[#00C853]/15 bg-[#182236] cursor-pointer text-center text-xs transition-all">
-                            <span class="block text-lg mb-1">●</span>Activo
+                <div x-data="{ status: 'IN_PROGRESS' }">
+                    <input type="hidden" name="status" :value="status">
+                    <div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Estado del proyecto</span>
+                            <div class="flex-1 h-px bg-[#00C853]/15"></div>
                         </div>
-                        <div class="status-opt flex-1 px-3 py-2.5 rounded-xl border border-[#00C853]/15 bg-[#182236] cursor-pointer text-center text-xs text-[#8AAABB] transition-all">
-                            <span class="block text-lg mb-1">◑</span>En progreso
-                        </div>
-                        <div class="status-opt flex-1 px-3 py-2.5 rounded-xl border border-[#00C853]/15 bg-[#182236] cursor-pointer text-center text-xs text-[#8AAABB] transition-all">
-                            <span class="block text-lg mb-1">⚠</span>Con retraso
+                        <div class="flex gap-2">
+
+                            <!-- EN PROGRESO -->
+                            <div @click="status = 'IN_PROGRESS'" :class="status === 'IN_PROGRESS'
+                ? 'bg-[#00C853]/20 border-[#00C853] text-[#00C853] shadow-lg scale-[1.02]'
+                : 'text-[#8AAABB] hover:bg-[#00C853]/10'" class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200">
+                                <span class="block text-lg mb-1">◑</span>En progreso
+                            </div>
+
+                            <!-- COMPLETADO -->
+                            <div @click="status = 'COMPLETED'" :class="status === 'COMPLETED'
+                ? 'bg-[#40C4FF]/20 border-[#40C4FF] text-[#40C4FF] shadow-lg scale-[1.02]'
+                : 'text-[#8AAABB] hover:bg-[#40C4FF]/10'" class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200">
+                                <span class="block text-lg mb-1">✔</span>Completado
+                            </div>
+
+                            <!-- RETRASADO -->
+                            <div @click="status = 'DELAYED'" :class="status === 'DELAYED'
+                ? 'bg-[#FFD740]/20 border-[#FFD740] text-[#FFD740] shadow-lg scale-[1.02]'
+                : 'text-[#8AAABB] hover:bg-[#FFD740]/10'" class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200">
+                                <span class="block text-lg mb-1">⚠</span>Con retraso
+                            </div>
+
                         </div>
                     </div>
                 </div>
