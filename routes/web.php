@@ -44,11 +44,14 @@ Route::middleware('auth')->group(function () {
         $users = App\Models\User::all();
         return view('users.detail', compact('users'));
     });
-    Route::get('/gestion', [GestionController::class, 'index'])->name('gestion.index');
+    Route::get('/gestion', [GestionController::class, 'index'])->name('regions.index');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('projects', ProjectController::class);
+    Route::resource('regions', RegionController::class);
+    Route::resource('centers', CenterController::class);
+    Route::resource('cohorts', CohortController::class);
 });
 
 
