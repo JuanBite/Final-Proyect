@@ -40,7 +40,7 @@ class ProjectController extends Controller
     $project->due_date    = $request    ->due_date;
     $project->progress    = $request    ->progress;
     $project->leader_id   = $request    ->leader_id;
-    $project->status      = $request    ->bolean('status');
+    $project->status      = $request    ->status;
 
     if ($project->save()) {
             return redirect('projects')->with('success', 'Project ' . $project->name . ' was successfully added.');
