@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Enums\EnumStatus;
 use Illuminate\Validation\Rules\Enum;
+use App\Models\User;
 
 class ProjectController extends Controller
 {
@@ -17,17 +18,18 @@ class ProjectController extends Controller
 
     //Create
     public function create() {
+        $users = User::all(); 
         return view('modals.create.project');
     }
 
     public function store(Request $request){
-    
+    // dd($request->all());
     $validation= $request->validate([
         'name'            => ['required','string'],
         'descripcion'     => ['required','string'],
         'start_date'      => ['required','date'],
         'due_date'        => ['required', 'date', 'after_or_equal:start_date'],
-        'progress'        => ['required','numeric', 'decimal:0,100'],
+        'progress'        => ['required','numeric','min:0','max:100'],
         'leader_id'       => ['required', 'exists:users,id'],
         'status'          => ['required', new Enum(EnumStatus::class)],
 
@@ -42,10 +44,9 @@ class ProjectController extends Controller
     $project->leader_id   = $request    ->leader_id;
     $project->status      = $request    ->status;
 
-    if ($project->save()) {
-            return redirect('projects')->with('success', 'Project ' . $project->name . ' was successfully added.');
-
-    }
+    $project->save();
+return redirect()->route('projects.index')
+    ->with('success', 'Project ' . $project->name . ' was successfully added.');
 }
 
 public function show(Project $Project)

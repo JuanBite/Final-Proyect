@@ -92,7 +92,7 @@
                 </div>
 
                 <!-- Sección: Equipo -->
-                <div>
+                {{-- <div>
                     <div class="flex items-center gap-2 mb-4">
                         <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Equipo participante</span>
                         <div class="flex-1 h-px bg-[#00C853]/15"></div>
@@ -135,7 +135,7 @@
                             <div class="mc-check w-4 h-4 rounded border border-[#8AAABB]/30 flex items-center justify-center ml-1"></div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Sección: Estado -->
                 <div x-data="{ status: 'IN_PROGRESS' }">
@@ -149,23 +149,37 @@
 
                             <!-- EN PROGRESO -->
                             <div @click="status = 'IN_PROGRESS'" :class="status === 'IN_PROGRESS'
-                ? 'bg-[#00C853]/20 border-[#00C853] text-[#00C853] shadow-lg scale-[1.02]'
-                : 'text-[#8AAABB] hover:bg-[#00C853]/10'" class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200">
-                                <span class="block text-lg mb-1">◑</span>En progreso
+                ? 'bg-[#00C853]/20 border-[#00C853] text-[#00C853] shadow-lg scale-[1.02] flex flex-col items-center'
+                : 'text-[#8AAABB] hover:bg-[#00C853]/10'" class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
+                                <span class="block text-lg mb-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+
+                                </span>En progreso
                             </div>
 
                             <!-- COMPLETADO -->
                             <div @click="status = 'COMPLETED'" :class="status === 'COMPLETED'
-                ? 'bg-[#40C4FF]/20 border-[#40C4FF] text-[#40C4FF] shadow-lg scale-[1.02]'
-                : 'text-[#8AAABB] hover:bg-[#40C4FF]/10'" class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200">
-                                <span class="block text-lg mb-1">✔</span>Completado
+                ? 'bg-[#40C4FF]/20 border-[#40C4FF] text-[#40C4FF] shadow-lg scale-[1.02] flex flex-col items-center'
+                : 'text-[#8AAABB] hover:bg-[#40C4FF]/10'" class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
+                                <span class="block text-lg mb-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                    </svg>
+
+                                </span>Completado
                             </div>
 
                             <!-- RETRASADO -->
                             <div @click="status = 'DELAYED'" :class="status === 'DELAYED'
-                ? 'bg-[#FFD740]/20 border-[#FFD740] text-[#FFD740] shadow-lg scale-[1.02]'
-                : 'text-[#8AAABB] hover:bg-[#FFD740]/10'" class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200">
-                                <span class="block text-lg mb-1">⚠</span>Con retraso
+                ? 'bg-[#FFD740]/20 border-[#FFD740] text-[#FFD740] shadow-lg scale-[1.02] flex flex-col items-center'
+                : 'text-[#8AAABB] hover:bg-[#FFD740]/10'" class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
+                                <span class="block text-lg mb-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                                    </svg>
+                                </span>Con retraso
                             </div>
 
                         </div>
