@@ -13,7 +13,7 @@ class GestionController extends Controller
 {
     $tab = $request->input('tab', 'regions');
 
-    return view('regions.index', [
+    return view('gestion.index', [
         'tab'     => $tab,
         'regions' => Region::orderBy('id')->paginate(20),
         'centers' => Center::with('region')->paginate(20),

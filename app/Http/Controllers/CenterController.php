@@ -11,13 +11,13 @@ class CenterController extends Controller
     public function index()
     {
         $centers = Center::orderBy('id', 'desc')->paginate(20);
-        return view('regions.index')->with('centers', $centers);
+        return view('gestion.index')->with('centers', $centers);
     }
 
     // Create
     public function create()
     {
-        return view('regions.index');
+        return view('gestion.index');
     }
 
     // Store
@@ -37,19 +37,19 @@ class CenterController extends Controller
        
 
         if ($centers->save()) {
-            return redirect('centers')->with('success', 'Center ' . $centers->name .  ' was successfully added.');
+            return redirect('gestion.index')->with('success', 'Center ' . $centers->name .  ' was successfully added.');
         }
     }
 
     // Show
     public function show(Center $centers)
     {
-        return view('regions.index')->with('center', $centers);
+        return view('gestion.index')->with('center', $centers);
     }
     // Edit
     public function edit(Center $centers)
     {
-        return view('regions.index')->with('center', $centers);
+        return view('gestion.index')->with('center', $centers);
     }
     // Update
     public function update(Request $request, Center $centers)
