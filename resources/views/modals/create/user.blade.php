@@ -77,20 +77,6 @@
                 </div>
             </div>
 
-            <!-- Estado -->
-            <div>
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Estado</span>
-                    <div class="flex-1 h-px bg-[#00C853]/15"></div>
-                </div>
-                <select name="status"
-                    class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none">
-                    <option value="1" style="background:#111D30">Activo</option>
-                    <option value="0" style="background:#111D30">Inactivo</option>
-                </select>
-            </div>
-
-
             <!-- Rol -->
             <div x-data="{ selectedRole: 'STUDENT' }">
                 <div class="flex items-center gap-2 mb-4">

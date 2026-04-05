@@ -58,24 +58,6 @@
                 placeholder="Correo electrónico">
         </div>
 
-        <!-- ESTADO -->
-        <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2">
-            Estado de la cuenta <div class="flex-1 h-px bg-green-500/20"></div>
-        </div>
-
-        <div class="flex gap-2 mb-6">
-            <div @click="formData.status = 1"
-                :class="formData.status == 1 ? 'border-green-500/30 bg-green-500/10 text-green-400' : 'border-green-500/20 bg-[#182236] text-gray-400'"
-                class="flex-1 text-center p-2 rounded-lg border cursor-pointer">
-                ● Activo
-            </div>
-            <div @click="formData.status = 0"
-                :class="formData.status == 0 ? 'border-red-500/30 bg-red-500/10 text-red-400' : 'border-green-500/20 bg-[#182236] text-gray-400'"
-                class="flex-1 text-center p-2 rounded-lg border cursor-pointer">
-                ○ Inactivo
-            </div>
-        </div>
-
         <!-- ROLES -->
         <div class="grid grid-cols-3 gap-2 mb-6">
             <div @click="formData.role = 'INSTRUCTOR'"
@@ -98,6 +80,38 @@
                 ⚙️
                 <div class="font-syne text-sm text-yellow-400">ADMIN</div>
                 <div class="text-xs text-gray-400">Administra</div>
+            </div>
+        </div>
+
+        <!-- PROYECTOS — sin x-data propio, usa el scope del padre -->
+        <div>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Asignar a proyectos</span>
+                <div class="flex-1 h-px bg-[#00C853]/15"></div>
+            </div>
+            <div class="flex flex-col gap-1.5">
+                @foreach($projects as $project)
+                <div @click="selectedProjects.includes({{ $project->id }})
+                        ? selectedProjects = selectedProjects.filter(p => p !== {{ $project->id }})
+                        : selectedProjects.push({{ $project->id }})" :class="selectedProjects.includes({{ $project->id }})
+                        ? 'bg-[#00C853]/6 border-[#00C853]/25'
+                        : 'bg-[#182236] border-[#00C853]/15'"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl border cursor-pointer transition-all">
+
+                    <div :class="selectedProjects.includes({{ $project->id }}) ? 'bg-[#00C853]' : 'bg-[#8AAABB]'"
+                        class="w-2 h-2 rounded-full shrink-0 transition-all"></div>
+
+                    <span class="text-[13px] flex-1">{{ $project->name }}</span>
+
+                    <div :class="selectedProjects.includes({{ $project->id }}) ? 'bg-[#00C853] border-[#00C853]' : 'border-[#8AAABB]/30'"
+                        class="w-[18px] h-[18px] rounded-[5px] border flex items-center justify-center shrink-0 transition-all">
+                        <svg x-show="selectedProjects.includes({{ $project->id }})" width="10" height="10" fill="none"
+                            stroke="white" stroke-width="3" viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                    </div>
+                </div>
+                @endforeach
             </div>
         </div>
 
@@ -129,20 +143,23 @@
         <input type="hidden" name="email" :value="formData.email">
         <input type="hidden" name="status" :value="formData.status">
         <input type="hidden" name="role" :value="formData.role">
+        {{-- Los inputs de projects[] se inyectan dinámicamente en save() --}}
     </form>
 
     <script>
         function editUserForm() {
             return {
-                
                 formData: {
                     id: null,
                     nombre: '',
                     apellido: '',
                     email: '',
                     status: 1,
-                    role: ''
+                    role: '',
                 },
+
+                // ✅ selectedProjects ahora vive en el scope raíz
+                selectedProjects: [],
 
                 loadUserData(data) {
                     this.formData.id       = data.userId;
@@ -151,9 +168,26 @@
                     this.formData.email    = data.email;
                     this.formData.status   = data.status;
                     this.formData.role     = data.role;
+
+                    // ✅ Cargar proyectos del usuario al abrir el modal
+                    this.selectedProjects  = data.projects ?? [];
                 },
 
                 save() {
+                    // ✅ Limpiar proyectos previos para no duplicar
+                    this.$refs.editForm
+                        .querySelectorAll('input[name="projects[]"]')
+                        .forEach(el => el.remove());
+
+                    // ✅ Inyectar un input hidden por cada proyecto seleccionado
+                    this.selectedProjects.forEach(projectId => {
+                        const input = document.createElement('input');
+                        input.type  = 'hidden';
+                        input.name  = 'projects[]';
+                        input.value = projectId;
+                        this.$refs.editForm.appendChild(input);
+                    });
+
                     this.$refs.editForm.submit();
                 }
             }

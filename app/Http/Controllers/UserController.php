@@ -31,23 +31,29 @@ class UserController extends Controller
     public function store(Request $request)
 {
     $request->validate([
+    
         'first_name' => ['required', 'string'],
         'last_name'  => ['required', 'string'],
         'email'      => ['required', 'lowercase', 'email', 'unique:' . User::class],
         'password'   => ['required', 'confirmed'],
         'role'       => ['required', new Enum(RoleEnum::class)],
-        'status'     => ['required', 'boolean'],
+       
+
     ]);
 
+    
+    
     $user = new User();
     $user->first_name = $request->first_name;
     $user->last_name  = $request->last_name;
     $user->email      = $request->email;
     $user->password   = bcrypt($request->password);
     $user->role       = $request->role;
-    $user->status     = $request->boolean('status');
+
 
     if ($user->save()) {
+
+    
         // Asignar proyectos
         if ($request->has('projects')) {
             foreach ($request->projects as $projectId) {
@@ -75,26 +81,37 @@ class UserController extends Controller
         return view('modals.edit.user')->with('user', $user);
     }
     // Update
-    public function update(Request $request, User $user)
-    {
+  public function update(Request $request, User $user)
+{
+    $validated = $request->validate([
+        'first_name' => ['required', 'string'],
+        'last_name'  => ['required', 'string'],
+        'email'      => ['required', 'lowercase', 'email', 'unique:' . User::class . ',email,' . $user->id],
+        'role'       => ['required', new Enum(RoleEnum::class)],
+    ]);
 
+    $user->update($validated);
 
-        $validation = $request->validate([
-            'first_name' => ['required', 'string'],
-            'last_name'  => ['required', 'string'],
-            'email'      => ['required', 'lowercase', 'email', 'unique:' . User::class . ',email,' . $user->id],
-            'role'       => ['required', new Enum(RoleEnum::class)],
-            'status'     => ['required', 'boolean'],
+    // Sincronizar proyectos
+    \App\Models\ProjectMember::where('user_id', $user->id)->delete();
 
-        ]);
-
-        $validation['status'] = $request->boolean('status');
-
-        $user->update($validation);
-
-        return redirect('users')
-            ->with('success', 'User ' . $user->first_name . ' ' . $user->last_name . ' was successfully updated.');
+    if ($request->has('projects')) {
+        foreach ($request->projects as $projectId) {
+            \App\Models\ProjectMember::create([
+                'user_id'      => $user->id,
+                'project_id'   => $projectId,
+                'project_role' => $request->role === 'INSTRUCTOR' ? 'LEADER' : 'MEMBER',
+            ]);
+        }
     }
+
+    // ❌ Elimina esta línea: dd($request->all());
+
+    return redirect()->route('users.index')
+        ->with('success', 'Usuario ' . $user->first_name . ' actualizado correctamente.');
+}
+
+    
     // Delete
     public function destroy($id)
     {
