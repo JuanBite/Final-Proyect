@@ -41,14 +41,13 @@ class Project extends Model
         'user_id'            // FK del otro modelo
     )->withPivot('project_role');
     }
-    public function getProgressColorAttribute()
+public function getProgressColorAttribute()
 {
-    if ($this->progress <= 30) {
-        return '#FF5252';
-    } elseif ($this->progress <= 70) {
-        return '#FFD740';
-    }
-    return '#00C853';
+    return match (true) {
+        $this->progress <= 30 => '#ef4444', // rojo moderno (Tailwind red-500)
+        $this->progress <= 70 => '#facc15', // amarillo (yellow-400)
+        default => '#22c55e',              // verde (green-500)
+    };
 }
 
 public function getProgressOffsetAttribute()
@@ -64,5 +63,29 @@ public function getProgressCircumferenceAttribute()
     return 2 * pi() * 18;
 }
 
+protected $casts = [
+    'start_date' => 'date',
+    'due_date' => 'date',
+];
+
+public function members()
+{
+    return $this->belongsToMany(User::class, 'project_members')
+                ->withPivot('project_role');
+}
+
+public function leader()
+{
+    return $this->belongsToMany(User::class, 'project_members')
+                ->withPivot('project_role')
+                ->wherePivot('project_role', 'LEADER');
+}
+
+public function team()
+{
+    return $this->belongsToMany(User::class, 'project_members')
+                ->withPivot('project_role')
+                ->wherePivot('project_role', 'MEMBER');
+}
     
 }

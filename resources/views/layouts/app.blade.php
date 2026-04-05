@@ -21,10 +21,47 @@
     </div>
 
 </body>
-</html>iv>
+</html>
 
 </body>
-</html>iv>
+</html>
+@if (session('success'))
+<div x-data="{ show: false, message: '', type: 'success' }" x-init="
+        @if(session('success'))
+            show = true;
+            message = '{{ session('success') }}';
+            type = 'success';
+            setTimeout(() => show = false, 4000);
+        @endif
 
+        @if($errors->any())
+            show = true;
+            message = '{{ $errors->first() }}';
+            type = 'error';
+            setTimeout(() => show = false, 4000);
+        @endif
+    " x-show="show" x-transition class="fixed top-6 right-6 z-50">
+    <div class="flex items-center gap-3 px-5 py-3 rounded-xl shadow-lg border" :class="type === 'success' 
+            ? 'bg-green-500/10 border-green-500 text-green-400' 
+            : 'bg-red-500/10 border-red-500 text-red-400'">
+
+        <!-- ICONO -->
+        <div>
+            <template x-if="type === 'success'">
+                ✔️
+            </template>
+            <template x-if="type === 'error'">
+                ❌
+            </template>
+        </div>
+
+        <!-- MENSAJE -->
+        <span x-text="message"></span>
+
+        <!-- CERRAR -->
+        <button @click="show = false">✖</button>
+    </div>
+</div>
+@endif
 </body>
 </html>

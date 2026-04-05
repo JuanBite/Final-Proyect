@@ -9,16 +9,25 @@
         </div>
         <div class="flex items-start justify-between mb-6 relative z-10 px-8 py-7">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-700 to-emerald-400 flex items-center justify-center font-black text-lg text-slate-900 shrink-0" style="font-family:'Syne',sans-serif">SA</div>
+                @php
+                $words = explode(' ', $project->name);
+                $initials = strtoupper(
+                substr($words[0], 0, 1) .
+                (isset($words[1]) ? substr($words[1], 0, 1) : '')
+                );
+                @endphp
+
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-700 to-emerald-400 flex items-center justify-center font-black text-lg text-slate-900 shrink-0" style="font-family:'Syne',sans-serif">
+                    {{ $initials }}
+                </div>
                 <div>
-                    <h1 class="font-black text-2xl leading-tight" style="font-family:'Syne',sans-serif">Sigpro Académico
+                    <h1 class="font-black text-2xl leading-tight" style="font-family:'Syne',sans-serif">{{ $project->name }}
                     </h1>
-                    <p class="text-sm text-slate-400 mt-1">Sistema de seguimiento y gestión educativa institucional</p>
+                    <p class="text-sm text-slate-400 mt-1">{{ $project->description }}</p>
                     <div class="flex gap-2 mt-2.5 flex-wrap">
                         <span class="px-3 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">●
-                            Activo</span>
-                        <span class="px-3 py-0.5 rounded-full text-xs font-medium bg-sky-400/15 text-sky-400 border border-sky-400/30">Educación</span>
-                        <span class="px-3 py-0.5 rounded-full text-xs font-medium bg-yellow-400/15 text-yellow-400 border border-yellow-400/30">50%
+                            {{ ucwords(str_replace('_', ' ', strtolower($project->status))) }}</span>
+                        <span class="px-3 py-0.5 rounded-full text-xs font-medium bg-yellow-400/15 text-yellow-400 border border-yellow-400/30">{{ number_format($project->progress, 0) }}%
                             completado</span>
                     </div>
                 </div>
@@ -43,46 +52,95 @@
         <div class="grid grid-cols-5 gap-5 relative z-10 px-8 pb-5">
             <div>
                 <p class="text-xs uppercase tracking-widest text-slate-400 mb-1.5">Fecha Inicio</p>
-                <p class="text-sm font-medium">12 Feb 2026</p>
+                <p class="text-sm font-medium">{{ $project->start_date->format('d M Y') }}</p>
             </div>
             <div>
                 <p class="text-xs uppercase tracking-widest text-slate-400 mb-1.5">Fecha Entrega</p>
-                <p class="text-sm font-medium">15 Feb 2027</p>
+                <p class="text-sm font-medium">{{ $project->due_date->format('d M Y') }}</p>
             </div>
             <div>
                 <p class="text-xs uppercase tracking-widest text-slate-400 mb-1.5">Líder</p>
-                <p class="text-sm font-medium">Luis Miguel M.</p>
-            </div>
-            <div>
-                <p class="text-xs uppercase tracking-widest text-slate-400 mb-1.5">Reuniones</p>
-                <p class="text-sm font-bold text-emerald-400" style="font-family:'Syne',sans-serif">8 realizadas</p>
+                <p class="text-sm font-medium">
+                    @php $leader = $project->leader->first(); @endphp
+
+                    {{ $leader?->first_name ?? 'Sin líder' }}
+                    {{ $leader?->last_name ?? '' }}
+                </p>
+                </p>
             </div>
             <div>
                 <p class="text-xs uppercase tracking-widest text-slate-400 mb-1.5">Días restantes</p>
-                <p class="text-sm font-bold text-yellow-400" style="font-family:'Syne',sans-serif">346 días</p>
+                @php
+                $days = ceil(now()->floatDiffInDays($project->due_date, false));
+                @endphp
+
+                <p class="text-sm font-bold text-yellow-400">
+                    {{ max(0, $days) }}
+                </p>
             </div>
         </div>
         <div class="mt-5 pt-5 border-t border-emerald-500/20 relative z-10 px-8">
             <div class="flex justify-between items-center mb-2">
-                <span class="text-xs uppercase tracking-widest text-slate-400">Avance general del proyecto</span>
-                <span class="font-black text-lg text-emerald-400" style="font-family:'Syne',sans-serif">50%</span>
+                <span class="text-xs uppercase tracking-widest text-slate-400">
+                    Avance general del proyecto
+                </span>
+                <span class="font-black text-lg" style="
+                font-family:'Syne',sans-serif;
+                color: {{ $project->progress_color }};
+            ">
+                    {{ number_format($project->progress, 0) }}%
+                </span>
             </div>
+
             <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-emerald-700 to-emerald-400 rounded-full" style="width:50%"></div>
+                <div class="h-full rounded-full transition-all duration-500" style="
+                width: {{ $project->progress }}%;
+                background: linear-gradient(
+                    to right,
+                    {{ $project->progress_color }},
+                    {{ $project->progress_color }}AA
+                );
+            ">
+                </div>
             </div>
         </div>
         <div class="mt-5 pt-5 pb-7 px-8 border-t border-emerald-500/20 flex items-center gap-3 relative z-10">
             <span class="text-xs uppercase tracking-widest text-slate-400 shrink-0">Equipo:</span>
             <div class="flex gap-1.5">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-700 to-emerald-400 border-2 border-slate-800 flex items-center justify-center font-black text-xs text-slate-900" style="font-family:'Syne',sans-serif" title="Luis Miguel Muñoz">LM</div>
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-700 to-sky-400 border-2 border-slate-800 flex items-center justify-center font-black text-xs text-slate-900" style="font-family:'Syne',sans-serif" title="Sebastián Grijalva">SG</div>
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-700 to-violet-400 border-2 border-slate-800 flex items-center justify-center font-black text-xs text-white" style="font-family:'Syne',sans-serif" title="Juan David Quinchia">JD</div>
+                @forelse($project->team as $member)
+                @php
+                $initials = strtoupper(
+                substr($member->first_name, 0, 1) .
+                substr($member->last_name, 0, 1)
+                );
+                @endphp
+
+                <div class="w-8 h-8 rounded-lg border-2 border-slate-800 flex items-center justify-center font-black text-xs text-white" style="
+                font-family:'Syne',sans-serif;
+                background: linear-gradient(
+                    to bottom right,
+                    #6366f1,
+                    #8b5cf6
+                );
+            " title="{{ $member->first_name }} {{ $member->last_name }}">
+                    {{ $initials }}
+                </div>
+                @empty
+                <span class="text-slate-400 text-sm">Sin miembros</span>
+                @endforelse
             </div>
-            <span class="text-sm text-slate-400">Luis Miguel Muñoz · Sebastián Grajales · Juan David Quinchia</span>
+            <div class="text-sm text-slate-400">
+                @forelse($project->team as $member)
+                <span>
+                    {{ $member->first_name }} {{ $member->last_name }}
+                </span>@if(!$loop->last), @endif
+                @empty
+                @endforelse
+            </div>
         </div>
     </div>
 
-    <!-- GANTT ESTÁTICO -->
+    <!-- GANTT  -->
     <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden hover:border-[#00C853]/35 hover:shadow-2xl hover:shadow-black/30 transition-all">
 
         <!-- Gantt header bar -->
@@ -304,16 +362,36 @@
     </div>
 
     <!-- MODAL ELIMINAR -->
-    <div x-show="modalEliminarAbierto" x-transition.opacity class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center" style="display: none;">
-        <div class="absolute inset-0" @click="modalEliminarAbierto = false"></div>
-        <div x-transition.scale.origin.center class="relative bg-[#1C2A40] border border-red-500/20 rounded-2xl p-6 w-full max-w-md shadow-2xl">
-            <h2 class="text-lg font-bold text-red-400 mb-2" style="font-family:'Syne',sans-serif">Eliminar proyecto</h2>
-            <p class="text-sm text-slate-400 mb-6">¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.</p>
-            <div class="flex justify-end gap-2">
-                <button @click="modalEliminarAbierto = false" class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-400 hover:text-white transition-all">Cancelar</button>
-                <button type="submit" class="px-4 py-2 rounded-xl text-sm bg-red-500 text-white hover:bg-red-600 transition-all">Sí, eliminar</button>
+    <form action="{{ route('projects.destroy', $project->id) }}" method="POST">
+        @csrf
+        @method('DELETE')
+
+        <div x-show="modalEliminarAbierto" x-transition.opacity class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center" style="display: none;">
+
+            <div class="absolute inset-0" @click="modalEliminarAbierto = false"></div>
+
+            <div x-transition.scale.origin.center class="relative bg-[#1C2A40] border border-red-500/20 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+
+                <h2 class="text-lg font-bold text-red-400 mb-2" style="font-family:'Syne',sans-serif">
+                    Eliminar proyecto
+                </h2>
+
+                <p class="text-sm text-slate-400 mb-6">
+                    ¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.
+                </p>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" @click="modalEliminarAbierto = false" class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-400 hover:text-white transition-all">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="px-4 py-2 rounded-xl text-sm bg-red-500 text-white hover:bg-red-600 transition-all">
+                        Sí, eliminar
+                    </button>
+                </div>
+
             </div>
         </div>
-    </div>
+    </form>
 </div>
 @endsection

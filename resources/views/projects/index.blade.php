@@ -32,7 +32,7 @@
                 <span class="text-[20px] text-[#ffffff]">{{ $project->name }}<span class=""></span></span>
             </div>
             <!-- Body -->
-            <a href="{{ url('projects/details') }}">
+            <a href="{{ route('projects.show', $project->id) }}">
                 <div class="p-5 flex flex-col">
                     <h3 class="font-syne font-bold text-base text-[#E8F4FF] mb-2">{{ $project->name }}</h3>
                     <div class="flex flex-col gap-1 mb-4">

@@ -113,7 +113,7 @@
                                 @endforeach
                             </select>
 
-                            <!-- INPUTS OCULTOS (LO QUE SE ENVÍA AL BACKEND) -->
+                            <!-- INPUTS OCULTOS -->
                             <template x-for="id in selected" :key="id">
                                 <input type="hidden" name="team[]" :value="id">
                             </template>
