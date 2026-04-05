@@ -190,6 +190,11 @@
                                 </span>
                             </td>
                             <td class="px-5 py-3.5">
+                                <span class="px-2 py-0.5 rounded-md text-xs bg-white/5 border border-white/10 text-slate-400">
+                                    {{ $cohort->center->region->name ?? '-' }}
+                                </span>
+                            </td>
+                            <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <button type="button"
                                         @click="openModal('edit', @js(['id'=>$cohort->id,'cohort_number'=>$cohort->cohort_number,'program_name'=>$cohort->program_name,'center_id'=>$cohort->center_id]), 'cohorts')"
@@ -235,14 +240,57 @@
                 <input type="hidden" name="_method" x-ref="modalMethod" value="POST">
 
                 <div class="px-7 py-6 grid grid-cols-2 gap-4">
-                    <template x-for="f in formFields" :key="f.key">
-                        <div class="flex flex-col gap-1">
-                            <label class="text-xs text-slate-400 uppercase tracking-widest" x-text="f.label"></label>
-                            <input :name="f.key" x-model="form[f.key]" :placeholder="f.label"
-                                   class="bg-[#182236] border border-[#00C853]/20 rounded-[10px] px-3.5 py-2.5 text-[#E8F4FF] text-sm outline-none focus:border-emerald-500/50 transition-colors">
-                        </div>
-                    </template>
-                </div>
+    <template x-for="f in formFields" :key="f.key">
+        <div class="flex flex-col gap-1">
+
+            <label class="text-xs text-slate-400 uppercase tracking-widest"
+                   x-text="f.label"></label>
+
+            <!-- INPUT NORMAL -->
+            <template x-if="f.key !== 'region_id' && f.key !== 'center_id'">
+                <input :name="f.key"
+                       x-model="form[f.key]"
+                       :placeholder="f.label"
+                       class="bg-[#182236] border border-[#00C853]/20 rounded px-3 py-2 text-sm">
+            </template>
+
+            <!-- SELECT REGIONES -->
+            <template x-if="f.key === 'region_id'">
+                <select name="region_id"
+                        x-model="form.region_id"
+                        class="bg-[#182236] border border-[#00C853]/20 rounded px-3 py-2 text-sm">
+
+                    <option value="">Seleccione una región</option>
+
+                    @foreach($regions as $region)
+                        <option value="{{ $region->id }}">
+                            {{ $region->name }}
+                        </option>
+                    @endforeach
+
+                </select>
+            </template>
+
+            <!-- SELECT CENTROS -->
+            <template x-if="f.key === 'center_id'">
+                <select name="center_id"
+                        x-model="form.center_id"
+                        class="bg-[#182236] border border-[#00C853]/20 rounded px-3 py-2 text-sm">
+
+                    <option value="">Seleccione un centro</option>
+
+                    @foreach($centers as $center)
+                        <option value="{{ $center->id }}">
+                            {{ $center->name }}
+                        </option>
+                    @endforeach
+
+                </select>
+            </template>
+
+        </div>
+    </template>
+</div>
 
                 <div class="px-7 py-5 border-t border-[#00C853]/15 flex justify-end gap-3">
                     <button type="button" @click="modal=false; document.body.style.overflow=''"
@@ -309,7 +357,7 @@ document.addEventListener('alpine:init', () => {
         cols: {
             regions: ['name', 'code'],
             centers: ['name', 'code', 'region_id'],
-            cohorts: ['cohort_number', 'program_name', 'center_id']
+            cohorts: ['cohort_number', 'program_name', 'center_id', 'region_id']
         },
 
         labels: {

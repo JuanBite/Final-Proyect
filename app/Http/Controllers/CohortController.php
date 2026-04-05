@@ -40,7 +40,7 @@ class CohortController extends Controller
         $cohort->end_date      = $request->end_date;
 
         if ($cohort->save()) {
-            return redirect('gestion.index')
+            return redirect()->route('gestion', ['tab' => 'cohorts'])
                 ->with('success', 'Cohort ' . $cohort->cohort_number . $cohort->program_name . ' was successfully added.');
         }
     }
@@ -75,7 +75,7 @@ class CohortController extends Controller
         $cohort->end_date      = $validation['end_date'] ?? null;
 
         if ($cohort->save()) {
-            return redirect('cohorts')
+            return redirect()->route('gestion', ['tab' => 'cohorts'])
                 ->with('success', 'Cohort ' . $cohort->cohort_number . $cohort->program_name . ' was successfully updated.');
         }
     }
@@ -84,7 +84,7 @@ class CohortController extends Controller
     public function destroy(Cohort $cohort)
     {
         if ($cohort->delete()) {
-            return redirect('cohorts')->with('success', 'Cohort ' . $cohort->cohort_number . $cohort->program_name . ' was successfully deleted.');
+            return redirect()->route('gestion', ['tab' => 'cohorts'])->with('success', 'Cohort ' . $cohort->cohort_number . $cohort->program_name . ' was successfully deleted.');
         }
     }
 }

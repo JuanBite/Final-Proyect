@@ -45,8 +45,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('projects', ProjectController::class);
-    Route::resource('centers', CenterController::class);
-    Route::resource('cohorts', CohortController::class);
     Route::resource('users', UserController::class);
     // REGIONS
     Route::post('/regions', [RegionController::class, 'store'])->name('regions.store');
@@ -55,13 +53,13 @@ Route::middleware('auth')->group(function () {
 
     // CENTERS
     Route::post('/centers', [CenterController::class, 'store'])->name('centers.store');
-    Route::put('/centers/{id}', [CenterController::class, 'update'])->name('centers.update');
-    Route::delete('/centers/{id}', [CenterController::class, 'destroy'])->name('centers.destroy');
+    Route::put('/centers/{center}', [CenterController::class, 'update'])->name('centers.update');
+    Route::delete('/centers/{center}', [CenterController::class, 'destroy'])->name('centers.destroy');
 
     // COHORTS
     Route::post('/cohorts', [CohortController::class, 'store'])->name('cohorts.store');
-    Route::put('/cohorts/{id}', [CohortController::class, 'update'])->name('cohorts.update');
-    Route::delete('/cohorts/{id}', [CohortController::class, 'destroy'])->name('cohorts.destroy');
+    Route::put('/cohorts/{cohort}', [CohortController::class, 'update'])->name('cohorts.update');
+    Route::delete('/cohorts/{cohort}', [CohortController::class, 'destroy'])->name('cohorts.destroy');
 
 
 });

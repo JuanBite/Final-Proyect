@@ -37,7 +37,7 @@ class CenterController extends Controller
        
 
         if ($centers->save()) {
-            return redirect('gestion.index')->with('success', 'Center ' . $centers->name .  ' was successfully added.');
+            return redirect()->route('gestion', ['tab' => 'centers'])->with('success', 'Center ' . $centers->name . ' was successfully added.');
         }
     }
 
@@ -64,14 +64,14 @@ class CenterController extends Controller
 
         $centers->update($validation);
 
-        return redirect('centers')
+        return redirect()->route('gestion', ['tab' => 'centers'])
             ->with('success', 'Center ' . $centers->name . ' was successfully updated.');
     }
     // Delete
     public function destroy(Center $centers)
     {
         if ($centers->delete()) {
-            return redirect('centers')->with('success', 'Centers ' . $centers->name . ' was successfully deleted.');
+            return redirect()->route('gestion', ['tab' => 'centers'])->with('success', 'Centers ' . $centers->name . ' was successfully deleted.');
         }
     }
 }
