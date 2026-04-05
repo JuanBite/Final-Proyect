@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('projects', ProjectController::class);
     Route::resource('centers', CenterController::class);
     Route::resource('cohorts', CohortController::class);
+    Route::resource('users', UserController::class);
     // REGIONS
     Route::post('/regions', [RegionController::class, 'store'])->name('regions.store');
     Route::put('/regions/{id}', [RegionController::class, 'update'])->name('regions.update');
@@ -62,8 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/cohorts/{id}', [CohortController::class, 'update'])->name('cohorts.update');
     Route::delete('/cohorts/{id}', [CohortController::class, 'destroy'])->name('cohorts.destroy');
 
-    // Users
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
 });
 
 
