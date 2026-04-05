@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -35,6 +36,7 @@ class User extends Authenticatable
     public function projects()
     {
         return $this->belongsToMany(Project::class, 'project_members', 'user_id', 'project_id');
+        
     }
 
     public function ledProjects()
@@ -50,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\ProjectMember::class, 'user_id');
     }
+
+
+
+
+   
 }
