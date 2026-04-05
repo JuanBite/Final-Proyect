@@ -10,14 +10,14 @@ class Project extends Model
     use HasFactory;
     public $timestamps = false; // NO tiene updated_at
     protected $fillable = [
-        "first_name",
-        "last_name",
-        "email",
-        "password",
-        "role",
-        "status",
-        "cohort_id",
-    ];
+    'name',
+    'description',
+    'start_date',
+    'due_date',
+    'progress',
+    'leader_id',
+    'status',
+];
 
     // Relations
     public function cohort()

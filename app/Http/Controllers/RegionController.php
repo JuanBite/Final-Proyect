@@ -10,12 +10,12 @@ class RegionController extends Controller
     // List
     public function index() {
         $regions = Region::orderBy('id')->paginate(20);
-        return view('regions.index', compact('regions'));
+        return view('gestion.index', compact('regions'));
     }
 
     // Create
     public function create() {
-        return view('modals.create.region');
+        return view('gestion.index', compact('regions'));
     }
 
     // store
@@ -33,20 +33,20 @@ class RegionController extends Controller
 
     $region->save();
 
-    return redirect('regions')
+    return redirect('gestion')
     ->with('success', 'Region ' . $region->name . ' was successfully added.');
 }
 
     // Show
     public function show(Region $region)
     {
-        return view('regions.details', compact('region'));     
+        return view('gestion.index', compact('regions'));   
     }
 
     // Edit
     public function edit(Region $region)
     {
-        return view('modals.edit.region', compact('region'));
+        return view('gestion.index', compact('regions'));
     }
 
     // Update
@@ -57,17 +57,17 @@ class RegionController extends Controller
             'code' => ['required','string'],
         ]);
 
-        $region->update($validation);
+         $region->update($request->only('name', 'code'));
 
-        return redirect('regions')
-            ->with('success', 'Regional ' .$region->name . 'actualizada correctamente.');
+        return redirect()->route('gestion', ['tab' => 'regions'])
+            ->with('success','Regional' .$region->name .  'actualizada correctamente.');
     }
 
     // Delete
     public function destroy(Region $region)
     {
     if ($region->delete()) {
-            return redirect('regions')->with('success', 'Regional ' . $region->name . ' was successfully deleted.');
+            return redirect()->route('gestion', ['tab' => 'regions'])->with('success', 'Regional ' . $region->name . ' was successfully deleted.');
         }
     }
 }

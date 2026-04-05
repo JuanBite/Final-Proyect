@@ -358,6 +358,7 @@ Alpine.data('appData', () => ({
         cohort_number: 'fichas',
         program_name: 'Programa'
     },
+    
 
     init() {},
 
@@ -385,6 +386,7 @@ Alpine.data('appData', () => ({
     get formFields() {
         return this.cols[this.tab].map(c => ({ key: c, label: this.labels[c] }));
     },
+    
 
     openModal(mode, row = null) {
         this.mode = mode;
