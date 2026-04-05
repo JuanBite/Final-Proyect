@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
     Route::get('/projects', function () {
-        $projects = App\Models\Project::with('users')->get();
+        $projects = App\Models\Project::with('projects')->get();
         return view('projects.index', compact('projects'));
     });
     Route::get('/stats', function () {
@@ -36,16 +36,16 @@ Route::middleware('auth')->group(function () {
         $projectMembers = App\Models\ProjectMember::all();
         return view('users.index', compact('users', 'projectMembers'));
     });
-    Route::get('/users/detail', function () {
-        $users = App\Models\User::all();
-        return view('users.detail', compact('users'));
-    });
     Route::get('/gestion', [GestionController::class, 'index'])->name('gestion');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('projects', ProjectController::class);
+
+    // Users
     Route::resource('users', UserController::class);
+    Route::get('/users/detail/{id}', [UserController::class, 'show'])->name('users.show');
+
     // REGIONS
     Route::post('/regions', [RegionController::class, 'store'])->name('regions.store');
     Route::put('/regions/{region}', [RegionController::class, 'update'])->name('regions.update');
@@ -63,9 +63,6 @@ Route::middleware('auth')->group(function () {
 
 
 });
-
-
-
 
 
 require __DIR__ . '/auth.php';

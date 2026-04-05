@@ -4,60 +4,57 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Project;
+use App\Models\Cohort;
+use App\Models\ProjectMember;
 use App\Enums\RoleEnum;
 use Illuminate\Validation\Rules\Enum;
 
-
 class UserController extends Controller
 {
-    // Listing
+    // LISTADO
     public function index()
-{
- $users = User::with('projects')->get();
+    {
+        $users = User::with(['projects', 'projectMembers.project'])
+            ->orderBy('id', 'desc')
+            ->paginate(20);
 
-    $users    = User::with(['projects', 'projectMembers', 'projectMembers.project'])->orderBy('id', 'desc')->paginate(20);
-    $projects = \App\Models\Project::all();
-    $cohorts  = \App\Models\Cohort::all();
+        $projects = Project::all();
+        $cohorts  = Cohort::all();
 
-    return view('users.index', compact('users', 'projects', 'cohorts'));
-}
+        return view('users.index', compact('users', 'projects', 'cohorts'));
+    }
 
-    // Create
+    // CREAR
     public function create()
     {
-        return view('modals.create.user');
+        $projects = Project::all();
+        return view('modals.create.user', compact('projects'));
     }
-    // Store
+
+    // GUARDAR
     public function store(Request $request)
-{
-    $request->validate([
-    
-        'first_name' => ['required', 'string'],
-        'last_name'  => ['required', 'string'],
-        'email'      => ['required', 'lowercase', 'email', 'unique:' . User::class],
-        'password'   => ['required', 'confirmed'],
-        'role'       => ['required', new Enum(RoleEnum::class)],
-       
+    {
+        $request->validate([
+            'first_name' => ['required', 'string'],
+            'last_name'  => ['required', 'string'],
+            'email'      => ['required', 'email', 'unique:users,email'],
+            'password'   => ['required', 'confirmed'],
+            'role'       => ['required', new Enum(RoleEnum::class)],
+        ]);
 
-    ]);
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name'  => $request->last_name,
+            'email'      => $request->email,
+            'password'   => bcrypt($request->password),
+            'role'       => $request->role,
+        ]);
 
-    
-    
-    $user = new User();
-    $user->first_name = $request->first_name;
-    $user->last_name  = $request->last_name;
-    $user->email      = $request->email;
-    $user->password   = bcrypt($request->password);
-    $user->role       = $request->role;
-
-
-    if ($user->save()) {
-
-    
-        // Asignar proyectos
-        if ($request->has('projects')) {
+        // Proyectos
+        if ($request->projects) {
             foreach ($request->projects as $projectId) {
-                \App\Models\ProjectMember::create([
+                ProjectMember::create([
                     'user_id'      => $user->id,
                     'project_id'   => $projectId,
                     'project_role' => $request->role === 'INSTRUCTOR' ? 'LEADER' : 'MEMBER',
@@ -65,82 +62,62 @@ class UserController extends Controller
             }
         }
 
-       
-
-        return redirect('users')->with('success', 'Usuario ' . $user->first_name . ' ' . $user->last_name . ' creado correctamente.');
+        return redirect()->route('users.index')
+            ->with('success', 'Usuario creado correctamente');
     }
-}
-    // Show
+
+    // DETALLE
     public function show(User $user)
     {
-        return view('users.detail')->with('user', $user);
+        $projects = Project::all();
+        $cohorts  = Cohort::all();
+
+        return view('users.detail', compact('user', 'projects', 'cohorts'));
     }
-    // Edit
+
+    // EDITAR
     public function edit(User $user)
     {
-        return view('modals.edit.user')->with('user', $user);
-    }
-    // Update
-  public function update(Request $request, User $user)
-{
-    $validated = $request->validate([
-        'first_name' => ['required', 'string'],
-        'last_name'  => ['required', 'string'],
-        'email'      => ['required', 'lowercase', 'email', 'unique:' . User::class . ',email,' . $user->id],
-        'role'       => ['required', new Enum(RoleEnum::class)],
-    ]);
-
-    $user->update($validated);
-
-    // Sincronizar proyectos
-    \App\Models\ProjectMember::where('user_id', $user->id)->delete();
-
-    if ($request->has('projects')) {
-        foreach ($request->projects as $projectId) {
-            \App\Models\ProjectMember::create([
-                'user_id'      => $user->id,
-                'project_id'   => $projectId,
-                'project_role' => $request->role === 'INSTRUCTOR' ? 'LEADER' : 'MEMBER',
-            ]);
-        }
+        $projects = Project::all();
+        return view('modals.edit.user', compact('user', 'projects'));
     }
 
-    // ❌ Elimina esta línea: dd($request->all());
-
-    return redirect()->route('users.index')
-        ->with('success', 'Usuario ' . $user->first_name . ' actualizado correctamente.');
-}
-
-    
-    // Delete
-    public function destroy($id)
+    // ACTUALIZAR
+    public function update(Request $request, User $user)
     {
-    {
-        try {
-            $user = User::findOrFail($id);
-            
-            // Opcional: Verificar que no sea el último administrador
-            if ($user->role === 'ADMIN' && User::where('role', 'ADMIN')->count() <= 1) {
-                return response()->json([
-                    'message' => 'No se puede eliminar el único administrador del sistema'
-                ], 400);
+        $validated = $request->validate([
+            'first_name' => ['required', 'string'],
+            'last_name'  => ['required', 'string'],
+            'email'      => ['required', 'email', 'unique:users,email,' . $user->id],
+            'role'       => ['required', new Enum(RoleEnum::class)],
+        ]);
+
+        $user->update($validated);
+
+        // Reset proyectos
+        ProjectMember::where('user_id', $user->id)->delete();
+
+        if ($request->projects) {
+            foreach ($request->projects as $projectId) {
+                ProjectMember::create([
+                    'user_id'      => $user->id,
+                    'project_id'   => $projectId,
+                    'project_role' => $request->role === 'INSTRUCTOR' ? 'LEADER' : 'MEMBER',
+                ]);
             }
-            
-            // Eliminar relaciones con proyectos (pivot table)
-            $user->projects()->detach();
-            
-            $user->delete();
-            
-            return response()->json([
-                'message' => 'Usuario eliminado exitosamente'
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al eliminar el usuario: ' . $e->getMessage()
-            ], 500);
         }
-    
+
+        return redirect()->route('users.index')
+            ->with('success', 'Usuario actualizado correctamente');
+    }
+
+    // ELIMINAR
+    public function destroy(User $user)
+    {
+
+        $user->delete();
+
+        return redirect()->route('users.index')
+            ->with('success', 'Usuario eliminado');
     }
 }
-}
-

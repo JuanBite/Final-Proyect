@@ -58,7 +58,7 @@
 
     <!-- User -->
     <div class="p-4 border-t border-green-500/20">
-        <a href="{{ url('users/detail') }}">
+        <a href="{{ url('users/detail/{id}') }}">
             <div class="flex items-center gap-3 bg-[#182236] border border-green-500/20 p-2 rounded-lg">
                 <div class="w-8 h-8 bg-gradient-to-br from-green-600 to-green-400 rounded flex items-center justify-center text-black font-bold text-xs">
                     LM</div>
