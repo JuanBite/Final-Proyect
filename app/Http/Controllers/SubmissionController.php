@@ -91,3 +91,4 @@ class SubmissionController extends Controller
             ->with('success', 'Entrega eliminada correctamente.');
     }
 }
+

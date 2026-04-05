@@ -11,13 +11,13 @@ class CohortController extends Controller
     public function index()
     {
         $cohorts = Cohort::orderBy('id', 'desc')->paginate(20);
-        return view('cohorts.index', compact('cohorts'));
+        return view('gestion.index', compact('cohorts'));
     }
 
     // Create
     public function create()
     {
-        return view('cohorts.create');
+        return view('gestion.create');
     }
 
     // Store
@@ -40,7 +40,7 @@ class CohortController extends Controller
         $cohort->end_date      = $request->end_date;
 
         if ($cohort->save()) {
-            return redirect('cohorts')
+            return redirect('gestion.index')
                 ->with('success', 'Cohort ' . $cohort->cohort_number . $cohort->program_name . ' was successfully added.');
         }
     }
@@ -48,13 +48,13 @@ class CohortController extends Controller
     // Show
     public function show(Cohort $cohort)
     {
-        return view('cohorts.show', compact('cohort'));
+        return view('gestion.show', compact('cohort'));
     }
 
     // Edit
     public function edit(Cohort $cohort)
     {
-        return view('cohorts.edit', compact('cohort'));
+        return view('gestion.edit', compact('cohort'));
     }
 
     // Update
