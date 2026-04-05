@@ -44,7 +44,7 @@
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Fecha inicio <span class="text-[#00C853]">*</span></label>
-                            <input class="form-input bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all" type="date" name="start_date" required value="2026-03-13" />
+                            <input class="form-input bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all" type="date" name="start_date" required value="{{ now()->format('Y-m-d') }}" />
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Fecha entrega <span class="text-[#00C853]">*</span></label>

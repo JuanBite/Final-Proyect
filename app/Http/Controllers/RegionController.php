@@ -66,8 +66,8 @@ class RegionController extends Controller
     // Delete
     public function destroy(Region $region)
     {
-    if ($region->delete()) {
+        $region->delete();
             return redirect()->route('gestion', ['tab' => 'regions'])->with('success', 'Regional ' . $region->name . ' was successfully deleted.');
-        }
+
     }
 }

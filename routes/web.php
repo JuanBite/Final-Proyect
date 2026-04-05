@@ -50,8 +50,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
     // REGIONS
     Route::post('/regions', [RegionController::class, 'store'])->name('regions.store');
-    Route::put('/regions/{id}', [RegionController::class, 'update'])->name('regions.update');
-    Route::delete('/regions/{id}', [RegionController::class, 'destroy'])->name('regions.destroy');
+    Route::put('/regions/{region}', [RegionController::class, 'update'])->name('regions.update');
+    Route::delete('/regions/{region}', [RegionController::class, 'destroy'])->name('regions.destroy');
 
     // CENTERS
     Route::post('/centers', [CenterController::class, 'store'])->name('centers.store');
