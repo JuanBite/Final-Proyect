@@ -54,9 +54,15 @@
             </h2>
             <div class="flex items-center gap-2 flex-wrap">
                 {{-- Buscador (decorativo por ahora, el filtro lo hace Laravel con ?tab=) --}}
-                <div class="flex items-center gap-2 bg-slate-700 border border-emerald-500/20 rounded-xl px-3 py-2 opacity-70">
-                    <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                    <input type="text" placeholder="Búsqueda" class="border-none outline-none text-slate-400 text-sm placeholder-slate-500 w-44 bg-slate-700">
+                <div
+                    class="flex items-center gap-2 bg-slate-700 border border-emerald-500/20 rounded-xl px-3 py-0.1 opacity-70 flex-1 sm:flex-none">
+                    <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                    <input type="text" placeholder="Busqueda" x-model="search" name="search" value="{{ request('search') }}"
+                        class="border-none outline-none text-slate-400 text-sm placeholder-slate-500 w-full sm:w-44 bg-slate-700">
                 </div>
                 {{-- Tabs --}}
                 <div class="flex gap-1.5">
@@ -210,7 +216,7 @@
                             </td>
                         </tr>
                         @empty
-                        <tr><td colspan="4" class="text-center py-10 text-slate-500 text-sm">Sin registros. Agrega el primero.</td></tr>
+                        <tr><td colspan="4" class="text-center py-10 text-slate-500 text-sm">Sin registros Agrega el primero.</td></tr>
                         @endforelse
                     @endif
 
@@ -255,7 +261,7 @@
             </template>
 
             <!-- SELECT REGIONES -->
-            <template x-if="f.key === 'region_id'">
+            <template x-if="f.key === 'region_id' && tab !== 'cohorts'">
                 <select name="region_id"
                         x-model="form.region_id"
                         class="bg-[#182236] border border-[#00C853]/20 rounded px-3 py-2 text-sm">

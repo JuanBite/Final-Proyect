@@ -9,7 +9,7 @@ class RegionController extends Controller
 {
     // List
     public function index() {
-        $regions = Region::orderBy('id')->paginate(20);
+        $regions = Region::orderBy('id', 'asc')->paginate(20);
         return view('gestion.index', compact('regions'));
     }
 
@@ -65,9 +65,15 @@ class RegionController extends Controller
 
     // Delete
     public function destroy(Region $region)
-    {
-        $region->delete();
-            return redirect()->route('gestion', ['tab' => 'regions'])->with('success', 'Regional ' . $region->name . ' was successfully deleted.');
-
+{
+    if ($region->centers()->exists()) {
+        return redirect()->route('gestion', ['tab' => 'regions'])->with('error', 'No puedes eliminar una región con centros asociados');
     }
+
+    $region->delete();
+
+    return redirect()
+        ->route('gestion', ['tab' => 'regions'])
+        ->with('success', 'Regional ' . $region->name . ' fue eliminada correctamente.');
+}
 }

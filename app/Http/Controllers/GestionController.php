@@ -15,9 +15,9 @@ class GestionController extends Controller
 
     return view('gestion.index', [
         'tab'     => $tab,
-        'regions' => Region::orderBy('id')->paginate(20),
-        'centers' => Center::with('region')->paginate(20),
-        'cohorts'  => Cohort::with('center')->paginate(20),
+        'regions' => Region::orderBy('id')->paginate(15),
+        'centers' => Center::with('region')->paginate(15),
+        'cohorts'  => Cohort::with('center')->paginate(15),
     ]);
 }
 }

@@ -33,6 +33,12 @@
             type = 'success';
             setTimeout(() => show = false, 4000);
         @endif
+        @if(session('error'))
+            show = true;
+            message = '{{ session('error') }}';
+            type = 'error';
+            setTimeout(() => show = false, 4000);
+        @endif
 
         @if($errors->any())
             show = true;

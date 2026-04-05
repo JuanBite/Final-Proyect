@@ -20,4 +20,8 @@ class Center extends Model
     {
         return $this->belongsTo(Region::class);
     }
+    public function cohort()
+    {
+        return $this->hasMany(Cohort::class);
+    }
 }

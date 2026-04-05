@@ -24,4 +24,5 @@ class Region extends Model
     {
         return $this->hasMany(Center::class);
     }
+    
 }

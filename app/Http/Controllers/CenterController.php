@@ -52,7 +52,7 @@ class CenterController extends Controller
         return view('gestion.index')->with('center', $centers);
     }
     // Update
-    public function update(Request $request, Center $centers)
+    public function update(Request $request, Center $center)
     {
         $validation = $request->validate([
             'name'          => ['required', 'string'],
@@ -62,16 +62,19 @@ class CenterController extends Controller
         ]);
 
 
-        $centers->update($validation);
+        $center->update($validation);
 
         return redirect()->route('gestion', ['tab' => 'centers'])
-            ->with('success', 'Center ' . $centers->name . ' was successfully updated.');
+            ->with('success', 'Center ' . $center->name . ' was successfully updated.');
     }
     // Delete
-    public function destroy(Center $centers)
+    public function destroy(Center $center)
     {
-        if ($centers->delete()) {
-            return redirect()->route('gestion', ['tab' => 'centers'])->with('success', 'Centers ' . $centers->name . ' was successfully deleted.');
-        }
+        if ($center->cohort()->exists()) {
+        return redirect()->route('gestion', ['tab' => 'centers'])->with('error', 'No puedes eliminar un centro con fichas asociados');
     }
+        $center->delete();
+            return redirect()->route('gestion', ['tab' => 'centers'])->with('success', 'Centers ' . $center->name . ' was successfully deleted.');
+        
+    } 
 }

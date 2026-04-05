@@ -16,8 +16,7 @@ return new class extends Migration
 
             $table->foreignId('center_id')
                 ->constrained('centers')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+                ->restrictOnDelete();
 
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();

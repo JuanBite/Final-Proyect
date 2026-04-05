@@ -15,8 +15,7 @@ return new class extends Migration
 
             $table->foreignId('region_id')
                 ->constrained('region')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+                ->restrictOnDelete();
 
             $table->timestamps();
         });

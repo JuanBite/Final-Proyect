@@ -22,7 +22,8 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $projects = App\Models\Project::all();
+        return view('dashboard', compact('projects'));
     })->name('dashboard');
     Route::get('/projects', function () {
         $projects = App\Models\Project::with('projects')->get();
