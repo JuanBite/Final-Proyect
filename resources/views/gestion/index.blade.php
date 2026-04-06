@@ -250,7 +250,7 @@
         <div class="flex flex-col gap-1">
 
             <label class="text-xs text-slate-400 uppercase tracking-widest"
-                   x-text="f.label"></label>
+                   x-text="f.label "></label>
 
             <!-- INPUT NORMAL -->
             <template x-if="f.key !== 'region_id' && f.key !== 'center_id'">
@@ -262,7 +262,7 @@
 
             <!-- SELECT REGIONES -->
             <template x-if="f.key === 'region_id' && tab !== 'cohorts'">
-                <select name="region_id"
+                <select name="region_id "
                         x-model="form.region_id"
                         class="bg-[#182236] border border-[#00C853]/20 rounded px-3 py-2 text-sm">
 
@@ -390,6 +390,13 @@ document.addEventListener('alpine:init', () => {
         init() {},
 
         get formFields() {
+            if(this.tab === 'cohorts') {
+                // Para cohorts, region_id y center_id van al final y con label diferente
+                return [
+                    ...this.cols[this.tab].filter(c => c !== 'region_id' && c !== 'center_id').map(c => ({ key: c, label: this.labels[c] })),
+                    { key: 'center_id', label: 'Centro' }
+                ];
+            }
             return this.cols[this.tab].map(c => ({ key: c, label: this.labels[c] }));
         },
 
