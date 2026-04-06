@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('first_name', 100);
             $table->string('last_name', 100);
             $table->string('email', 150)->unique();
+            $table->string('document', 11)->unique();
             $table->string('password');
             $table->enum('role', ['ADMIN', 'INSTRUCTOR', 'STUDENT']);
             $table->boolean('status')->default(true);
