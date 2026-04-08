@@ -8,7 +8,7 @@
     <div class="flex items-center justify-between mb-7">
         <h1 class="font-syne font-bold text-xl text-[#E8F4FF]">Tarjetas de <span class="text-[#00C853]">Proyecto</span>
         </h1>
-        <!-- Botón Nuevo con Alpine.js -->
+        
         <button @click="modalAbierto = true" type="button" class="flex items-center gap-2 px-5 py-2 bg-[#00C853] text-[#0A1628] font-semibold text-sm rounded-xl hover:brightness-110 transition-all cursor-pointer">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <line x1="12" y1="5" x2="12" y2="19" />

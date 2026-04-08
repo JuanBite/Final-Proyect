@@ -53,6 +53,13 @@
                             class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none"
                             type="text" placeholder="Ej: Muñoz" required />
                     </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Documento <span
+                                class="text-[#40C4FF]">*</span></label>
+                        <input name="document"
+                            class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none"
+                            type="text" placeholder="Ej: 10025***" required />
+                    </div>
                     <div class="col-span-2 flex flex-col gap-1.5">
                         <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Correo
                             electrónico <span class="text-[#40C4FF]">*</span></label>
@@ -60,6 +67,7 @@
                             class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none"
                             type="email" placeholder="usuario@correo.com" required />
                     </div>
+
                     <div class="flex flex-col gap-1.5">
                         <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Contraseña <span
                                 class="text-[#40C4FF]">*</span></label>
@@ -110,37 +118,49 @@
             </div>
 
             <!-- Proyectos -->
-            <div x-data="{ selectedProjects: [] }">
+            <div x-data="projectAssignerCreate()">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Asignar a proyectos</span>
                     <div class="flex-1 h-px bg-[#00C853]/15"></div>
                 </div>
-                <div class="flex flex-col gap-1.5">
-                    @foreach($projects as $project)
-                    <div @click="selectedProjects.includes({{ $project->id }}) 
-                ? selectedProjects = selectedProjects.filter(p => p !== {{ $project->id }}) 
-                : selectedProjects.push({{ $project->id }})" :class="selectedProjects.includes({{ $project->id }}) 
-                ? 'bg-[#00C853]/6 border-[#00C853]/25' 
-                : 'bg-[#182236] border-[#00C853]/15'"
-                        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl border cursor-pointer transition-all">
+                <div class="flex flex-col gap-2">
+                    <select @change="addProject($event)"
+                        class="form-input w-full mb-1 bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] transition-all focus:border-[#00C853]/40">
+                        <option value="">— Seleccionar proyecto para asignar —</option>
+                        @foreach ($projects as $project)
+                        <option value="{{ $project->id }}" style="background:#111D30; color:white;">
+                            {{ $project->name }}
+                        </option>
+                        @endforeach
+                    </select>
 
-                        <input type="checkbox" name="projects[]" value="{{ $project->id }}"
-                            :checked="selectedProjects.includes({{ $project->id }})" class="hidden">
+                    <!-- Inputs ocultos -->
+                    <template x-for="id in selected" :key="id">
+                        <input type="hidden" name="projects[]" :value="id">
+                    </template>
 
-                        <div :class="selectedProjects.includes({{ $project->id }}) ? 'bg-[#00C853]' : 'bg-[#8AAABB]'"
-                            class="w-2 h-2 rounded-full shrink-0 transition-all"></div>
-
-                        <span class="text-[13px] flex-1">{{ $project->name }}</span>
-
-                        <div :class="selectedProjects.includes({{ $project->id }}) ? 'bg-[#00C853] border-[#00C853]' : 'border-[#8AAABB]/30'"
-                            class="w-[18px] h-[18px] rounded-[5px] border flex items-center justify-center shrink-0 transition-all">
-                            <svg x-show="selectedProjects.includes({{ $project->id }})" width="10" height="10"
-                                fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
+                    <!-- Proyectos seleccionados -->
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <template x-for="project in selectedProjects" :key="project.id">
+                            <div
+                                class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#182236] border border-[#00C853]/15">
+                                <div class="w-[26px] h-[26px] rounded-lg bg-[#00C853] flex items-center justify-center text-[9px] text-black font-bold"
+                                    x-text="getInitials(project.name)"></div>
+                                <span class="text-[12.5px]" x-text="project.name"></span>
+                                <button type="button" @click="removeProject(project.id)"
+                                    class="ml-2 text-red-400 hover:text-red-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="size-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </template>
+                        <div x-show="selectedProjects.length === 0" class="text-[12px] text-[#8AAABB] italic py-2">
+                            No hay proyectos asignados
                         </div>
                     </div>
-                    @endforeach
                 </div>
             </div>
 
@@ -163,4 +183,33 @@
         </div>
 
     </form>
+    <script>
+        function projectAssignerCreate() {
+        return {
+            projects: @json($projects),
+            selected: [],
+
+            get selectedProjects() {
+                return this.projects.filter(project => this.selected.includes(project.id));
+            },
+
+            addProject(event) {
+                let id = parseInt(event.target.value);
+                if (!id) return;
+                if (!this.selected.includes(id)) {
+                    this.selected.push(id);
+                }
+                event.target.value = "";
+            },
+
+            removeProject(id) {
+                this.selected = this.selected.filter(p => p !== id);
+            },
+
+            getInitials(name) {
+                return name.substring(0, 2).toUpperCase();
+            }
+        }
+    }
+    </script>
 </div>

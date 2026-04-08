@@ -4,33 +4,30 @@
 
 @section('content')
 
-<div x-data="{ createModalOpen: false, editModalOpen: false, deleteModalOpen: false, currentUserId: null }" x-init="
-        window.createModalOpen = () => { createModalOpen = false };
-        window.editModalOpen = () => { editModalOpen = false };
-        window.deleteModalOpen = () => { deleteModalOpen = false };
-     ">
-    <!-- STATS -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        <div
-            class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-4 py-4 flex items-center gap-3 hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-2xl hover:shadow-black/30 transition-all cursor-default">
-            <div
-                class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0">
+<div x-data="{ createModalOpen: false, editModalOpen: false, deleteModalOpen: false, showModalOpen: false }"
+    x-init=" { createModalOpen = false, editModalOpen = false, deleteModalOpen = false, showModalOpen = false }"
+    class="p-6 space-y-8">
+
+    {{-- 🔹 STATS --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        {{-- Usuarios --}}
+        <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-4 py-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
                 </svg>
             </div>
             <div>
-                <div class="font-black text-2xl leading-none" style="font-family:'Syne',sans-serif">
-                    {{ $users->count() }}
-                </div>
-                <div class="text-xs text-slate-400 mt-1">Usuarios totales</div>
+                <div class="font-black text-2xl">{{ $users->count() }}</div>
+                <div class="text-xs text-slate-400">Usuarios totales</div>
             </div>
         </div>
-        <div
-            class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-4 py-4 flex items-center gap-3 hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-2xl transition-all cursor-default">
-            <div class="w-10 h-10 rounded-xl bg-sky-400/15 text-sky-400 flex items-center justify-center shrink-0">
+
+        {{-- Líderes --}}
+        <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-4 py-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-sky-400/15 text-sky-400 flex items-center justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M12 2L2 7l10 5 10-5-10-5z" />
                     <path d="M2 17l10 5 10-5" />
@@ -38,35 +35,32 @@
                 </svg>
             </div>
             <div>
-                <div class="font-black text-2xl leading-none" style="font-family:'Syne',sans-serif">
-                    {{ $users->filter(function($user) {
-                    return $user->projects->contains(function($project) {
-                    return $project->pivot->project_role === 'LEADER';
-                    });
-                    })->count() }}
+                <div class="font-black text-2xl">
+                    {{ $users->filter(fn($u) => $u->projectMembers->contains('project_role','LEADER'))->count() }}
                 </div>
-                <div class="text-xs text-slate-400 mt-1">Líderes de proyecto</div>
+                <div class="text-xs text-slate-400">Líderes de proyecto</div>
             </div>
         </div>
-        <div
-            class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-4 py-4 flex items-center gap-3 hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-2xl transition-all cursor-default">
-            <div
-                class="w-10 h-10 rounded-xl bg-yellow-400/15 text-yellow-400 flex items-center justify-center shrink-0">
+
+        {{-- Miembros --}}
+        <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-4 py-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-yellow-400/15 text-yellow-400 flex items-center justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                 </svg>
             </div>
             <div>
-                <div class="font-black text-2xl leading-none" style="font-family:'Syne',sans-serif">
-                    {{ $users->where('status', true)->count() }}
+                <div class="font-black text-2xl">
+                    {{ $users->count() }}
                 </div>
-                <div class="text-xs text-slate-400 mt-1">Miembros activos</div>
+                <div class="text-xs text-slate-400">Miembros activos</div>
             </div>
         </div>
-        <div
-            class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-4 py-4 flex items-center gap-3 hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-2xl transition-all cursor-default">
-            <div class="w-10 h-10 rounded-xl bg-red-400/15 text-red-400 flex items-center justify-center shrink-0">
+
+        {{-- Proyectos activos --}}
+        <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-4 py-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-red-400/15 text-red-400 flex items-center justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <rect x="3" y="3" width="7" height="7" />
                     <rect x="14" y="3" width="7" height="7" />
@@ -75,21 +69,26 @@
                 </svg>
             </div>
             <div>
-                <div class="font-black text-2xl leading-none" style="font-family:'Syne',sans-serif">
+                <div class="font-black text-2xl">
                     {{ $projects->count() }}
                 </div>
-                <div class="text-xs text-slate-400 mt-1">Proyectos activos</div>
+                <div class="text-xs text-slate-400">Proyectos activos</div>
             </div>
         </div>
+
     </div>
 
-    <!-- TABLE SECTION -->
-    <div x-data="userManager()" x-init="init()">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
-            <h2 class="font-bold text-xl" style="font-family:'Syne',sans-serif">Gestión de <span
-                    class="text-emerald-400">Usuarios</span></h2>
-            <div class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
-                <!-- Barra de búsqueda -->
+    {{-- 🔹 HEADER --}}
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+        <h2 class="text-xl font-bold text-white">
+            Gestión de <span class="text-emerald-400">Usuarios</span>
+        </h2>
+
+        <div class="flex items-center gap-2 flex-wrap">
+
+            {{-- Buscador --}}
+            <form method="GET" action="{{ route('users.index') }}" class="flex items-center gap-2" id="search-form">
                 <div
                     class="flex items-center gap-2 bg-slate-700 border border-emerald-500/20 rounded-xl px-3 py-0.1 opacity-70 flex-1 sm:flex-none">
                     <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2"
@@ -97,528 +96,322 @@
                         <circle cx="11" cy="11" r="8" />
                         <path d="M21 21l-4.35-4.35" />
                     </svg>
-                    <input type="text" placeholder="Busqueda" x-model="search"
-                        class="border-none outline-none text-slate-400 text-sm placeholder-slate-500 w-full sm:w-44 bg-slate-700">
+                    <input type="text" name="search" id="search-input" placeholder="Búsqueda"
+                        value="{{ request('search') }}"
+                        class="border-none outline-none text-slate-400 text-sm placeholder-slate-500 w-full sm:w-44 bg-slate-700"
+                        oninput="toggleClearBtn(this); liveSearch(this.value)">
+                    {{-- Botón X --}}
+                    <button type="button" id="clear-search" onclick="clearSearch()"
+                        class="text-slate-400 hover:text-slate-200 transition-colors {{ request('search') ? '' : 'hidden' }}">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M18 6L6 18M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
-                <!-- Filtros -->
+
+                {{-- Filtros --}}
                 <div class="flex gap-1.5">
-                    <span @click="filter = 'todos'"
-                        :class="filter === 'todos' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-slate-700 text-slate-400 border-emerald-500/15'"
-                        class="px-3 py-1.5 rounded-full text-xs font-medium border cursor-pointer">
+                    <a href="{{ route('users.index', array_merge(request()->except('filter'), [])) }}"
+                        class="px-3 py-1.5 rounded-full text-xs border transition-all
+            {{ !request('filter') ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-slate-700 text-slate-400 border-white/10' }}">
                         Todos
-                    </span>
-                    <span @click="filter = 'LEADER'"
-                        :class="filter === 'LEADER' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-slate-700 text-slate-400 border-emerald-500/15'"
-                        class="px-3 py-1.5 rounded-full text-xs font-medium border cursor-pointer">
+                    </a>
+                    <a href="{{ route('users.index', array_merge(request()->except('filter'), ['filter' => 'LEADER'])) }}"
+                        class="px-3 py-1.5 rounded-full text-xs border transition-all
+            {{ request('filter') === 'LEADER' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-slate-700 text-slate-400 border-white/10' }}">
                         Líderes
-                    </span>
-                    <span @click="filter = 'MEMBER'"
-                        :class="filter === 'MEMBER' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-slate-700 text-slate-400 border-emerald-500/15'"
-                        class="px-3 py-1.5 rounded-full text-xs font-medium border cursor-pointer">
+                    </a>
+                    <a href="{{ route('users.index', array_merge(request()->except('filter'), ['filter' => 'MEMBER'])) }}"
+                        class="px-3 py-1.5 rounded-full text-xs border transition-all
+            {{ request('filter') === 'MEMBER' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-slate-700 text-slate-400 border-white/10' }}">
                         Miembros
-                    </span>
+                    </a>
                 </div>
-                <!-- Botón agregar -->
-                <button @click="createModalOpen = true; document.body.style.overflow='hidden'"
-                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-emerald-500 text-slate-900 shadow-lg shadow-emerald-500/25 border-none hover:bg-emerald-400 transition-all cursor-pointer w-full sm:w-auto justify-center">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    Agregar usuario
-                </button>
-            </div>
-        </div>
 
-        <!-- Tabla completamente responsiva SIN SCROLL -->
-        <div class="bg-[#1C2A40] border border-emerald-500/20 rounded-2xl overflow-hidden">
-            <div class="block w-full">
-                <!-- Versión para desktop: tabla tradicional -->
-                <div class="hidden md:block">
-                    <table class="w-full border-collapse">
-                        <thead>
-                            <tr class="bg-emerald-500/5 border-b border-emerald-500/15">
-                                <th
-                                    class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[22%]">
-                                    Usuario</th>
-                                <th
-                                    class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[13%]">
-                                    Rol</th>
-                                <th
-                                    class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[13%]">
-                                    Rol de Proyecto</th>
-                                <th
-                                    class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[22%]">
-                                    Proyectos asignados</th>
-                                <th
-                                    class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[10%]">
-                                    Estado</th>
-                                <th
-                                    class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[10%]">
-                                    Ingreso</th>
-                                <th
-                                    class="text-center px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[10%]">
-                                    Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($users as $user)
-                            @php
-                            $isLeader = $user->role === 'INSTRUCTOR';
-                            $projectRole = $isLeader ? 'LEADER' : ($user->role === 'STUDENT' ? 'MEMBER' : null);
-                            @endphp
-                            <tr x-show="matchesSearch({
-                                    name:        '{{ addslashes($user->first_name . ' ' . $user->last_name) }}',
-                                    email:       '{{ addslashes($user->email) }}',
-                                    role:        '{{ $user->role }}',
-                                    projectRole: '{{ $projectRole ?? '' }}'
-                                }) && matchesFilter('{{ $projectRole ?? '' }}')"
-                                class="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors">
-                                <td class="px-4 py-3.5">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-700 to-emerald-400 flex items-center justify-center font-black text-sm shrink-0 text-slate-900">
-                                            {{ strtoupper(substr($user->first_name, 0, 1)) }}{{
-                                            strtoupper(substr($user->last_name, 0, 1)) }}
-                                        </div>
-                                        <div class="min-w-0 flex-1">
-                                            <div class="text-sm font-semibold truncate">{{ $user->first_name }} {{
-                                                $user->last_name }}</div>
-                                            <div class="text-xs text-slate-400 mt-0.5 truncate">{{ $user->email }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3.5">
-                                    @if($user->role === 'ADMIN')
-                                    <span
-                                        class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-yellow-500/12 text-yellow-400 border border-yellow-500/25">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
-                                        ADMIN
-                                    </span>
-                                    @elseif($user->role === 'INSTRUCTOR')
-                                    <span
-                                        class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                                        INSTRUCTOR
-                                    </span>
-                                    @else
-                                    <span
-                                        class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 text-slate-300 border border-slate-500/25">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                                        STUDENT
-                                    </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3.5">
-                                    @if($projectRole === 'LEADER')
-                                    <span
-                                        class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                                        Líder
-                                    </span>
-                                    @elseif($projectRole === 'MEMBER')
-                                    <span
-                                        class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 text-slate-300 border border-slate-500/25">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                                        Miembro
-                                    </span>
-                                    @else
-                                    <span class="text-xs text-slate-500 italic">Sin rol</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3.5">
-                                    <div class="flex flex-wrap gap-1">
-                                        @forelse($user->projects as $project)
-                                        <span
-                                            class="px-2 py-0.5 rounded-md text-xs bg-white/5 border border-white/10 text-slate-400 truncate max-w-[150px]">
-                                            {{ $project->name }}
-                                        </span>
-                                        @empty
-                                        <span class="text-xs text-slate-500 italic">Sin proyectos</span>
-                                        @endforelse
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3.5">
-                                    @if($user->status)
-                                    <span class="inline-flex items-center gap-1.5 text-sm">
-                                        <span
-                                            class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_3px_rgba(52,211,153,0.2)]"></span>
-                                        Activo
-                                    </span>
-                                    @else
-                                    <span class="inline-flex items-center gap-1.5 text-sm text-slate-400">
-                                        <span class="w-2 h-2 rounded-full bg-slate-500"></span>
-                                        Inactivo
-                                    </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3.5 text-xs text-slate-400">
-                                    {{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y') }}
-                                </td>
-                                <td class="px-4 py-3.5">
-                                    <div class="flex items-center justify-center gap-1.5">
-                                        <button @click="
-                                            editModalOpen = true;
-                                            document.body.style.overflow='hidden';
-                                            $dispatch('load-user-data', {
-                                                userId:   {{ $user->id }},
-                                                nombre:   '{{ addslashes($user->first_name) }}',
-                                                apellido: '{{ addslashes($user->last_name) }}',
-                                                email:    '{{ addslashes($user->email) }}',
-                                                status:   {{ $user->status ? 1 : 0 }},
-                                                role:     '{{ $user->role }}'
-                                            })"
-                                            class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-emerald-500/20 hover:text-emerald-400 transition-all cursor-pointer">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
-                                                viewBox="0 0 24 24">
-                                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                            </svg>
-                                        </button>
-                                        <button @click="confirmDelete({{ $user->id }})"
-                                            class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-red-500/20 hover:text-red-400 transition-all cursor-pointer">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
-                                                viewBox="0 0 24 24">
-                                                <polyline points="3 6 5 6 21 6" />
-                                                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                                                <path d="M10 11v6M14 11v6" />
-                                                <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                {{-- Submit invisible al escribir --}}
+                <button type="submit" class="hidden"></button>
+            </form>
+
+            {{-- Submit invisible al escribir --}}
+            <button type="submit" class="hidden"></button>
+
+            </form>
+
+            {{-- Botón --}}
+            <button @click="createModalOpen = true"
+                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm bg-emerald-500 text-slate-900">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Nuevo usuario
+            </button>
+
+        </div>
+    </div>
+
+    {{-- 🔹 TABLA --}}
+    <div class="bg-[#1C2A40] border border-emerald-500/20 rounded-2xl overflow-hidden overflow-x-auto">
+
+        <table class="w-full min-w-[800px]" id="users-table">
+
+            <thead class="bg-emerald-500/5 border-b border-emerald-500/15">
+                <tr class="bg-emerald-500/5 border-b border-emerald-500/15">
+                    <th
+                        class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[22%]">
+                        Usuario</th>
+                    <th
+                        class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[13%]">
+                        Rol</th>
+                    <th
+                        class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[13%]">
+                        Rol de Proyecto</th>
+                    <th
+                        class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[22%]">
+                        Proyectos asignados</th>
+                    <th
+                        class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[10%]">
+                        Estado</th>
+                    <th
+                        class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[10%]">
+                        Ingreso</th>
+                    <th
+                        class="text-center px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[10%]">
+                        Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach($users as $user)
+
+                @php
+                $isLeader = $user->projectMembers->contains('project_role','LEADER');
+                $role = $isLeader ? 'LEADER' : ($user->projectMembers->isNotEmpty() ? 'MEMBER' : null);
+                @endphp
+
+                <tr class="border-b border-white/5 hover:bg-emerald-500/5">
+
+                    {{-- Usuario --}}
+                    <td class="px-5 py-3">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-700 to-emerald-400 flex items-center justify-center text-black font-bold">
+                                {{ strtoupper(substr($user->first_name,0,1)) }}{{
+                                strtoupper(substr($user->last_name,0,1)) }}
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold">
+                                    {{ $user->first_name }} {{ $user->last_name }}
+                                </div>
+                                <div class="text-xs text-slate-400">
+                                    {{ $user->email }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    {{-- Rol --}}
+                    <td class="px-4 py-3.5">
+                        @if($user->role === 'ADMIN')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-yellow-500/12 text-yellow-400 border border-yellow-500/25">
+                            <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
+                            ADMIN
+                        </span>
+                        @elseif($user->role === 'INSTRUCTOR')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            INSTRUCTOR
+                        </span>
+                        @else
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 text-slate-300 border border-slate-500/25">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                            STUDENT
+                        </span>
+                        @endif
+                    </td>
+
+                    {{-- Rol de proyecto --}}
+                    <td class="px-4 py-3.5">
+                        @if($role === 'LEADER')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            Líder
+                        </span>
+                        @elseif($role === 'MEMBER')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 text-slate-300 border border-slate-500/25">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                            Miembro
+                        </span>
+                        @else
+                        <span class="text-xs text-slate-500 italic">Sin rol</span>
+                        @endif
+                    </td>
+
+                    {{-- Proyectos --}}
+                    <td class="px-4 py-3.5">
+                        <div class="flex flex-wrap gap-1">
+                            @forelse($user->projects as $project)
+                            <span
+                                class="px-2 py-0.5 rounded-md text-xs bg-white/5 border border-white/10 text-slate-400 truncate max-w-[150px]">
+                                {{ $project->name }}
+                            </span>
                             @empty
-                            <tr>
-                                <td colspan="7" class="px-4 py-10 text-center text-slate-500 italic">
-                                    No hay usuarios registrados.
-                                </td>
-                            </tr>
+                            <span class="text-xs text-slate-500 italic">Sin proyectos</span>
                             @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Versión para móvil: tarjetas en lugar de tabla -->
-                <div class="block md:hidden space-y-3">
-                    @forelse($users as $user)
-                    @php
-                    $isLeader = $user->role === 'INSTRUCTOR';
-                    $projectRole = $isLeader ? 'LEADER' : ($user->role === 'STUDENT' ? 'MEMBER' : null);
-                    @endphp
-                    <div x-show="matchesSearch({
-                            name:        '{{ addslashes($user->first_name . ' ' . $user->last_name) }}',
-                            email:       '{{ addslashes($user->email) }}',
-                            role:        '{{ $user->role }}',
-                            projectRole: '{{ $projectRole ?? '' }}'
-                        }) && matchesFilter('{{ $projectRole ?? '' }}')"
-                        class="bg-[#1C2A40] border border-emerald-500/20 rounded-xl p-4">
-
-                        <!-- Header con nombre y acciones -->
-                        <div class="flex items-start justify-between mb-3">
-                            <div class="flex items-center gap-3 flex-1">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-700 to-emerald-400 flex items-center justify-center font-black text-sm shrink-0 text-slate-900">
-                                    {{ strtoupper(substr($user->first_name, 0, 1)) }}{{
-                                    strtoupper(substr($user->last_name, 0, 1)) }}
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-semibold truncate">{{ $user->first_name }} {{
-                                        $user->last_name }}</div>
-                                    <div class="text-xs text-slate-400 mt-0.5 truncate">{{ $user->email }}</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-1 ml-2">
-                                <button @click="
-                                    editModalOpen = true;
-                                    document.body.style.overflow='hidden';
-                                    $dispatch('load-user-data', {
-                                        userId:   {{ $user->id }},
-                                        nombre:   '{{ addslashes($user->first_name) }}',
-                                        apellido: '{{ addslashes($user->last_name) }}',
-                                        email:    '{{ addslashes($user->email) }}',
-                                        status:   {{ $user->status ? 1 : 0 }},
-                                        role:     '{{ $user->role }}'
-                                    })"
-                                    class="w-8 h-8 rounded-lg bg-slate-700 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-emerald-500/20 hover:text-emerald-400 transition-all">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24">
-                                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                    </svg>
-                                </button>
-                                <button @click="confirmDelete({{ $user->id }})"
-                                    class="w-8 h-8 rounded-lg bg-slate-700 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-red-500/20 hover:text-red-400 transition-all">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24">
-                                        <polyline points="3 6 5 6 21 6" />
-                                        <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                                        <path d="M10 11v6M14 11v6" />
-                                        <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
-                                    </svg>
-                                </button>
-                            </div>
                         </div>
+                    </td>
 
-                        <!-- Información en grid -->
-                        <div class="grid grid-cols-2 gap-3 text-sm">
-                            <div>
-                                <span class="text-xs text-slate-500 block mb-1">Rol del sistema</span>
-                                @if($user->role === 'ADMIN')
-                                <span
-                                    class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-yellow-500/12 text-yellow-400 border border-yellow-500/25">
-                                    ADMIN
-                                </span>
-                                @elseif($user->role === 'INSTRUCTOR')
-                                <span
-                                    class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
-                                    INSTRUCTOR
-                                </span>
-                                @else
-                                <span
-                                    class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 text-slate-300 border border-slate-500/25">
-                                    STUDENT
-                                </span>
-                                @endif
-                            </div>
-                            <div>
-                                <span class="text-xs text-slate-500 block mb-1">Rol de proyecto</span>
-                                @if($projectRole === 'LEADER')
-                                <span
-                                    class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
-                                    Líder
-                                </span>
-                                @elseif($projectRole === 'MEMBER')
-                                <span
-                                    class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 text-slate-300 border border-slate-500/25">
-                                    Miembro
-                                </span>
-                                @else
-                                <span class="text-xs text-slate-500 italic">Sin rol</span>
-                                @endif
-                            </div>
-                            <div>
-                                <span class="text-xs text-slate-500 block mb-1">Estado</span>
-                                @if($user->status)
-                                <span class="inline-flex items-center gap-1.5 text-sm">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                                    Activo
-                                </span>
-                                @else
-                                <span class="inline-flex items-center gap-1.5 text-sm text-slate-400">
-                                    <span class="w-2 h-2 rounded-full bg-slate-500"></span>
-                                    Inactivo
-                                </span>
-                                @endif
-                            </div>
-                            <div>
-                                <span class="text-xs text-slate-500 block mb-1">Ingreso</span>
-                                <span class="text-xs text-slate-400">{{
-                                    \Carbon\Carbon::parse($user->created_at)->format('d/m/Y') }}</span>
-                            </div>
+                    {{-- Estado --}}
+                    <td class="px-4 py-3.5">
+                        @if($user->status)
+                        <span class="inline-flex items-center gap-1.5 text-sm">
+                            <span
+                                class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_3px_rgba(52,211,153,0.2)]"></span>
+                            Activo
+                        </span>
+                        @else
+                        <span class="inline-flex items-center gap-1.5 text-sm text-slate-400">
+                            <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                            Inactivo
+                        </span>
+                        @endif
+                    </td>
+
+                    {{-- Fecha --}}
+                    <td class="px-4 py-3.5 text-xs text-slate-400">
+                        {{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y') }}
+                    </td>
+
+                    {{-- Acciones --}}
+                    <td class="px-4 py-3.5">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button @click="editModalOpen = true, currentUserId = {{ $user->id }}"
+                                class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-emerald-500/20 hover:text-emerald-400 transition-all cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                            </button>
+
+                            <button @click="deleteModalOpen = true"
+                                class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-red-500/20 hover:text-red-400 transition-all cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <polyline points="3 6 5 6 21 6" />
+                                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                                    <path d="M10 11v6M14 11v6" />
+                                    <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                                </svg>
+                            </button>
+
+                            <button
+                                @click="showModalOpen = true; currentShowUserId = {{ $user->id }}; document.body.style.overflow='hidden'"
+                                class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-[#40C4FF]/20 hover:text-[#40C4FF] transition-all cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
                         </div>
-
-                        <!-- Proyectos -->
-                        <div class="mt-3">
-                            <span class="text-xs text-slate-500 block mb-1">Proyectos asignados</span>
-                            <div class="flex flex-wrap gap-1">
-                                @forelse($user->projects as $project)
-                                <span
-                                    class="px-2 py-0.5 rounded-md text-xs bg-white/5 border border-white/10 text-slate-400">
-                                    {{ $project->name }}
-                                </span>
-                                @empty
-                                <span class="text-xs text-slate-500 italic">Sin proyectos</span>
-                                @endforelse
-                            </div>
-                        </div>
-                    </div>
-                    @empty
-                    <div
-                        class="bg-[#1C2A40] border border-emerald-500/20 rounded-xl p-8 text-center text-slate-500 italic">
-                        No hay usuarios registrados.
-                    </div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
         <!-- Modal de creación de usuario -->
         <div x-show="createModalOpen" @close-create-modal.window="createModalOpen=false"
             x-transition.opacity.duration.200ms
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center"
             @click.away="createModalOpen=false; document.body.style.overflow=''" x-cloak>
             <div @click.stop>
                 @include('modals.create.user')
             </div>
         </div>
-
         <!-- Modal de edición de usuario -->
         <div x-show="editModalOpen" @close-edit-modal.window="editModalOpen=false; currentUserId=null"
             x-transition.opacity.duration.200ms
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
             @click.away="editModalOpen=false; document.body.style.overflow=''; currentUserId=null" x-cloak>
-            <div @click.stop>
-                @include('modals.edit.user')
+            @foreach($users as $user)
+            <div x-show="editModalOpen && currentUserId === {{ $user->id }}">
+                @include('modals.edit.user', ['user' => $user])
             </div>
+            @endforeach
         </div>
-
         <!-- MODAL ELIMINAR -->
-        <div x-show="deleteModalOpen" x-transition.opacity.duration.200ms @click.away="closeDeleteModal()"
-            class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" x-cloak>
-            <div @click.stop
-                class="relative bg-[#1C2A40] border border-red-500/20 rounded-2xl p-6 w-full max-w-md shadow-2xl"
-                x-transition.scale.origin.center>
-                <h2 class="text-lg font-bold text-red-400 mb-2">Eliminar Usuario</h2>
-                <p class="text-sm text-slate-400 mb-6">
-                    ¿Estás seguro de que deseas eliminar este Usuario? Esta acción no se puede deshacer.
-                </p>
+        <div x-show="deleteModalOpen"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 " x-cloak>
+            <div @click.away="closeModals()" class="bg-[#1C2A40] p-6 rounded-2xl w-full max-w-md">
+                <h2 class="text-red-400 font-bold mb-2">Eliminar usuario</h2>
+                <p class="text-sm text-slate-400 mb-6"> ¿Seguro que deseas eliminar este usuario?</p>
                 <div class="flex justify-end gap-2">
-                    <button @click="closeDeleteModal()"
-                        class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-400 hover:text-white transition-all">
-                        Cancelar
-                    </button>
-                    <button @click="deleteUser()"
-                        class="px-4 py-2 rounded-xl text-sm bg-red-500 text-white hover:bg-red-600 transition-all">
-                        Sí, eliminar
-                    </button>
+                    <button type="button" @click="deleteModalOpen = false"
+                        class="px-4 py-2 bg-slate-700 rounded-xl">Cancelar</button>
+                    <form method="POST" action="{{ route('users.destroy', $user->id) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="px-4 py-2 bg-red-500 rounded-xl text-white">Eliminar</button>
+                    </form>
                 </div>
             </div>
+        </div>
+        {{-- MODAL SHOW --}}
+        <div x-show="showModalOpen" @close-show-modal.window="showModalOpen=false; currentShowUserId=null"
+            x-transition.opacity.duration.200ms
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            @click.away="showModalOpen=false; document.body.style.overflow=''; currentShowUserId=null" x-cloak>
+            @foreach($users as $user)
+            <div x-show="showModalOpen && currentShowUserId === {{ $user->id }}">
+                @include('modals.show.user', ['user' => $user])
+            </div>
+            @endforeach
         </div>
     </div>
-
-    <script>
-        function userManager() {
-    return {
-        createModalOpen: false,
-        editModalOpen: false,
-        deleteModalOpen: false,
-        currentUserId: null,
-        search: '',
-        filter: 'todos',
-        isDeleting: false,
-
-        matchesSearch(user) {
-            if (!this.search.trim()) return true;
-            const q = this.search.toLowerCase();
-            return user.name.toLowerCase().includes(q)
-                || user.email.toLowerCase().includes(q)
-                || user.role.toLowerCase().includes(q)
-                || user.projectRole.toLowerCase().includes(q);
-        },
-
-        matchesFilter(role) {
-            if (this.filter === 'todos') return true;
-            return role === this.filter;
-        },
-
-        confirmDelete(userId) {
-            this.currentUserId = userId;
-            this.deleteModalOpen = true;
-            document.body.style.overflow = 'hidden';
-        },
-
-        closeDeleteModal() {
-            this.deleteModalOpen = false;
-            this.currentUserId = null;
-            document.body.style.overflow = '';
-        },
-
-        async deleteUser() {
-            if (this.isDeleting || !this.currentUserId) return;
-            
-            this.isDeleting = true;
-            
-            try {
-                // Obtener el token CSRF de forma segura
-                const token = document.querySelector('meta[name="csrf-token"]');
-                if (!token) {
-                    throw new Error('No se encontró el token CSRF');
-                }
-
-                const response = await fetch(`/users/${this.currentUserId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': token.getAttribute('content'),
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    credentials: 'same-origin'
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                
-                // Mostrar mensaje de éxito
-                this.showNotification(data.message || 'Usuario eliminado exitosamente', 'success');
-                
-                // Recargar la página después de un breve delay
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-                
-            } catch (error) {
-                console.error('Error al eliminar:', error);
-                this.showNotification(error.message || 'Error de conexión al eliminar el usuario', 'error');
-            } finally {
-                this.isDeleting = false;
-                this.closeDeleteModal();
-            }
-        },
-
-        showNotification(message, type = 'success') {
-            // Crear elemento de notificación
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg text-white font-medium shadow-lg ${
-                type === 'success' ? 'bg-emerald-500' : 'bg-red-500'
-            } transition-all duration-300 transform translate-x-full`;
-            notification.innerHTML = `
-                <div class="flex items-center gap-2">
-                    ${type === 'success' ? 
-                        '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' : 
-                        '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>'
-                    }
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Animar entrada
-            setTimeout(() => {
-                notification.classList.remove('translate-x-full');
-                notification.classList.add('translate-x-0');
-            }, 10);
-            
-            // Eliminar después de 3 segundos
-            setTimeout(() => {
-                notification.classList.remove('translate-x-0');
-                notification.classList.add('translate-x-full');
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-        },
-
-        init() {
-            // Escuchar eventos de cierre de modales
-            window.addEventListener('close-modals', () => {
-                this.createModalOpen = false;
-                this.editModalOpen = false;
-                this.deleteModalOpen = false;
-                document.body.style.overflow = '';
-            });
-        }
-    }
-}
-    </script>
 </div>
+<script>
+    function toggleClearBtn(input) {
+        const btn = document.getElementById('clear-search');
+        btn.classList.toggle('hidden', input.value === '');
+    }
+
+    function clearSearch() {
+        const input = document.getElementById('search-input');
+        input.value = '';
+        toggleClearBtn(input);
+        document.getElementById('search-form').submit();
+    }
+    let searchTimeout = null;
+
+    function liveSearch(value) {
+        clearTimeout(searchTimeout);
+
+        // Debounce: espera 300ms después de que el usuario deje de escribir
+        searchTimeout = setTimeout(() => {
+            const params = new URLSearchParams(window.location.search);
+            params.set('search', value);
+            if (!value) params.delete('search');
+
+            fetch(`{{ route('users.index') }}?${params.toString()}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                // Reemplaza solo la tabla/lista de usuarios
+                document.getElementById('users-table').innerHTML =
+                    doc.getElementById('users-table').innerHTML;
+            });
+        }, 300);
+    }
+</script>
 
 @endsection

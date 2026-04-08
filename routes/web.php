@@ -25,13 +25,16 @@ Route::middleware('auth')->group(function () {
         $projects = App\Models\Project::all();
         return view('dashboard', compact('projects'));
     })->name('dashboard');
+
     Route::get('/projects', function () {
         $projects = App\Models\Project::with('projects')->get();
         return view('projects.index', compact('projects'));
     });
+
     Route::get('/stats', function () {
         return view('stats.index');
     });
+    
     Route::get('/users', function () {
         $users = App\Models\User::all();
         $projectMembers = App\Models\ProjectMember::all();

@@ -1,197 +1,278 @@
-<div x-data="editUserForm()" @load-user-data.window="loadUserData($event.detail)"
-    class="bg-[#111D30] border border-green-500/20 rounded-3xl w-[560px] max-w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-
-    <!-- HEADER -->
-    <div class="relative flex items-center gap-4 p-7 border-b border-green-500/20 bg-green-500/5 shrink-0">
-        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-blue-400"></div>
-        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-700 to-green-400 flex items-center justify-center font-black text-sm text-black"
-            x-text="(formData.nombre.charAt(0) + formData.apellido.charAt(0)).toUpperCase()">
-        </div>
-        <div>
-            <div class="font-syne text-xl font-extrabold">
-                Editar <span class="text-green-400" x-text="formData.nombre + ' ' + formData.apellido"></span>
-            </div>
-            <div class="text-sm text-gray-400" x-text="formData.email"></div>
-        </div>
-        <div
-            class="ml-auto mr-10 flex items-center gap-2 bg-green-500/10 border border-green-500/30 px-3 py-1 rounded text-xs text-green-400">
-            ● Modo edición
-        </div>
-        <button @click="$dispatch('close-edit-modal'); document.body.style.overflow='';"
-            class="absolute top-5 right-5 w-8 h-8 bg-[#182236] border border-green-500/20 rounded flex items-center justify-center text-gray-400 hover:text-white transition-all cursor-pointer">
-            ✕
-        </button>
-    </div>
-
-    <!-- BODY -->
-    <div class="p-6 overflow-y-auto flex-1">
-
-        <!-- PROFILE -->
-        <div class="flex items-center gap-4 bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-6">
-            <div class="w-12 h-12 flex items-center justify-center rounded-xl font-bold bg-gradient-to-br from-green-700 to-green-400 text-black"
-                x-text="(formData.nombre.charAt(0) + formData.apellido.charAt(0)).toUpperCase()">
-            </div>
-            <div class="flex-1">
-                <div class="font-syne font-bold" x-text="formData.nombre + ' ' + formData.apellido"></div>
-                <div class="text-xs text-gray-400" x-text="formData.email"></div>
-            </div>
-            <div class="text-xs bg-green-500/10 text-green-400 px-3 py-1 rounded-full border border-green-500/30">
-                ● <span
-                    x-text="formData.role === 'INSTRUCTOR' ? 'Líder de Proyecto' : formData.role === 'STUDENT' ? 'Miembro' : 'Admin'"></span>
-            </div>
-        </div>
-
-        <!-- DATOS -->
-        <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2">
-            Datos personales <div class="flex-1 h-px bg-green-500/20"></div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <input x-model="formData.nombre"
-                class="col-span-1 bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm focus:border-green-500/50 outline-none"
-                placeholder="Nombre">
-            <input x-model="formData.apellido"
-                class="col-span-1 bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm focus:border-green-500/50 outline-none"
-                placeholder="Apellido">
-            <input x-model="formData.email"
-                class="col-span-2 bg-[#182236] border border-green-500/20 rounded-lg p-3 text-sm focus:border-green-500/50 outline-none"
-                placeholder="Correo electrónico">
-        </div>
-
-        <!-- ROLES -->
-        <div class="grid grid-cols-3 gap-2 mb-6">
-            <div @click="formData.role = 'INSTRUCTOR'"
-                :class="formData.role === 'INSTRUCTOR' ? 'border-green-500/30 bg-green-500/10' : 'border-green-500/20 bg-[#182236]'"
-                class="text-center p-3 rounded-xl border cursor-pointer">
-                🎯
-                <div class="font-syne text-sm text-green-400">INSTRUCTOR</div>
-                <div class="text-xs text-gray-400">Gestiona</div>
-            </div>
-            <div @click="formData.role = 'STUDENT'"
-                :class="formData.role === 'STUDENT' ? 'border-blue-500/30 bg-blue-500/10' : 'border-green-500/20 bg-[#182236]'"
-                class="text-center p-3 rounded-xl border cursor-pointer">
-                👤
-                <div class="font-syne text-sm text-blue-400">STUDENT</div>
-                <div class="text-xs text-gray-400">Participa</div>
-            </div>
-            <div @click="formData.role = 'ADMIN'"
-                :class="formData.role === 'ADMIN' ? 'border-yellow-500/30 bg-yellow-500/10' : 'border-green-500/20 bg-[#182236]'"
-                class="text-center p-3 rounded-xl border cursor-pointer">
-                ⚙️
-                <div class="font-syne text-sm text-yellow-400">ADMIN</div>
-                <div class="text-xs text-gray-400">Administra</div>
-            </div>
-        </div>
-
-        <!-- PROYECTOS — sin x-data propio, usa el scope del padre -->
-        <div>
-            <div class="flex items-center gap-2 mb-4">
-                <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Asignar a proyectos</span>
-                <div class="flex-1 h-px bg-[#00C853]/15"></div>
-            </div>
-            <div class="flex flex-col gap-1.5">
-                @foreach($projects as $project)
-                <div @click="selectedProjects.includes({{ $project->id }})
-                        ? selectedProjects = selectedProjects.filter(p => p !== {{ $project->id }})
-                        : selectedProjects.push({{ $project->id }})" :class="selectedProjects.includes({{ $project->id }})
-                        ? 'bg-[#00C853]/6 border-[#00C853]/25'
-                        : 'bg-[#182236] border-[#00C853]/15'"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl border cursor-pointer transition-all">
-
-                    <div :class="selectedProjects.includes({{ $project->id }}) ? 'bg-[#00C853]' : 'bg-[#8AAABB]'"
-                        class="w-2 h-2 rounded-full shrink-0 transition-all"></div>
-
-                    <span class="text-[13px] flex-1">{{ $project->name }}</span>
-
-                    <div :class="selectedProjects.includes({{ $project->id }}) ? 'bg-[#00C853] border-[#00C853]' : 'border-[#8AAABB]/30'"
-                        class="w-[18px] h-[18px] rounded-[5px] border flex items-center justify-center shrink-0 transition-all">
-                        <svg x-show="selectedProjects.includes({{ $project->id }})" width="10" height="10" fill="none"
-                            stroke="white" stroke-width="3" viewBox="0 0 24 24">
-                            <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-
-    </div>
-
-    <!-- FOOTER -->
-    <div class="flex justify-between items-center p-6 border-t border-green-500/20 shrink-0">
-        <div class="text-xs text-gray-400">
-            ID: <b x-text="'#' + String(formData.id).padStart(3, '0')"></b>
-        </div>
-        <div class="flex gap-2">
-            <button @click="$dispatch('close-edit-modal'); document.body.style.overflow='';"
-                class="btn-ghost flex items-center gap-2 px-6 py-[11px] rounded-xl text-[13.5px] font-medium text-[#8AAABB] bg-[#182236] border border-[#00C853]/15 cursor-pointer transition-all hover:bg-[#182236]/80">
-                Cancelar
-            </button>
-            <button @click="save()"
-                class="px-5 py-2 rounded-lg bg-green-400 text-black font-medium hover:bg-green-300 transition-all">
-                Guardar
-            </button>
-        </div>
-    </div>
-
-    <!-- FORM OCULTO -->
-    <form x-ref="editForm" :action="`/users/${formData.id}`" method="POST" style="display:none">
+<div x-data="projectAssignerEdit_{{ $user->id }}()" key="{{ $user->id }}">
+    <form action="{{ route('users.update', $user->id) }}" method="POST">
         @csrf
         @method('PUT')
-        <input type="hidden" name="first_name" :value="formData.nombre">
-        <input type="hidden" name="last_name" :value="formData.apellido">
-        <input type="hidden" name="email" :value="formData.email">
-        <input type="hidden" name="status" :value="formData.status">
-        <input type="hidden" name="role" :value="formData.role">
-        {{-- Los inputs de projects[] se inyectan dinámicamente en save() --}}
+        <div
+            class="w-[620px] max-w-[90vw] max-h-[90vh] bg-[#111D30] border border-[#40C4FF]/15 rounded-3xl overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.5),0_0_0_1px_rgba(64,196,255,0.08)] flex flex-col">
+
+            <!-- Header - Fijo -->
+            <div
+                class="relative px-8 pt-7 pb-6 border-b border-[#40C4FF]/15 bg-[#40C4FF]/[0.03] flex items-center gap-4 shrink-0 pr-16">
+                <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#40C4FF] to-[#00C853]"></div>
+                <div
+                    class="w-12 h-12 rounded-2xl bg-[#40C4FF]/12 border border-[#40C4FF]/25 flex items-center justify-center text-[#40C4FF] shrink-0 font-bold text-lg">
+                    {{ strtoupper(substr($user->first_name, 0, 1)) }}{{ strtoupper(substr($user->last_name, 0, 1)) }}
+                </div>
+                <div>
+                    <div class="font-syne font-extrabold text-[22px] text-[#E8F4FF]">Editar <span
+                            class="text-[#40C4FF]">Usuario</span></div>
+                    <div class="text-[13px] text-[#8AAABB] mt-0.5">Modifica los datos del usuario seleccionado</div>
+                </div>
+                <!-- Badge modo edición -->
+                <div
+                    class="ml-auto flex items-center gap-1.5 bg-[#40C4FF]/08 border border-[#40C4FF]/20 rounded-lg px-3 py-1.5 text-[11px] text-[#40C4FF] shrink-0">
+                    <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    Modo edición
+                </div>
+                <!-- Botón cerrar -->
+                <button type="button" @click="$dispatch('close-edit-modal'); document.body.style.overflow='';"
+                    class="absolute top-5 right-5 w-9 h-9 bg-[#182236] border border-[#40C4FF]/15 rounded-xl flex items-center justify-center text-[#8AAABB] hover:text-[#E8F4FF] transition-colors">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Body - Con scroll -->
+            <div class="px-8 py-7 overflow-y-auto flex-1" style="max-height: calc(90vh - 140px);">
+                <div class="flex flex-col gap-6">
+
+                    <!-- Sección: Datos personales -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Datos personales</span>
+                            <div class="flex-1 h-px bg-[#40C4FF]/15"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Nombre
+                                    <span class="text-[#40C4FF]">*</span></label>
+                                <input
+                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40"
+                                    type="text" name="first_name" required placeholder="Ej: Luis Miguel"
+                                    value="{{ $user->first_name }}" />
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Apellido
+                                    <span class="text-[#40C4FF]">*</span></label>
+                                <input
+                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40"
+                                    type="text" name="last_name" required placeholder="Ej: Muñoz"
+                                    value="{{ $user->last_name }}" />
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Documento
+                                    <span class="text-[#40C4FF]">*</span></label>
+                                <input
+                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40"
+                                    type="text" name="document" required placeholder="Ej: 10025***"
+                                    value="{{ $user->document }}" />
+                            </div>
+                            <div class="col-span-2 flex flex-col gap-1.5">
+                                <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Correo
+                                    electrónico <span class="text-[#40C4FF]">*</span></label>
+                                <input
+                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40"
+                                    type="email" name="email" required placeholder="usuario@correo.com"
+                                    value="{{ $user->email }}" />
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label
+                                    class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Contraseña</label>
+                                <input
+                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40"
+                                    type="password" name="password"
+                                    placeholder="•••••••• (dejar vacío para mantener)" />
+                                <span class="text-[10px] text-[#8AAABB]">Dejar vacío para mantener la contraseña
+                                    actual</span>
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Confirmar
+                                    contraseña</label>
+                                <input
+                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40"
+                                    type="password" name="password_confirmation" placeholder="••••••••" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección: Rol en el sistema -->
+                    <div x-data="{ role: '{{ $user->role }}' }">
+                        <input type="hidden" name="role" :value="role">
+                        <div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Rol en el
+                                    sistema</span>
+                                <div class="flex-1 h-px bg-[#40C4FF]/15"></div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <!-- INSTRUCTOR -->
+                                <div @click="role = 'INSTRUCTOR'"
+                                    :class="role === 'INSTRUCTOR' ? 'bg-[#00C853]/20 border-[#00C853] text-[#00C853] shadow-lg scale-[1.02]' : 'text-[#8AAABB] hover:bg-[#00C853]/10'"
+                                    class="flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
+                                    <span class="block text-lg mb-1">🎯</span>
+                                    <span class="font-syne font-bold text-[11px]">INSTRUCTOR</span>
+                                    <span class="text-[9px] mt-0.5 opacity-70">Gestiona y dirige</span>
+                                </div>
+                                <!-- STUDENT -->
+                                <div @click="role = 'STUDENT'"
+                                    :class="role === 'STUDENT' ? 'bg-[#40C4FF]/20 border-[#40C4FF] text-[#40C4FF] shadow-lg scale-[1.02]' : 'text-[#8AAABB] hover:bg-[#40C4FF]/10'"
+                                    class="flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
+                                    <span class="block text-lg mb-1">👤</span>
+                                    <span class="font-syne font-bold text-[11px]">STUDENT</span>
+                                    <span class="text-[9px] mt-0.5 opacity-70">Participa</span>
+                                </div>
+                                <!-- ADMIN -->
+                                <div @click="role = 'ADMIN'"
+                                    :class="role === 'ADMIN' ? 'bg-[#FFD740]/20 border-[#FFD740] text-[#FFD740] shadow-lg scale-[1.02]' : 'text-[#8AAABB] hover:bg-[#FFD740]/10'"
+                                    class="flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
+                                    <span class="block text-lg mb-1">⚙️</span>
+                                    <span class="font-syne font-bold text-[11px]">ADMIN</span>
+                                    <span class="text-[9px] mt-0.5 opacity-70">Administra</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección: Estado del usuario -->
+                    <div x-data="{ status: {{ $user->status ? '1' : '0' }} }">
+                        <input type="hidden" name="status" :value="status">
+                        <div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Estado del
+                                    usuario</span>
+                                <div class="flex-1 h-px bg-[#40C4FF]/15"></div>
+                            </div>
+                            <div class="flex gap-2">
+                                <!-- ACTIVO -->
+                                <div @click="status = '1'"
+                                    :class="status === '1' ? 'bg-[#00C853]/20 border-[#00C853] text-[#00C853] shadow-lg scale-[1.02]' : 'text-[#8AAABB] hover:bg-[#00C853]/10'"
+                                    class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
+                                    <span class="block text-lg mb-1">🟢</span>
+                                    Activo
+                                </div>
+                                <!-- INACTIVO -->
+                                <div @click="status = '0'"
+                                    :class="status === '0' ? 'bg-[#FF5252]/20 border-[#FF5252] text-[#FF5252] shadow-lg scale-[1.02]' : 'text-[#8AAABB] hover:bg-[#FF5252]/10'"
+                                    class="status-opt flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
+                                    <span class="block text-lg mb-1">🔴</span>
+                                    Inactivo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección: Asignar a proyectos -->
+                    <div x-data="projectAssignerEdit()">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Asignar a proyectos</span>
+                            <div class="flex-1 h-px bg-[#40C4FF]/15"></div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <select @change="addProject($event)"
+                                class="form-input w-full mb-1 bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] transition-all focus:border-[#40C4FF]/40">
+                                <option value="">— Seleccionar proyecto para asignar —</option>
+                                @foreach ($projects as $project)
+                                <option value="{{ $project->id }}" style="background:#111D30; color:white;">
+                                    {{ $project->name }}
+                                </option>
+                                @endforeach
+                            </select>
+
+                            <!-- Inputs ocultos -->
+                            <template x-for="id in selected" :key="id">
+                                <input type="hidden" name="projects[]" :value="id">
+                            </template>
+
+                            <!-- Proyectos seleccionados -->
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                <template x-for="project in selectedProjects" :key="project.id">
+                                    <div
+                                        class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#182236] border border-[#40C4FF]/15">
+                                        <div class="w-[26px] h-[26px] rounded-lg bg-[#40C4FF] flex items-center justify-center text-[9px] text-black font-bold"
+                                            x-text="getInitials(project.name)"></div>
+                                        <span class="text-[12.5px]" x-text="project.name"></span>
+                                        <button type="button" @click="removeProject(project.id)"
+                                            class="ml-2 text-red-400 hover:text-red-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
+                                <div x-show="selectedProjects.length === 0"
+                                    class="text-[12px] text-[#8AAABB] italic py-2">
+                                    No hay proyectos asignados
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Footer - Fijo -->
+            <div
+                class="px-8 py-5 border-t border-[#40C4FF]/15 flex items-center justify-between gap-2.5 shrink-0 bg-[#111D30]">
+                <div class="text-[11px] text-[#8AAABB]">
+                    Última modificación: <span class="text-[#40C4FF] font-semibold">{{
+                        $user->updated_at?->format('d/m/Y, g:i A') ?? 'Sin cambios' }}</span>
+                </div>
+                <div class="flex gap-2.5">
+                    <button type="button" @click="$dispatch('close-edit-modal'); document.body.style.overflow='';"
+                        class="btn-ghost flex items-center gap-2 px-6 py-[11px] rounded-xl text-[13.5px] font-medium text-[#8AAABB] bg-[#182236] border border-[#40C4FF]/15 cursor-pointer transition-all">
+                        Cancelar
+                    </button>
+                    <button
+                        class="btn-primary flex items-center gap-2 px-6 py-[11px] rounded-xl text-[13.5px] font-medium bg-[#40C4FF] text-[#0A1628] cursor-pointer transition-all"
+                        type="submit">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"
+                            viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Guardar cambios
+                    </button>
+                </div>
+            </div>
+
+        </div>
     </form>
-
-    <script>
-        function editUserForm() {
-            return {
-                formData: {
-                    id: null,
-                    nombre: '',
-                    apellido: '',
-                    email: '',
-                    status: 1,
-                    role: '',
-                },
-
-                // ✅ selectedProjects ahora vive en el scope raíz
-                selectedProjects: [],
-
-                loadUserData(data) {
-                    this.formData.id       = data.userId;
-                    this.formData.nombre   = data.nombre;
-                    this.formData.apellido = data.apellido;
-                    this.formData.email    = data.email;
-                    this.formData.status   = data.status;
-                    this.formData.role     = data.role;
-
-                    // ✅ Cargar proyectos del usuario al abrir el modal
-                    this.selectedProjects  = data.projects ?? [];
-                },
-
-                save() {
-                    // ✅ Limpiar proyectos previos para no duplicar
-                    this.$refs.editForm
-                        .querySelectorAll('input[name="projects[]"]')
-                        .forEach(el => el.remove());
-
-                    // ✅ Inyectar un input hidden por cada proyecto seleccionado
-                    this.selectedProjects.forEach(projectId => {
-                        const input = document.createElement('input');
-                        input.type  = 'hidden';
-                        input.name  = 'projects[]';
-                        input.value = projectId;
-                        this.$refs.editForm.appendChild(input);
-                    });
-
-                    this.$refs.editForm.submit();
-                }
-            }
-        }
-    </script>
-
 </div>
+<script>
+    function projectAssignerEdit_{{ $user->id }}() {
+        return {
+            projects: @json($projects),
+            selected: @json($user->projects->pluck('id')->toArray()).map(id => parseInt(id)),
+            
+
+        get selectedProjects() {
+            return this.projects.filter(p => this.selected.includes(parseInt(p.id)));
+        },
+
+        addProject(event) {
+            let id = parseInt(event.target.value);
+            if (!id) return;
+            if (!this.selected.includes(id)) {
+                this.selected.push(id);
+            }
+            event.target.value = "";
+        },
+
+        removeProject(id) {
+            this.selected = this.selected.filter(p => p !== parseInt(id));
+        },
+
+        getInitials(name) {
+            return name.substring(0, 2).toUpperCase();
+        }
+    }
+    // ← closeModals eliminado de aquí
+}
+</script>

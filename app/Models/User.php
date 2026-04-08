@@ -36,8 +36,8 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->belongsToMany(Project::class, 'project_members', 'user_id', 'project_id');
-        
+        return $this->belongsToMany(Project::class, 'project_members', 'user_id', 'project_id')
+        ->withPivot('project_role');
     }
 
     public function ledProjects()
@@ -54,8 +54,9 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\ProjectMember::class, 'user_id');
     }
 
-
-
-
-   
+    // Permite que estudiante y instructor puedan ser lider de proyecto.
+    public function getProjectRoleAttribute()
+    {
+        return optional($this->projectMembers->first())->project_role;
+    }
 }
