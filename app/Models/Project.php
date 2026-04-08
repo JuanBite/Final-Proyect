@@ -76,6 +76,11 @@ public function members()
 
 public function leader()
 {
+    return $this->belongsTo(User::class, 'leader_id');
+}
+
+public function leaderViaMembers()
+{
     return $this->belongsToMany(User::class, 'project_members')
                 ->withPivot('project_role')
                 ->wherePivot('project_role', 'LEADER');

@@ -354,8 +354,7 @@
     </div>
 
     <!-- MODAL DE EDICIÓN -->
-    <div x-show="modalEditarAbierto" x-transition.opacity @close-modal.window="modalEditarAbierto = false" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center" style="display: none;">
-        <div class="absolute inset-0" @click="modalEditarAbierto = false"></div>
+    <div x-show="modalEditarAbierto" @click.away="modalEditarAbierto = false; document.body.style.overflow = ''; " x-transition.opacity @close-modal.window="modalEditarAbierto = false" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center" x-cloak>
         <div x-transition.scale.origin.center class="relative">
             @include('modals.edit.project')
         </div>
@@ -366,7 +365,7 @@
         @csrf
         @method('DELETE')
 
-        <div x-show="modalEliminarAbierto" x-transition.opacity class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center" style="display: none;">
+        <div x-show="modalEliminarAbierto" @click.away="modalEliminarAbierto = false; document.body.style.overflow = ''; " x-transition.opacity class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center" x-cloak>
 
             <div class="absolute inset-0" @click="modalEliminarAbierto = false"></div>
 
