@@ -3,6 +3,10 @@
 
 @section('content')
 
+@php
+    $user = Auth::user();
+@endphp
+
 {{-- ================================================================
      HEADER
 ================================================================ --}}
@@ -10,11 +14,10 @@
     <div>
         <p class="text-[10px] font-mono text-green-400/60 uppercase tracking-[0.2em] mb-1">Panel de Control</p>
         <h1 class="font-syne text-3xl font-extrabold text-white leading-tight">
-            ¡Bienvenido, <span class="text-green-400">{{ Auth::user()->first_name . ' ' . Auth::user()->last_name}}</span> 👋
+            ¡Bienvenido, <span class="text-green-400">{{ $user->first_name . ' ' . $user->last_name }}</span> 👋
         </h1>
         <p class="text-gray-400 text-sm mt-1.5">Gestión de proyectos de grado · {{ $today->format('d M Y') }}</p>
     </div>
-
 </div>
 
 {{-- ================================================================
@@ -54,14 +57,13 @@
 
     <div class="bg-[#1C2A40] border border-green-500/20 rounded-xl p-4 hover:border-green-500/40 transition-colors">
         <p class="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-2">Avance Global</p>
-        {{-- Mini donut SVG --}}
+        @php
+            $avg = $stats['avg_progress'];
+            $r = 18; $circ = 2 * pi() * $r;
+            $offset = $circ - ($avg / 100) * $circ;
+            $avgColor = $avg >= 70 ? '#4ade80' : ($avg >= 40 ? '#facc15' : '#f87171');
+        @endphp
         <div class="flex items-center gap-3">
-            @php
-                $avg = $stats['avg_progress'];
-                $r = 18; $circ = 2 * pi() * $r;
-                $offset = $circ - ($avg / 100) * $circ;
-                $avgColor = $avg >= 70 ? '#4ade80' : ($avg >= 40 ? '#facc15' : '#f87171');
-            @endphp
             <svg width="48" height="48" viewBox="0 0 48 48">
                 <circle cx="24" cy="24" r="{{ $r }}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="5"/>
                 <circle cx="24" cy="24" r="{{ $r }}" fill="none" stroke="{{ $avgColor }}" stroke-width="5"
@@ -107,14 +109,20 @@
             </div>
         </div>
 
+        {{-- FIX: si no hay datos mostramos mensaje en lugar de donut vacío --}}
+        @if($stats['total'] === 0)
+        <p class="text-[11px] font-mono text-gray-500 text-center py-2">Sin proyectos registrados</p>
+        @endif
+
         <div class="space-y-2">
             @foreach($statusConfig as $key => $cfg)
             @php $count = match($key) {
                 'IN_PROGRESS' => $stats['en_progreso'],
                 'COMPLETED'   => $stats['completados'],
                 'DELAYED'     => $stats['con_retraso'],
-                default       => 0
+                default       => null   
             }; @endphp
+            @if(!is_null($count))
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <div class="w-2 h-2 rounded-full" style="background:{{ $cfg['color'] }}"></div>
@@ -127,13 +135,15 @@
                     <span class="text-[11px] font-mono font-bold w-4 text-right" style="color:{{ $cfg['color'] }}">{{ $count }}</span>
                 </div>
             </div>
+            @endif
             @endforeach
         </div>
     </div>
 
     {{-- EN RIESGO --}}
     <div class="lg:col-span-2 bg-[#1C2A40] border border-red-400/20 rounded-xl p-5">
-        <div class="flex items-center gap-2 mb-5" style="scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.1) transparent">
+        {{-- FIX: el style de scrollbar estaba aquí por error, se eliminó --}}
+        <div class="flex items-center gap-2 mb-5">
             <div class="w-6 h-6 rounded-lg bg-red-400/10 border border-red-400/20 flex items-center justify-center">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-red-400">
                     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -150,8 +160,8 @@
             @foreach($at_risk as $rp)
             @php
                 $daysLeft = $rp->due_date ? $today->diffInDays($rp->due_date, false) : null;
-                $urgency  = $daysLeft < 0 ? 'VENCIDO' : ($daysLeft === 0 ? 'HOY' : ($daysLeft === 1 ? 'MAÑANA' : "en {$daysLeft}d"));
-                $urgColor = $daysLeft <= 0 ? '#f87171' : ($daysLeft <= 7 ? '#fb923c' : '#facc15');
+                $urgency  = is_null($daysLeft) ? 'S/F' : ($daysLeft < 0 ? 'VENCIDO' : ($daysLeft === 0 ? 'HOY' : ($daysLeft === 1 ? 'MAÑANA' : "en {$daysLeft}d")));
+                $urgColor = is_null($daysLeft) ? '#6b7280' : ($daysLeft <= 0 ? '#f87171' : ($daysLeft <= 7 ? '#fb923c' : '#facc15'));
             @endphp
             <div class="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:border-red-400/20 transition-colors">
                 <div class="flex items-start justify-between gap-2 mb-2">
@@ -192,7 +202,6 @@
 ================================================================ --}}
 <div class="grid grid-cols-1 gap-5 mb-5">
 
-    {{-- AVANCE POR PROYECTO --}}
     <div class="bg-[#1C2A40] border border-white/[0.07] rounded-xl p-5">
         <div class="flex items-center gap-2 mb-5">
             <div class="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
@@ -210,18 +219,19 @@
         <div class="space-y-3 max-h-96 overflow-y-auto pr-1" style="scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.1) transparent">
             @forelse($projects as $p)
             @php
-                $cfg = $statusConfig[$p->status] ?? $statusConfig['IN_PROGRESS'];
-                $pct   = $p->progress ?? 0;
-                $daysLeft = $today->diffInDays($p->due_date, false);
+                $cfg      = $statusConfig[$p->status] ?? $statusConfig['IN_PROGRESS'];
+                $pct      = $p->progress ?? 0;
+                $daysLeft = $p->due_date ? $today->diffInDays($p->due_date, false) : null;
             @endphp
             <div class="group">
                 <div class="flex items-center justify-between mb-1">
+                    {{-- FIX: max-w relativo en lugar de píxeles fijos --}}
                     <div class="flex items-center gap-2 min-w-0">
-                        <span class="text-[11px] font-mono text-gray-300 truncate max-w-[180px]">{{ $p->name }}</span>
+                        <span class="text-[11px] font-mono text-gray-300 truncate max-w-[40%]">{{ $p->name }}</span>
                         <span class="shrink-0 text-[9px] font-mono px-1.5 py-0.5 rounded {{ $cfg['bg'] }} {{ $cfg['text'] }}">{{ $cfg['label'] }}</span>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
-                        @if($p->due_date)
+                        @if(!is_null($daysLeft))
                         <span class="text-[9px] font-mono {{ $daysLeft < 0 ? 'text-red-400' : ($daysLeft <= 7 ? 'text-yellow-400' : 'text-gray-500') }}">
                             {{ $daysLeft < 0 ? 'Vencido' : $daysLeft.'d restantes' }}
                         </span>
@@ -242,14 +252,6 @@
 
 </div>
 
-
-
-
-
-    
-
-
-
 {{-- ================================================================
      CHART.JS — solo Donut
 ================================================================ --}}
@@ -268,6 +270,13 @@
         bodyFont: { family: 'monospace', size: 12, weight: 'bold' },
     };
 
+    // FIX: datos casteados a entero para evitar problemas si llegan como string
+    const chartData = [
+        {{ (int)$stats['en_progreso'] }},
+        {{ (int)$stats['completados'] }},
+        {{ (int)$stats['con_retraso'] }},
+    ];
+
     function renderDonut() {
         if (typeof window.Chart === 'undefined') {
             return window.setTimeout(renderDonut, 50);
@@ -278,6 +287,10 @@
             return window.setTimeout(renderDonut, 50);
         }
 
+        // FIX: si no hay datos, no renderizamos el donut para evitar advertencias de Chart.js
+        const total = chartData.reduce((a, b) => a + b, 0);
+        if (total === 0) return;
+
         window.Chart.defaults.color = 'rgba(255,255,255,0.25)';
         window.Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
 
@@ -286,11 +299,7 @@
             data: {
                 labels: ['En Progreso', 'Completados', 'Con Retraso'],
                 datasets: [{
-                    data: [
-                        {{ $stats['en_progreso'] }},
-                        {{ $stats['completados'] }},
-                        {{ $stats['con_retraso'] }},
-                    ],
+                    data: chartData,
                     backgroundColor: ['#facc15', '#4ade80', '#f87171'],
                     borderColor: 'transparent',
                     borderRadius: 4,
