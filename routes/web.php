@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
 
     // Users
     Route::resource('users', UserController::class);
-    Route::get('/users/detail/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
 
     // REGIONS
     Route::post('/regions', [RegionController::class, 'store'])->name('regions.store');

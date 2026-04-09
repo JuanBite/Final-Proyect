@@ -14,14 +14,14 @@
         <div class="px-8 pb-7 flex items-end gap-6 -mt-9 relative z-10">
             <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-700 to-emerald-400 border-4 border-[#1C2A40] flex items-center justify-center font-black text-3xl text-slate-900 shrink-0 shadow-xl shadow-emerald-500/20" style="font-family:'Syne',sans-serif">LM</div>
             <div class="flex-1 pt-11">
-                <h1 class="font-black text-3xl leading-tight" style="font-family:'Syne',sans-serif">Luis Miguel Muñoz</h1>
-                <p class="text-sm text-slate-400 mt-1">luis.munoz@sigpro.edu.co</p>
+                <h1 class="font-black text-3xl leading-tight" style="font-family:'Syne',sans-serif">{{ Auth::user()->first_name . ' ' . Auth::user()->last_name }}</h1>
+                <p class="text-sm text-slate-400 mt-1">{{ Auth::user()->email }}</p>
                 <div class="flex gap-2 mt-2.5 flex-wrap items-center">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
                         <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <circle cx="12" cy="12" r="10" />
                             <polyline points="20 6 9 17 4 12" /></svg>
-                        Activo
+                        {{ auth()->user()->status ? 'Activo' : 'Inactivo' }}
                     </span>
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-yellow-400/12 text-yellow-400 border border-yellow-400/25">
                         <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -35,7 +35,7 @@
                             <line x1="16" y1="2" x2="16" y2="6" />
                             <line x1="8" y1="2" x2="8" y2="6" />
                             <line x1="3" y1="10" x2="21" y2="10" /></svg>
-                        Desde 12/02/2026
+                        {{ Auth::user()->created_at}}
                     </span>
                 </div>
             </div>
@@ -122,7 +122,7 @@
                         </div>
                         <div>
                             <p class="text-xs uppercase tracking-widest text-slate-500">Nombre completo</p>
-                            <p class="text-sm font-medium mt-0.5">Luis Miguel Muñoz</p>
+                            <p class="text-sm font-medium mt-0.5">{{ Auth::user()->first_name . ' ' . Auth::user()->last_name }}</p>
                         </div>
                     </div>
 
@@ -134,7 +134,7 @@
                         </div>
                         <div>
                             <p class="text-xs uppercase tracking-widest text-slate-500">Correo electrónico</p>
-                            <p class="text-sm font-medium mt-0.5">luis.munoz@sigpro.edu.co</p>
+                            <p class="text-sm font-medium mt-0.5">{{ Auth::user()->email }}</p>
                         </div>
                     </div>
 
@@ -148,7 +148,7 @@
                         </div>
                         <div>
                             <p class="text-xs uppercase tracking-widest text-slate-500">Fecha de ingreso</p>
-                            <p class="text-sm font-medium mt-0.5">12 de Febrero, 2026</p>
+                            <p class="text-sm font-medium mt-0.5">{{ Auth::user()->created_at}}</p>
                         </div>
                     </div>
 
@@ -160,7 +160,7 @@
                         </div>
                         <div>
                             <p class="text-xs uppercase tracking-widest text-slate-500">Documento</p>
-                            <p class="text-sm font-medium mt-0.5">1.234.567.890</p>
+                            <p class="text-sm font-medium mt-0.5">{{ Auth::user()->document}}</p>
                         </div>
                     </div>
 
@@ -172,7 +172,7 @@
                         </div>
                         <div>
                             <p class="text-xs uppercase tracking-widest text-slate-500">Último acceso</p>
-                            <p class="text-sm font-medium mt-0.5">Hoy, 9:42 AM</p>
+                            <p class="text-sm font-medium mt-0.5">{{--{{ }}--}}</p> 
                         </div>
                     </div>
 
@@ -185,7 +185,8 @@
                         <div>
                             <p class="text-xs uppercase tracking-widest text-slate-500">Estado de la cuenta</p>
                             <span class="inline-flex items-center gap-1.5 mt-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Activo
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                {{ auth()->user()->status ? 'Activo' : 'Inactivo' }}
                             </span>
                         </div>
                     </div>

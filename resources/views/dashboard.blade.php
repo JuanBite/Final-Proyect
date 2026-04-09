@@ -10,7 +10,7 @@
     <div>
         <p class="text-[10px] font-mono text-green-400/60 uppercase tracking-[0.2em] mb-1">Panel de Control</p>
         <h1 class="font-syne text-3xl font-extrabold text-white leading-tight">
-            ¡Bienvenido, <span class="text-green-400">Luis Miguel!</span> 👋
+            ¡Bienvenido, <span class="text-green-400">{{ Auth::user()->first_name . ' ' . Auth::user()->last_name}}</span> 👋
         </h1>
         <p class="text-gray-400 text-sm mt-1.5">Gestión de proyectos de grado · {{ $today->format('d M Y') }}</p>
     </div>

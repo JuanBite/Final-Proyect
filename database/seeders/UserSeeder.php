@@ -10,32 +10,6 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // =========================
-        // ADMIN
-        // =========================
-
-        $user = new User;
-        $user->first_name = 'Juan';
-        $user->last_name = 'Pérez';
-        $user->email = 'admin@sigpro.com';
-        $user->document = '12345678917';
-        $user->password = Hash::make('admin123');
-        $user->role = 'ADMIN';
-        $user->status = 1;
-        $user->cohort_id = null;
-        $user->save();
-
-        $user = new User;
-        $user->first_name = 'María';
-        $user->last_name = 'González';
-        $user->email = 'superadmin@sigpro.com';
-        $user->document = '12345678914';
-        $user->password = Hash::make('admin123');
-        $user->role = 'ADMIN';
-        $user->status = 1;
-        $user->cohort_id = null;
-        $user->save();
-
 
         // =========================
         // INSTRUCTORES
@@ -132,6 +106,39 @@ class UserSeeder extends Seeder
         $user->role = 'STUDENT';
         $user->status = 1;
         $user->cohort_id = 2;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Juan David';
+        $user->last_name = 'Quinchia Contreras';
+        $user->email = 'quinchiaj73@gmail.com';
+        $user->document = '107332084';
+        $user->password = Hash::make('Quinchia_123');
+        $user->role = 'ADMIN';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Sebastian';
+        $user->last_name = 'Grijalva Pineda';
+        $user->email = 'Sebastiangp20044@gmail.com';
+        $user->document = '13131451241';
+        $user->password = Hash::make('Sebastian_123');
+        $user->role = 'ADMIN';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'Luis Miguel';
+        $user->last_name = 'Muñoz Arango';
+        $user->email = 'Luismik1010@gmail.com';
+        $user->document = '1313151241';
+        $user->password = Hash::make('Luis_123');
+        $user->role = 'ADMIN';
+        $user->status = 1;
+        $user->cohort_id = null;
         $user->save();
     }
 }
