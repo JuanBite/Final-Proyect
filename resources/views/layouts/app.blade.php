@@ -7,13 +7,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('scripts')
 </head>
-<body class="bg-[#0A1628] text-[#E8F4FF]">
+<body class="bg-[#0A1628] text-[#E8F4FF]" x-data="{ sidebarOpen: false  }">
 
     @include('layouts.sidebar')
 
-    <div class="ml-60 min-h-screen flex flex-col">
+     {{-- El margen cambia según si el sidebar está abierto o cerrado --}}
+    <div :class="sidebarOpen ? 'ml-60' : 'ml-16'">
         @include('layouts.topbar')
-
         <main class="p-8 flex flex-col gap-6 flex-1">
             @yield('content')
         </main>

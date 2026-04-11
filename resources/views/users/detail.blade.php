@@ -3,6 +3,11 @@
 @section('title', 'Dashboard')
 
 @section('content')
+@section('breadcrumbs')
+<span class="text-[#00C853]/30">›</span>
+<span class="font-syne font-bold text-sm text-[#E8F4FF]">Perfil</span>
+@endsection
+
 <div x-data="{ editModalOpen: false, currentUserId: null }" x-init="window.editModalOpen = () => { editModalOpen = false };" class="flex flex-col gap-6">
     <!-- HERO CARD -->
     <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden hover:border-[#00C853]/35 hover:shadow-2xl hover:shadow-black/30 transition-all relative">
