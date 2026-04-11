@@ -31,18 +31,25 @@ class UserController extends Controller
             ->when($filter === 'MEMBER', function ($query) {
                 $query->whereHas('projectMembers', fn($q) => $q->where('project_role', 'MEMBER'));
             })
-            ->get();
+            ->paginate(10);
+
+        // Conteos reales (sin paginación)
+        $totalUsers  = User::count();
+        $totalLeaders = User::whereHas('projectMembers', fn($q) => $q->where('project_role', 'LEADER'))->count();
+        $totalMembers = User::whereHas('projectMembers', fn($q) => $q->where('project_role', 'MEMBER'))->count();
+        $totalMembers = User::where('status', 1)->count();
 
         $projects = Project::all();
         $cohorts  = Cohort::all();
-        return view('users.index', compact('users', 'projects', 'cohorts'));
+        return view('users.index', compact('users', 'projects', 'cohorts', 'totalUsers', 'totalLeaders', 'totalMembers'));
     }
 
     // CREAR
     public function create()
     {
         $projects = Project::all();
-        return view('modals.create.user', compact('projects'));
+        $cohorts = Cohort::all();
+        return view('modals.create.user', compact('projects', 'cohorts'));
     }
 
     // GUARDAR
@@ -64,6 +71,7 @@ class UserController extends Controller
             'document'   => $request->document,
             'password'   => bcrypt($request->password),
             'role'       => $request->role,
+            'cohort_id'  => $request->cohort_id,
         ]);
 
         // Proyectos
@@ -84,18 +92,40 @@ class UserController extends Controller
     // Show
     public function show(User $user)
     {
+        $user->load(['projects.members', 'projectMembers']);
+
+        $assignedProjects = $user->projects;
+
+        $ledProjects = $assignedProjects->filter(
+            fn($p) => $p->pivot->project_role === 'LEADER'
+        );
+
+        // members() ya retorna Users directamente
+        $teammates = $assignedProjects
+            ->flatMap(fn($p) => $p->members)
+            ->filter(fn($m) => $m->id !== $user->id) // $m es User, no ProjectMember
+            ->unique('id');
+
         $projects = Project::all();
         $cohorts  = Cohort::all();
 
-        return view('users.detail', compact('user', 'projects', 'cohorts'));
+        return view('users.detail', compact(
+            'user',
+            'projects',
+            'cohorts',
+            'assignedProjects',
+            'ledProjects',
+            'teammates'
+        ));
     }
 
     // Edit
     public function edit(User $user)
     {
         $projects = Project::all();
+        $cohorts = Cohort::all();
 
-        return view('modals.edit.user', compact('user', 'projects'));
+        return view('modals.edit.user', compact('user', 'projects', 'cohorts'));
     }
 
     // Update
@@ -111,6 +141,7 @@ class UserController extends Controller
             'email' => $request->email,
             'role' => $request->role,
             'status' => $request->status,
+            'cohort_id'  => $request->cohort_id,
         ]);
 
         // Contraseña (solo si viene)

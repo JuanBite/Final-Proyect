@@ -20,7 +20,7 @@
                 </svg>
             </div>
             <div>
-                <div class="font-black text-2xl">{{ $users->count() }}</div>
+                <div class="font-black text-2xl">{{ $totalUsers }}</div>
                 <div class="text-xs text-slate-400">Usuarios totales</div>
             </div>
         </div>
@@ -36,7 +36,7 @@
             </div>
             <div>
                 <div class="font-black text-2xl">
-                    {{ $users->filter(fn($u) => $u->projectMembers->contains('project_role','LEADER'))->count() }}
+                    {{ $totalLeaders  }}
                 </div>
                 <div class="text-xs text-slate-400">Líderes de proyecto</div>
             </div>
@@ -52,7 +52,7 @@
             </div>
             <div>
                 <div class="font-black text-2xl">
-                    {{ $users->count() }}
+                    {{ $totalMembers }}
                 </div>
                 <div class="text-xs text-slate-400">Miembros activos</div>
             </div>
@@ -151,7 +151,7 @@
     </div>
 
     {{-- 🔹 TABLA --}}
-    <div class="bg-[#1C2A40] border border-emerald-500/20 rounded-2xl overflow-hidden overflow-x-auto">
+    <div class="bg-[#1C2A40]  border border-emerald-500/20 rounded-2xl overflow-hidden overflow-x-auto">
 
         <table class="w-full min-w-[800px]" id="users-table">
 
@@ -326,6 +326,47 @@
                 @endforeach
             </tbody>
         </table>
+        {{-- Paginador --}}
+        @if($users->hasPages())
+        <div class="flex items-center justify-between px-5 py-4 border-t border-white/5">
+            <span class="text-xs text-slate-400">
+                Mostrando {{ $users->firstItem() }}–{{ $users->lastItem() }} de {{ $users->total() }} usuarios
+            </span>
+            <div class="flex items-center gap-1">
+                {{-- Anterior --}}
+                @if($users->onFirstPage())
+                <span class="px-3 py-1.5 rounded-lg text-xs text-slate-600 bg-white/5 cursor-not-allowed">←
+                    Anterior</span>
+                @else
+                <a href="{{ $users->previousPageUrl() }}"
+                    class="px-3 py-1.5 rounded-lg text-xs text-slate-400 bg-white/5 hover:bg-emerald-500/20 hover:text-emerald-400 transition-all">
+                    ← Anterior
+                </a>
+                @endif
+
+                {{-- Páginas --}}
+                @foreach($users->getUrlRange(1, $users->lastPage()) as $page => $url)
+                <a href="{{ $url }}" class="px-3 py-1.5 rounded-lg text-xs transition-all
+                {{ $page == $users->currentPage()
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    : 'text-slate-400 bg-white/5 hover:bg-emerald-500/10 hover:text-emerald-400' }}">
+                    {{ $page }}
+                </a>
+                @endforeach
+
+                {{-- Siguiente --}}
+                @if($users->hasMorePages())
+                <a href="{{ $users->nextPageUrl() }}"
+                    class="px-3 py-1.5 rounded-lg text-xs text-slate-400 bg-white/5 hover:bg-emerald-500/20 hover:text-emerald-400 transition-all">
+                    Siguiente →
+                </a>
+                @else
+                <span class="px-3 py-1.5 rounded-lg text-xs text-slate-600 bg-white/5 cursor-not-allowed">Siguiente
+                    →</span>
+                @endif
+            </div>
+        </div>
+        @endif
         <!-- Modal de creación de usuario -->
         <div x-show="createModalOpen" @close-create-modal.window="createModalOpen=false"
             x-transition.opacity.duration.200ms

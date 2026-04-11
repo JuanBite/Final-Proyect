@@ -73,6 +73,22 @@
                                     type="text" name="document" required placeholder="Ej: 10025***"
                                     value="{{ $user->document }}" />
                             </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">
+                                    Ficha <span class="text-[#40C4FF]">*</span>
+                                </label>
+                                <select name="cohort_id"
+                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40"
+                                    required>
+                                    <option value="" disabled>Selecciona una ficha</option>
+                                    @foreach($cohorts as $cohort)
+                                    <option value="{{ $cohort->id }}" {{ $user->cohort_id == $cohort->id ? 'selected' :
+                                        '' }}>
+                                        {{ $cohort->program_name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="col-span-2 flex flex-col gap-1.5">
                                 <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Correo
                                     electrónico <span class="text-[#40C4FF]">*</span></label>
