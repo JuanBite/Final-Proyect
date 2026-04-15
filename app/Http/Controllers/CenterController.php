@@ -10,8 +10,8 @@ class CenterController extends Controller
     // Listing
     public function index()
     {
-        $centers = Center::orderBy('id', 'desc')->paginate(20);
-        return view('gestion.index')->with('centers', $centers);
+        $center = Center::orderBy('id', 'desc')->paginate(20);
+        return view('gestion.index')->with('centers', $center);
     }
 
     // Create
@@ -29,27 +29,27 @@ class CenterController extends Controller
             'region_id'     => ['required', 'string'],
            
         ]);
-        $centers = new Center();
-        $centers->name        = $request       ->name;
-        $centers->code        = $request       ->code;
-        $centers->region_id   = $request       ->region_id;
+        $center = new Center();
+        $center->name        = $request       ->name;
+        $center->code        = $request       ->code;
+        $center->region_id   = $request       ->region_id;
         
        
 
-        if ($centers->save()) {
-            return redirect()->route('gestion', ['tab' => 'centers'])->with('success', 'Center ' . $centers->name . ' was successfully added.');
+        if ($center->save()) {
+            return redirect()->route('gestion', ['tab' => 'centers'])->with('success', 'Center ' . $center->name . ' was successfully added.');
         }
     }
 
     // Show
-    public function show(Center $centers)
+    public function show(Center $center)
     {
-        return view('gestion.index')->with('center', $centers);
+        return view('gestion.index')->with('center', $center);
     }
     // Edit
-    public function edit(Center $centers)
+    public function edit(Center $center)
     {
-        return view('gestion.index')->with('center', $centers);
+        return view('gestion.index')->with('center', $center);
     }
     // Update
     public function update(Request $request, Center $center)
