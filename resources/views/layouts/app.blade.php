@@ -7,7 +7,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('scripts')
 </head>
-<body class="bg-[#0A1628] text-[#E8F4FF]" x-data="{ sidebarOpen: false  }">
+<body class="bg-[#0A1628] text-[#E8F4FF]" x-data="{ sidebarOpen: true  }">
 
     @include('layouts.sidebar')
 
