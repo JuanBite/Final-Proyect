@@ -23,9 +23,9 @@
                     <path d="M21 21l-4.35-4.35" />
                 </svg>
 
-                <!-- Input -->
-                <input type="text" name="search" id="search-input" placeholder="Buscar proyecto..." value="{{ request('search') }}" class="bg-transparent text-sm text-slate-300 placeholder-slate-500 outline-none flex-1 min-w-0 transition-colors" oninput="toggleClearBtn(this); liveSearch(this.value)">
-
+                <input type="text" name="search" id="search-input" placeholder="Buscar proyecto..." value="{{ request('search') }}" class="bg-transparent text-sm text-slate-300 placeholder-slate-500 flex-1 min-w-0 
+           border-none outline-none ring-0 focus:ring-0 focus:outline-none" oninput="toggleClearBtn(this); liveSearch(this.value)">
+           
                 <!-- Botón limpiar -->
                 <button type="button" id="clear-search" onclick="clearSearch()" class="flex-shrink-0 w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors {{ request('search') ? '' : 'hidden' }}" title="Limpiar búsqueda">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
