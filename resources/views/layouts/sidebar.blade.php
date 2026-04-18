@@ -52,11 +52,12 @@
             </svg>
             <span class="sidebar-text hidden whitespace-nowrap">Proyectos</span>
         </a>
+        @if(auth()->user()->role === 'ADMIN' || auth()->user()->role === 'INSTRUCTOR')
 
         <span id="label-admin" class="hidden text-[9px] tracking-[2px] uppercase text-[#8AAABB] px-2 py-1 mt-4">Admin</span>
 
         <a href="{{ url('gestion') }}" class="sidebar-link flex items-center gap-3 px-0 justify-center py-2.5 rounded-xl text-[13.5px] border transition-all
-            {{ request()->is('gestion*') ? 'text-[#00C853] bg-[#00C853]/12 border-[#00C853]/25' : 'text-[#8AAABB] border-transparent hover:bg-[#00C853]/6 hover:text-[#E8F4FF] hover:border-[#00C853]/15' }}">
+        {{ request()->is('gestion*') ? 'text-[#00C853] bg-[#00C853]/12 border-[#00C853]/25' : 'text-[#8AAABB] border-transparent hover:bg-[#00C853]/6 hover:text-[#E8F4FF] hover:border-[#00C853]/15' }}">
             <svg class="shrink-0 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
@@ -66,19 +67,23 @@
         </a>
 
         <a href="{{ url('users') }}" class="sidebar-link flex items-center gap-3 px-0 justify-center py-2.5 rounded-xl text-[13.5px] border transition-all
-            {{ request()->is('users') ? 'text-[#00C853] bg-[#00C853]/12 border-[#00C853]/25' : 'text-[#8AAABB] border-transparent hover:bg-[#00C853]/6 hover:text-[#E8F4FF] hover:border-[#00C853]/15' }}">
+        {{ request()->is('users') ? 'text-[#00C853] bg-[#00C853]/12 border-[#00C853]/25' : 'text-[#8AAABB] border-transparent hover:bg-[#00C853]/6 hover:text-[#E8F4FF] hover:border-[#00C853]/15' }}">
             <svg class="shrink-0" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
             </svg>
             <span class="sidebar-text hidden whitespace-nowrap">Usuarios</span>
         </a>
+
+        @endif
     </nav>
 
     {{-- User --}}
     <div class="p-3 border-t border-green-500/20">
         <a href="{{ route('users.show', auth()->user()) }}">
-            <div id="user-card" class="flex items-center justify-center bg-[#182236] border border-[#00C853]/20 p-3 rounded-lg hover:border-[#00C853]/40 transition-all overflow-hidden">
+            <div id="user-card" :class="sidebarOpen 
+        ? 'border border-[#00C853]/20 hover:border-[#00C853]/40' 
+        : ''" class="flex items-center justify-center bg-[#182236] p-3 rounded-lg overflow-hidden">
                 <div class="w-9 h-9 bg-gradient-to-br from-[#00C853] to-[#00A040] rounded-lg flex items-center justify-center text-[#0A1628] font-bold text-xs font-syne shrink-0">
                     {{ strtoupper(substr(auth()->user()->first_name, 0, 1) . substr(auth()->user()->last_name, 0, 1)) }}
                 </div>

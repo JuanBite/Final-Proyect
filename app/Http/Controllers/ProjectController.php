@@ -26,7 +26,7 @@ class ProjectController extends Controller
             });
         }
 
-        $projects = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();
+        $projects = $query->orderBy('id', 'desc')->paginate(9)->withQueryString();
         $users = User::all();
 
         return view('projects.index', compact('projects', 'users'));
