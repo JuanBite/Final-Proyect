@@ -155,6 +155,12 @@ class UserController extends Controller
         $user->projects()->sync($request->projects ?? []);
 
 
+        // 🔥 Redirige según desde dónde vino
+        if ($request->redirect_to === 'show') {
+            return redirect()->route('users.show', $user->id)
+                ->with('success', 'Usuario actualizado correctamente');
+        }
+
         return redirect()->route('users.index')
             ->with('success', 'Usuario actualizado correctamente');
     }

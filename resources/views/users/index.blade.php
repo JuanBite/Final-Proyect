@@ -8,7 +8,7 @@
 <span class="font-syne font-bold text-sm text-[#E8F4FF]">Usuarios</span>
 @endsection
 
-<div x-data="{ createModalOpen: false, editModalOpen: false, deleteModalOpen: false, showModalOpen: false }" x-init=" { createModalOpen = false, editModalOpen = false, deleteModalOpen = false, showModalOpen = false }" class="p-6 space-y-8">
+<div x-data="{ createModalOpen: false, editModalOpen: false, deleteModalOpen: false, showModalOpen: false }" x-init=" { createModalOpen = false, editModalOpen = false, deleteModalOpen = false, showModalOpen = false }" class="p-3 space-y-6">
 
     {{-- 🔹 STATS --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

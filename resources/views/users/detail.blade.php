@@ -8,9 +8,11 @@
 <span class="font-syne font-bold text-sm text-[#E8F4FF]">Perfil</span>
 @endsection
 
-<div x-data="{ editModalOpen: false, currentUserId: null }" x-init="window.editModalOpen = () => { editModalOpen = false };" class="flex flex-col gap-6">
+<div x-data="{ editModalOpen: false, currentUserId: null }"
+    x-init="window.editModalOpen = () => { editModalOpen = false };" class="flex flex-col gap-6">
     <!-- HERO CARD -->
-    <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden hover:border-[#00C853]/35 hover:shadow-2xl hover:shadow-black/30 transition-all relative">
+    <div
+        class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden hover:border-[#00C853]/35 hover:shadow-2xl hover:shadow-black/30 transition-all relative">
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-sky-400 rounded-t-2xl"></div>
 
         <!-- Body -->
@@ -35,7 +37,8 @@
                         {{ $user->status ? 'Activo' : 'Inactivo' }}
                     </span>
                     <span @if($user->role === 'ADMIN')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-yellow-500/12 text-yellow-400 border border-yellow-500/25">
+                        <span
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-yellow-500/12 text-yellow-400 border border-yellow-500/25">
                             <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5"
                                 viewBox="0 0 24 24">
                                 <circle cx="12" cy="12" r="10" />
@@ -44,7 +47,8 @@
                             Admin
                         </span>
                         @elseif($user->role === 'INSTRUCTOR')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
+                        <span
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
                             <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5"
                                 viewBox="0 0 24 24">
                                 <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -64,7 +68,8 @@
                         </span>
                         @endif
                     </span>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-sky-400/12 text-sky-400 border border-sky-400/25">
+                    <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-sky-400/12 text-sky-400 border border-sky-400/25">
                         <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5"
                             viewBox="0 0 24 24">
                             <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -91,7 +96,8 @@
 
     <!-- STATS -->
     <div class="grid grid-cols-4 gap-4">
-        <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-5 py-4 relative overflow-hidden hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-lg hover:shadow-black/30 transition-all">
+        <div
+            class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-5 py-4 relative overflow-hidden hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-lg hover:shadow-black/30 transition-all">
             <div class="absolute top-0 left-0 right-0 h-0.5 bg-emerald-500 rounded-t-2xl"></div>
             <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -106,7 +112,8 @@
             <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">Proyectos asignados</div>
         </div>
 
-        <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-5 py-4 relative overflow-hidden hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-lg hover:shadow-black/30 transition-all">
+        <div
+            class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-5 py-4 relative overflow-hidden hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-lg hover:shadow-black/30 transition-all">
             <div class="absolute top-0 left-0 right-0 h-0.5 bg-yellow-400 rounded-t-2xl"></div>
             <div class="w-9 h-9 rounded-xl bg-yellow-400/10 text-yellow-400 flex items-center justify-center mb-3">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -119,7 +126,8 @@
             <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">Proyectos liderados</div>
         </div>
 
-        <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-5 py-4 relative overflow-hidden hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-lg hover:shadow-black/30 transition-all">
+        <div
+            class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-5 py-4 relative overflow-hidden hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-lg hover:shadow-black/30 transition-all">
             <div class="absolute top-0 left-0 right-0 h-0.5 bg-sky-400 rounded-t-2xl"></div>
             <div class="w-9 h-9 rounded-xl bg-sky-400/10 text-sky-400 flex items-center justify-center mb-3">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -133,7 +141,8 @@
             <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">Compañeros de equipo</div>
         </div>
 
-        <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-5 py-4 relative overflow-hidden hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-lg hover:shadow-black/30 transition-all">
+        <div
+            class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl px-5 py-4 relative overflow-hidden hover:-translate-y-0.5 hover:border-[#00C853]/35 hover:shadow-lg hover:shadow-black/30 transition-all">
             <div class="absolute top-0 left-0 right-0 h-0.5 bg-emerald-500 rounded-t-2xl"></div>
             <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -155,7 +164,8 @@
         <div class="flex flex-col gap-5">
 
             <!-- Datos personales -->
-            <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden hover:border-[#00C853]/25 transition-all">
+            <div
+                class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden hover:border-[#00C853]/25 transition-all">
                 <div class="px-5 py-4 border-b border-[#00C853]/10 bg-[#111D30]/60 flex items-center gap-2">
                     <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400"
                         style="font-family:'Syne',sans-serif">Datos <span class="text-emerald-400">Personales</span>
@@ -164,7 +174,8 @@
                 <div class="p-5 flex flex-col">
 
                     <div class="flex items-start gap-3.5 py-3 border-b border-[#2b2b2b]">
-                        <div class="w-8 h-8 rounded-lg bg-[#182236] border border-[#00C853]/15 flex items-center justify-center text-slate-400 shrink-0">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-[#182236] border border-[#00C853]/15 flex items-center justify-center text-slate-400 shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                                 <circle cx="12" cy="7" r="4" />
@@ -178,7 +189,8 @@
                     </div>
 
                     <div class="flex items-start gap-3.5 py-3 border-b border-[#2b2b2b]">
-                        <div class="w-8 h-8 rounded-lg bg-[#182236] border border-[#00C853]/15 flex items-center justify-center text-slate-400 shrink-0">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-[#182236] border border-[#00C853]/15 flex items-center justify-center text-slate-400 shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                                 <polyline points="22,6 12,13 2,6" />
@@ -191,7 +203,8 @@
                     </div>
 
                     <div class="flex items-start gap-3.5 py-3 border-b border-[#2b2b2b]">
-                        <div class="w-8 h-8 rounded-lg bg-[#182236] border border-[#00C853]/15 flex items-center justify-center text-slate-400 shrink-0">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-[#182236] border border-[#00C853]/15 flex items-center justify-center text-slate-400 shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <rect x="3" y="4" width="18" height="18" rx="2" />
                                 <line x1="16" y1="2" x2="16" y2="6" />
@@ -206,7 +219,25 @@
                     </div>
 
                     <div class="flex items-start gap-3.5 py-3 border-b border-[#2b2b2b]">
-                        <div class="w-8 h-8 rounded-lg bg-[#182236] border border-[#00C853]/15 flex items-center justify-center text-slate-400 shrink-0">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-[#182236] border border-[#00C853]/15 flex items-center justify-center text-slate-400 shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M12 3L2 8l10 5 10-5-10-5z" />
+                                <path d="M2 13l10 5 10-5" />
+                                <path d="M2 18l10 5 10-5" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase tracking-widest text-slate-500">Ficha</p>
+                            <p class="text-sm font-medium mt-0.5">
+                                {{ Auth::user()->cohort->cohort_number ?? 'Sin cohorte' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3.5 py-3 border-b border-[#2b2b2b]">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-[#182236] border border-[#00C853]/15 flex items-center justify-center text-slate-400 shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
                                 <polyline points="14 2 14 8 20 8" />
@@ -240,7 +271,8 @@
             </div>
 
             <!-- Rol y permisos -->
-            <div class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden hover:border-[#00C853]/25 transition-all">
+            <div
+                class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden hover:border-[#00C853]/25 transition-all">
                 <div class="px-5 py-4 border-b border-[#00C853]/10 bg-[#111D30]/60">
                     <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400"
                         style="font-family:'Syne',sans-serif">Rol y <span class="text-emerald-400">Permisos</span></h3>
@@ -248,7 +280,8 @@
                 <div class="p-5">
                     <!-- Role box -->
                     @if($user->role === 'ADMIN')
-                    <div class="bg-yellow-500/8 border border-yellow-500/20 rounded-xl p-4 flex items-center gap-3.5 mb-4">
+                    <div
+                        class="bg-yellow-500/8 border border-yellow-500/20 rounded-xl p-4 flex items-center gap-3.5 mb-4">
                         <div
                             class="w-11 h-11 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -263,8 +296,10 @@
                         </div>
                     </div>
                     @elseif($user->role === 'INSTRUCTOR')
-                    <div class="bg-emerald-500/8 border border-emerald-500/20 rounded-xl p-4 flex items-center gap-3.5 mb-4">
-                        <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                    <div
+                        class="bg-emerald-500/8 border border-emerald-500/20 rounded-xl p-4 flex items-center gap-3.5 mb-4">
+                        <div
+                            class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <circle cx="12" cy="8" r="4" />
                                 <path d="M6 20v-2a4 4 0 018 0v2" />
@@ -278,7 +313,8 @@
                     </div>
                     @else
                     <div class="bg-sky-400/8 border border-sky-400/20 rounded-xl p-4 flex items-center gap-3.5 mb-4">
-                        <div class="w-11 h-11 rounded-xl bg-sky-400/10 border border-sky-400/20 flex items-center justify-center text-sky-400 shrink-0">
+                        <div
+                            class="w-11 h-11 rounded-xl bg-sky-400/10 border border-sky-400/20 flex items-center justify-center text-sky-400 shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <circle cx="12" cy="8" r="4" />
                                 <path d="M6 20v-2a4 4 0 018 0v2" />
@@ -330,7 +366,7 @@
         </div>
 
         <!-- RIGHT COL -->
-        <div class="max-h-[720px] overflow-y-auto pr-2
+        <div class="max-h-[780px] overflow-y-auto pr-2
     [&::-webkit-scrollbar]:w-1.5
     [&::-webkit-scrollbar-track]:bg-transparent
     [&::-webkit-scrollbar-thumb]:bg-white/10
@@ -344,7 +380,8 @@
                 $role = $project->pivot->project_role;
                 $isLeader = $role === 'LEADER';
                 @endphp
-                <div class="bg-[#182236] border border-[#00C853]/15 rounded-xl hover:border-[#00C853]/30 hover:bg-emerald-500/5 transition-all overflow-hidden">
+                <div
+                    class="bg-[#182236] border border-[#00C853]/15 rounded-xl hover:border-[#00C853]/30 hover:bg-emerald-500/5 transition-all overflow-hidden">
 
                     {{-- Cabecera del proyecto --}}
                     <div class="flex items-center gap-3.5 px-4 py-3.5">
@@ -382,7 +419,8 @@
                     [&::-webkit-scrollbar-thumb]:rounded-full">
                             @foreach($project->members as $member)
                             @php $mIsLeader = $member->pivot->project_role === 'LEADER'; @endphp
-                            <div class="flex items-center gap-2 bg-[#1C2A40] border border-white/5 rounded-lg px-2.5 py-1.5">
+                            <div
+                                class="flex items-center gap-2 bg-[#1C2A40] border border-white/5 rounded-lg px-2.5 py-1.5">
                                 <div class="w-6 h-6 rounded-md bg-gradient-to-br {{ $mIsLeader ? 'from-emerald-700 to-emerald-400' : 'from-sky-700 to-sky-400' }} flex items-center justify-center font-black text-[10px] text-white shrink-0"
                                     style="font-family:'Syne',sans-serif">
                                     {{ strtoupper(substr($member->first_name,0,1)) }}{{

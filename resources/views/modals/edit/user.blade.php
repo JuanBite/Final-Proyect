@@ -1,7 +1,8 @@
 <div x-data="projectAssignerEdit_{{ $user->id }}()" key="{{ $user->id }}">
-    <form action="{{ route('users.update', $user->id) }}" method="POST">
+    <form method="POST" action="{{ route('users.update', $user->id) }}" >
         @csrf
         @method('PUT')
+        <input type="hidden" name="redirect_to" value="{{ request()->routeIs('users.show') ? 'show' : 'index' }}">
         <div
             class="w-[620px] max-w-[90vw] max-h-[90vh] bg-[#111D30] border border-[#40C4FF]/15 rounded-3xl overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.5),0_0_0_1px_rgba(64,196,255,0.08)] flex flex-col">
 
@@ -289,6 +290,5 @@
             return name.substring(0, 2).toUpperCase();
         }
     }
-    // ← closeModals eliminado de aquí
 }
 </script>
