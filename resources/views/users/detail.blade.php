@@ -230,7 +230,7 @@
                         <div>
                             <p class="text-xs uppercase tracking-widest text-slate-500">Ficha</p>
                             <p class="text-sm font-medium mt-0.5">
-                                {{ Auth::user()->cohort->cohort_number ?? 'Sin cohorte' }}
+                                {{ Auth::user()->cohort->cohort_number ?? 'Sin Ficha' }}
                             </p>
                         </div>
                     </div>
