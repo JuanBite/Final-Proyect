@@ -6,7 +6,7 @@
         {{-- Logo cerrado --}}
         <div id="logo-closed">
             <button onclick="toggleSidebar()" class="w-9 h-9 flex items-center justify-center rounded-xl bg-[#00C853] text-[#0A1628] font-syne font-extrabold text-sm">
-                SP
+                <img src="{{ asset('images/logo-sena.png') }}" alt="Logo SENA">
             </button>
         </div>
 
@@ -14,7 +14,7 @@
         <div id="logo-open" class="w-full px-4 items-center justify-between" style="display:none">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 bg-[#00C853] rounded-xl flex items-center justify-center font-syne font-extrabold text-sm text-[#0A1628] shrink-0">
-                    SP
+                    <img src="{{ asset('images/logo-sena.png') }}" alt="Logo SENA">
                 </div>
                 <span class="font-syne font-extrabold text-lg tracking-[2px] text-[#E8F4FF]">SIGPRO</span>
             </div>
