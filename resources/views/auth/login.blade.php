@@ -20,7 +20,7 @@
                 <!-- Logo -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center font-bold text-white text-sm">
-                        SP
+                        <img src="{{ asset('images/logo-sena.png') }}" alt="Logo SENA">
                     </div>
                     <span class="text-lg font-semibold tracking-widest text-gray-200">SIGPRO</span>
                 </div>
@@ -164,10 +164,10 @@
 
                     <!-- Remember + Forgot -->
                     <div class="flex justify-between items-center text-sm mb-6">
-                        <label class="flex items-center gap-2 text-gray-400 cursor-pointer">
+                        {{-- <label class="flex items-center gap-2 text-gray-400 cursor-pointer">
                             <input type="checkbox" name="checkbox" {{ old('remember') ? 'checked' : '' }} class="accent-green-500 w-4 h-4 rounded">
                             Recordarme
-                        </label>
+                        </label> --}}
 
                         <a href="{{ route('password.request') }}" class="text-green-400 hover:underline text-sm">
                             ¿Olvidaste tu contraseña?

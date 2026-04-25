@@ -146,6 +146,9 @@
                         Enviar Email
                     </button>
                 </form>
+                <a href="{{ route('login') }}" class="text-green-400 hover:underline text-sm">
+                    Volver al inicio de sesión
+                </a>
                 <!-- Footer -->
                 <div class="mt-12 text-center text-xs text-gray-600 space-y-1">
                     <p>¿Problemas para ingresar? Contacta al administrador</p>
