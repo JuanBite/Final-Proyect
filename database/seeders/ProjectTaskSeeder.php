@@ -1,0 +1,148 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class ProjectTaskSeeder extends Seeder
+{
+    public function run(): void
+    {
+        DB::table('project_tasks')->insert([
+            [
+                'project_id' => 1,
+                'phase' => 'Planning',
+                'sort_order' => 1,
+                'title' => 'Definir requerimientos',
+                'description' => 'Recolección de requisitos del cliente',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(5),
+                'status' => 'PENDING',
+                'assigned_to' => 1,
+            ],
+            [
+                'project_id' => 1,
+                'phase' => 'Development',
+                'sort_order' => 2,
+                'title' => 'Desarrollo del módulo principal',
+                'description' => 'Implementación de funcionalidades base',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(10),
+                'status' => 'IN_PROGRESS',
+                'assigned_to' => 2,
+            ],
+            [
+                'project_id' => 1,
+                'phase' => 'Testing',
+                'sort_order' => 3,
+                'title' => 'Pruebas del sistema',
+                'description' => 'Validación de funcionalidades',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(15),
+                'status' => 'COMPLETED',
+                'assigned_to' => null,
+            ],
+            [
+                'project_id' => 3,
+                'phase' => 'Planning',
+                'sort_order' => 1,
+                'title' => 'Definir requerimientos',
+                'description' => 'Recolección de requisitos del cliente',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(5),
+                'status' => 'PENDING',
+                'assigned_to' => 1,
+            ],
+            [
+                'project_id' => 3,
+                'phase' => 'Development',
+                'sort_order' => 2,
+                'title' => 'Desarrollo del módulo principal',
+                'description' => 'Implementación de funcionalidades base',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(10),
+                'status' => 'IN_PROGRESS',
+                'assigned_to' => 2,
+            ],
+            [
+                'project_id' => 3,
+                'phase' => 'Testing',
+                'sort_order' => 3,
+                'title' => 'Pruebas del sistema',
+                'description' => 'Validación de funcionalidades',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(15),
+                'status' => 'COMPLETED',
+                'assigned_to' => null,
+            ],
+            [
+                'project_id' => 7,
+                'phase' => 'Planning',
+                'sort_order' => 1,
+                'title' => 'Definir requerimientos',
+                'description' => 'Recolección de requisitos del cliente',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(5),
+                'status' => 'PENDING',
+                'assigned_to' => 1,
+            ],
+            [
+                'project_id' => 7,
+                'phase' => 'Development',
+                'sort_order' => 2,
+                'title' => 'Desarrollo del módulo principal',
+                'description' => 'Implementación de funcionalidades base',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(10),
+                'status' => 'IN_PROGRESS',
+                'assigned_to' => 2,
+            ],
+            [
+                'project_id' => 7,
+                'phase' => 'Testing',
+                'sort_order' => 3,
+                'title' => 'Pruebas del sistema',
+                'description' => 'Validación de funcionalidades',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(15),
+                'status' => 'COMPLETED',
+                'assigned_to' => null,
+            ],
+            [
+                'project_id' => 8,
+                'phase' => 'Planning',
+                'sort_order' => 1,
+                'title' => 'Definir requerimientos',
+                'description' => 'Recolección de requisitos del cliente',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(5),
+                'status' => 'PENDING',
+                'assigned_to' => 1,
+            ],
+            [
+                'project_id' => 8,
+                'phase' => 'Development',
+                'sort_order' => 2,
+                'title' => 'Desarrollo del módulo principal',
+                'description' => 'Implementación de funcionalidades base',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(10),
+                'status' => 'IN_PROGRESS',
+                'assigned_to' => 2,
+            ],
+            [
+                'project_id' => 8,
+                'phase' => 'Testing',
+                'sort_order' => 3,
+                'title' => 'Pruebas del sistema',
+                'description' => 'Validación de funcionalidades',
+                'start_date' => Carbon::now(),
+                'due_date' => Carbon::now()->addDays(15),
+                'status' => 'COMPLETED',
+                'assigned_to' => null,
+            ],
+        ]);
+    }
+}
