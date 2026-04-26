@@ -9,7 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GestionController;
-
+use App\Http\Controllers\ProjectTaskController;
 
 
 Route::get('/', function () {
@@ -20,9 +20,24 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/stats', function () {
-        return view('stats.index');
-    });
+
+Route::prefix('projects/{project}/tasks')->name('project-tasks.')->group(function () {
+
+    // Crear tarea
+    Route::post('/',            [ProjectTaskController::class, 'store'])->name('store');
+
+    // Actualizar tarea
+    Route::put('/{task}',       [ProjectTaskController::class, 'update'])->name('update');
+
+    // Eliminar tarea
+    Route::delete('/{task}',    [ProjectTaskController::class, 'destroy'])->name('destroy');
+
+    // Subir entrega a celda de semana
+    Route::post('/{task}/submissions',                      [ProjectTaskController::class, 'storeSubmission'])->name('submissions.store');
+
+    // Eliminar entrega
+    Route::delete('/{task}/submissions/{submission}',       [ProjectTaskController::class, 'destroySubmission'])->name('submissions.destroy');
+});
 
     Route::get('/gestion', [GestionController::class, 'index'])->name('gestion');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

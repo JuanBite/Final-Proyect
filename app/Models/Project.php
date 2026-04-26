@@ -24,10 +24,10 @@ class Project extends Model
     {
         return $this->belongsTo(Cohort::class);
     }
-    public function task()
-    {
-        return $this->hasMany(Task::class, 'assigned_to');
-    }
+    public function projectTasks()
+{
+    return $this->hasMany(ProjectTask::class);
+}
     public function submissions()
     {
         return $this->hasMany(Submission::class);

@@ -9,6 +9,8 @@ use Illuminate\Validation\Rules\Enum;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\ProjectMember;
+use App\Models\ProjectTask;
+use App\Models\Submission;
 
 class ProjectController extends Controller
 {
@@ -101,11 +103,45 @@ class ProjectController extends Controller
         }
     }
 
-    public function show($id)
+// ─── REEMPLAZA el método show() en ProjectController.php ───────────────────────
+
+    public function show(Request $request, $id)
     {
         $project = \App\Models\Project::with(['leader', 'team'])->findOrFail($id);
-        $users = User::all();
-        return view('projects.details', compact('project', 'users'));
+        $users   = \App\Models\User::all();
+
+        // ── Filtro año/mes ──────────────────────────────────────
+        $filterYear  = (int) $request->get('filter_year',  now()->year);
+        $filterMonth = (int) $request->get('filter_month', now()->month);
+
+        // ── Tareas agrupadas por fase ───────────────────────────
+        $tasks = \App\Models\ProjectTask::where('project_id', $project->id)
+            ->orderBy('phase')
+            ->orderBy('sort_order')
+            ->get();
+
+        // Agrupar por fase
+        $phases = $tasks->groupBy('phase');
+
+        // ── Entregas del mes filtrado, indexadas por [task_id][week] ──
+        $submissionsMap = [];
+        $allSubmissions = \App\Models\Submission::where('project_id', $project->id)
+            ->where('submission_year',  $filterYear)
+            ->where('submission_month', $filterMonth)
+            ->get();
+
+        foreach ($allSubmissions as $sub) {
+            $submissionsMap[$sub->task_id][$sub->week_number][] = $sub;
+        }
+
+        return view('projects.details', compact(
+            'project',
+            'users',
+            'phases',
+            'filterYear',
+            'filterMonth',
+            'submissionsMap'
+        ));
     }
 
 
