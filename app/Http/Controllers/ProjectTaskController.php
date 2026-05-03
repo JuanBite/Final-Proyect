@@ -202,4 +202,23 @@ class ProjectTaskController extends Controller
             12 => 'dic',
         };
     }
+
+
+    public function gradeSubmission(Request $request, Project $project, ProjectTask $task, Submission $submission)
+{
+    // Solo admin e instructor pueden calificar
+    abort_unless(in_array(auth()->user()->role, ['ADMIN', 'INSTRUCTOR']), 403);
+
+    $request->validate([
+        'grade'    => ['required', 'numeric', 'min:0', 'max:100'],
+        'feedback' => ['nullable', 'string', 'max:500'],
+    ]);
+
+    $submission->update([
+        'grade'    => $request->grade,
+        'feedback' => $request->feedback,
+    ]);
+
+    return back()->with('success', 'Entrega calificada correctamente.');
+}
 }

@@ -23,6 +23,9 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('projects/{project}/tasks')->name('project-tasks.')->group(function () {
 
+
+Route::post('/{task}/submissions/{submission}/grade', [ProjectTaskController::class, 'gradeSubmission'])->name('submissions.grade');
+
     // Crear tarea
     Route::post('/',            [ProjectTaskController::class, 'store'])->name('store');
 
