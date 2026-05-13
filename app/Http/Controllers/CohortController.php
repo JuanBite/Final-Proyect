@@ -24,7 +24,7 @@ class CohortController extends Controller
     public function store(Request $request)
     {
         $validation = $request->validate([
-            'cohort_number' => ['required', 'string', 'max:20'],
+            'cohort_number' => ['required', 'string', 'max:150'],
             'program_name'  => ['nullable', 'string', 'max:150'],
             'center_id'     => ['required', 'exists:centers,id'],
             'start_date'    => ['nullable', 'date'],

@@ -67,10 +67,10 @@
                     <h3 class="font-syne font-bold text-base text-[#E8F4FF] mb-2">{{ $project->name }}</h3>
                     <div class="flex flex-col gap-1 mb-4">
 
-                        @forelse ($project->users as $user)
+                        @forelse ($project->members as $member)
 
                         <span class="text-sm text-gray-400">
-                            {{ $user->first_name }} {{ $user->last_name }}
+                            {{ $member->first_name }} {{ $member->last_name }}
                         </span>
 
                         @empty

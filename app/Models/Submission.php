@@ -53,6 +53,7 @@ class Submission extends Model
     {
         return str_starts_with($this->mime_type ?? '', 'image/');
     }
+    
 }
 
 

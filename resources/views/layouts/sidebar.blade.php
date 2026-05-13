@@ -54,7 +54,7 @@
         </a>
 
         {{-- PROYECTOS --}}
-        @if(auth()->user()->role !== 'COORDINATOR')
+        @if(!in_array(auth()->user()->role, ['COORDINATOR' || 'REGIONAL_ADMIN']))
 
         <a href="{{ url('projects') }}"
             class="sidebar-link flex items-center gap-3 px-0 justify-center py-2.5 rounded-xl text-[13.5px] border transition-all
@@ -72,12 +72,28 @@
                 Proyectos
             </span>
         </a>
+        @elseif(auth()->user()->role === 'INSTRUCTOR' || 'STUDENT')
+        <a href="{{ url('projects') }}"
+            class="sidebar-link flex items-center gap-3 px-0 justify-center py-2.5 rounded-xl text-[13.5px] border transition-all
+        {{ request()->is('projects*') ? 'text-[#00C853] bg-[#00C853]/12 border-[#00C853]/25' : 'text-[#8AAABB] border-transparent hover:bg-[#00C853]/6 hover:text-[#E8F4FF] hover:border-[#00C853]/15' }}">
 
+            <svg class="shrink-0" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+            </svg>
+
+            <span class="sidebar-text hidden whitespace-nowrap">
+                Proyectos
+            </span>
+        </a>
         @endif
 
 
         {{-- SECCIÓN ADMIN --}}
-        @if(in_array(auth()->user()->role, ['ADMIN', 'COORDINATOR']))
+        @if(in_array(auth()->user()->role, ['ADMIN', 'REGIONAL_ADMIN','COORDINATOR']))
 
         <span id="label-admin" class="hidden text-[9px] tracking-[2px] uppercase text-[#8AAABB] px-2 py-1 mt-4">
             Admin
@@ -87,7 +103,7 @@
 
 
         {{-- GESTIÓN SOLO ADMIN --}}
-        @if(auth()->user()->role === 'ADMIN')
+        @if(in_array(auth()->user()->role, ['ADMIN', 'REGIONAL_ADMIN']))
 
         <a href="{{ url('gestion') }}"
             class="sidebar-link flex items-center gap-3 px-0 justify-center py-2.5 rounded-xl text-[13.5px] border transition-all
@@ -108,7 +124,7 @@
 
 
         {{-- USERS ADMIN Y COORDINADOR --}}
-        @if(in_array(auth()->user()->role, ['ADMIN', 'COORDINATOR']))
+        @if(in_array(auth()->user()->role, ['ADMIN', 'REGIONAL_ADMIN','COORDINATOR']))
 
         <a href="{{ url('users') }}"
             class="sidebar-link flex items-center gap-3 px-0 justify-center py-2.5 rounded-xl text-[13.5px] border transition-all

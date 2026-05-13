@@ -65,7 +65,7 @@
                         </label>
                         <select name="cohort_id"
                             class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none"
-                            required>
+                            >
                             <option value="" disabled selected>Selecciona una ficha</option>
                             @foreach($cohorts as $cohort)
                             <option value="{{ $cohort->id }}">{{ $cohort->program_name }}</option>

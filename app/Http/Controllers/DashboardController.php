@@ -2,52 +2,90 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
 use App\Enums\EnumStatus;
+use App\Models\Cohort;        // ← NUEVO
+use App\Models\Project;      // ← NUEVO
+use App\Models\Submission;  // ← NUEVO
+use App\Models\User;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $projects = Project::with(['leader', 'members'])
+        $user = auth()->user(); // ← NUEVO
+
+        // ← NUEVO: visibleTo filtra según rol automáticamente
+        $projects = Project::visibleTo($user)
+            ->with(['leader', 'members'])
             ->orderByRaw("
                 CASE status 
-                    WHEN '" . EnumStatus::DELAYED->value . "' THEN 1
-                    WHEN '" . EnumStatus::IN_PROGRESS->value . "' THEN 2
-                    WHEN '" . EnumStatus::COMPLETED->value . "' THEN 3
+                    WHEN '".EnumStatus::DELAYED->value."' THEN 1
+                    WHEN '".EnumStatus::IN_PROGRESS->value."' THEN 2
+                    WHEN '".EnumStatus::COMPLETED->value."' THEN 3
                 END
             ")
             ->orderBy('due_date')
             ->get();
 
+        // Stats base (ya filtradas por scope) — sin cambios en cálculo
         $stats = [
-            'total'        => $projects->count(),
-            'en_progreso'  => $projects->where('status', EnumStatus::IN_PROGRESS->value)->count(),
-            'con_retraso'  => $projects->where('status', EnumStatus::DELAYED->value)->count(),
-            'completados'  => $projects->where('status', EnumStatus::COMPLETED->value)->count(),
+            'total' => $projects->count(),
+            'en_progreso' => $projects->where('status', EnumStatus::IN_PROGRESS->value)->count(),
+            'con_retraso' => $projects->where('status', EnumStatus::DELAYED->value)->count(),
+            'completados' => $projects->where('status', EnumStatus::COMPLETED->value)->count(),
             'avg_progress' => $projects->count() ? round($projects->avg('progress')) : 0,
         ];
+
+        // ← NUEVO: stats extra según rol (se pasan a la vista para mostrar u ocultar)
+        $roleStats = match ($user->role) {
+            'ADMIN' => [
+                'total_users' => User::count(),
+                'total_cohorts' => Cohort::count(),
+            ],
+            'REGIONAL_ADMIN' => [
+                'total_users' => User::whereIn('center_id', $user->visibleCenterIds())->count(),
+                'total_cohorts' => Cohort::whereIn('center_id', $user->visibleCenterIds())->count(),
+            ],
+            'COORDINATOR' => [
+                'total_users' => User::where('center_id', $user->center_id)->count(),
+                'total_cohorts' => Cohort::where('center_id', $user->center_id)->count(),
+            ],
+            'INSTRUCTOR' => [
+                // ← NUEVO: entregas sin calificar de sus fichas
+                'por_calificar' => Submission::whereHas('task.project', fn ($q) => $q->where('cohort_id', $user->cohort_id)
+                )->whereNull('grade')->count(),
+                'aprendices' => User::where('cohort_id', $user->cohort_id)
+                    ->where('role', 'STUDENT')->count(),
+            ],
+            'STUDENT' => [
+                'mis_entregas' => Submission::whereHas('task.project', fn ($q) => $q->where('cohort_id', $user->cohort_id)
+                )->count(),
+            ],
+            default => [],
+        };
+
+        // ── Todo lo de abajo sin cambios ──────────────────────────────────────
 
         $statusConfig = [
             EnumStatus::IN_PROGRESS->value => [
                 'label' => 'En Progreso',
                 'color' => '#facc15',
-                'bg'    => 'bg-yellow-400/10',
-                'text'  => 'text-yellow-400',
+                'bg' => 'bg-yellow-400/10',
+                'text' => 'text-yellow-400',
                 'count' => $stats['en_progreso'],
             ],
             EnumStatus::COMPLETED->value => [
                 'label' => 'Completado',
                 'color' => '#4ade80',
-                'bg'    => 'bg-green-400/10',
-                'text'  => 'text-green-400',
+                'bg' => 'bg-green-400/10',
+                'text' => 'text-green-400',
                 'count' => $stats['completados'],
             ],
             EnumStatus::DELAYED->value => [
                 'label' => 'Con Retraso',
                 'color' => '#f87171',
-                'bg'    => 'bg-red-400/10',
-                'text'  => 'text-red-400',
+                'bg' => 'bg-red-400/10',
+                'text' => 'text-red-400',
                 'count' => $stats['con_retraso'],
             ],
         ];
@@ -63,22 +101,15 @@ class DashboardController extends Controller
         ];
 
         $at_risk = $projects->filter(function ($p) use ($today) {
-            if (!$p->due_date) {
+            if (! $p->due_date) {
                 return false;
             }
+            $daysLeft = $today->diffInDays($p->due_date->copy()->startOfDay(), false);
 
-            $dueDate = $p->due_date->copy()->startOfDay();
-            $daysLeft = $today->diffInDays($dueDate, false);
-
-            return $daysLeft >= 0
-                && $daysLeft <= 14
-                && $p->status !== EnumStatus::COMPLETED->value;
+            return $daysLeft >= 0 && $daysLeft <= 14 && $p->status !== EnumStatus::COMPLETED->value;
         })->map(function ($p) {
-            if ($p->leader) {
-                $p->leader_name = trim($p->leader->first_name . ' ' . $p->leader->last_name);
-            } else {
-                $p->leader_name = '—';
-            }
+            $p->leader_name = $p->leader ? trim($p->leader->first_name.' '.$p->leader->last_name) : '—';
+
             return $p;
         })->sortBy('due_date')->take(5);
 
@@ -92,6 +123,7 @@ class DashboardController extends Controller
         return view('dashboard', compact(
             'projects',
             'stats',
+            'roleStats',   // ← NUEVO
             'at_risk',
             'statusConfig',
             'chartData',

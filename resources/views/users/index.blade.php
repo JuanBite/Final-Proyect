@@ -267,11 +267,17 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                             INSTRUCTOR
                         </span>
-                        @else
+                        @elseif($user->role === 'APRENDIZ')
                         <span
                             class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 text-slate-300 border border-slate-500/25">
                             <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                             APRENDIZ
+                        </span>
+                        @elseif($user->role === 'REGIONAL_ADMIN')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium text-red-300 border border-red-500/25">
+                            <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                            REGIONAL ADMIN
                         </span>
                         @endif
                     </td>

@@ -504,7 +504,7 @@ function liveSearch(value) {
     cols: {
         regions: ['name', 'code'],
         centers: ['name', 'code', 'region_id'],
-        cohorts: ['cohort_number', 'program_name', 'center_id', 'region_id']
+        cohorts: ['program_name', 'cohort_number', 'center_id', 'region_id']
     },
 
     labels: {
@@ -512,8 +512,8 @@ function liveSearch(value) {
         code: 'Código',
         region_id: 'Región',
         center_id: 'Centro',
-        cohort_number: 'Número ficha',
-        program_name: 'Programa'
+        cohort_number: 'Programa',
+        program_name: 'Número ficha'
     },
 
     storeRoutes: {
