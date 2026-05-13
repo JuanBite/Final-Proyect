@@ -19,6 +19,7 @@ class ProjectController extends Controller
     public function index(Request $request)
     {
         $query = Project::query();
+        $cohort = $request->input('cohort'); 
 
         //  BUSCADOR
         if ($request->search) {
@@ -26,8 +27,9 @@ class ProjectController extends Controller
                 $q->where('name', 'like', "%{$request->search}%")
                     ->orWhere('description', 'like', "%{$request->search}%");
             });
+            
         }
-
+        
         $projects = $query->orderBy('id', 'desc')->paginate(9)->withQueryString();
         $users = User::all();
 

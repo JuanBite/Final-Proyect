@@ -56,6 +56,16 @@
                             </svg>
                             Instructor
                         </span>
+                        @elseif($user->role === 'COORDINATOR')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-500/12 text-amber-400 border border-amber-500/25">
+                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5"
+                                viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+                            </svg>
+                            Coordinador
+                        </span>
                         @else
                         <span
                             class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-sky-400/12 text-sky-400 border border-sky-400/25">

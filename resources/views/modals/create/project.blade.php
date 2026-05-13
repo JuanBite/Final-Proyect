@@ -25,7 +25,7 @@
         </div>
 
         <!-- Body - Con scroll -->
-        <div class="px-8 py-7 overflow-y-auto overflow flex-1 " style="max-height: calc(90vh - 140px) ;">
+        <div class="px-8 py-6 flex flex-col gap-6 overflow-y-auto flex-1 min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-[#0d1726] [&::-webkit-scrollbar-thumb]:bg-[#2a3a52] [&::-webkit-scrollbar-thumb]:rounded-full">
             <div class="flex flex-col gap-6">
                 <!-- Sección: Información básica -->
                 <div>

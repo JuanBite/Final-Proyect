@@ -7,12 +7,6 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('scripts')
 
-    <style>
-        body::-webkit-scrollbar { width: 6px; }
-        body::-webkit-scrollbar-track { background: #0d1726; }
-        body::-webkit-scrollbar-thumb { background: #2a3a52; border-radius: 999px; }
-        body::-webkit-scrollbar-thumb:hover { background: #3a4f6e; }
-    </style>
 </head>
 <body class="bg-[#0A1628] text-[#E8F4FF]">
 

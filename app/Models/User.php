@@ -23,6 +23,7 @@ class User extends Authenticatable
         'role',
         'status',
         'cohort_id',
+        'center_id',
     ];
 
     protected $hidden = [

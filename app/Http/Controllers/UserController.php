@@ -8,51 +8,56 @@ use App\Models\Project;
 use App\Models\Cohort;
 use App\Models\ProjectMember;
 use App\Enums\RoleEnum;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Enum;
 
 class UserController extends Controller
 {
     // LISTADO
-   public function index(Request $request)
-{
-    $search = $request->input('search');
-    $filter = $request->input('filter');
-    $sort   = $request->input('sort', 'desc');
-    $cohort = $request->input('cohort'); // nuevo
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+        $filter = $request->input('filter');
+        $sort   = $request->input('sort', 'desc');
+        $cohort = $request->input('cohort'); // nuevo
 
-    $users = User::with('projectMembers', 'cohort')
-        ->when($search, function ($query) use ($search) {
-            $query->where('first_name', 'like', "%$search%")
-                ->orWhere('last_name',  'like', "%$search%")
-                ->orWhere('email',      'like', "%$search%")
-                ->orWhere('document',   'like', "%$search%");
-        })
-        ->when($filter === 'LEADER', function ($query) {
-            $query->whereHas('projectMembers', fn($q) => $q->where('project_role', 'LEADER'));
-        })
-        ->when($filter === 'MEMBER', function ($query) {
-            $query->whereHas('projectMembers', fn($q) => $q->where('project_role', 'MEMBER'));
-        })
-        ->when($cohort, function ($query) use ($cohort) {
-            $query->where('cohort_id', $cohort);
-        })
-        ->orderBy('created_at', $sort)
-        ->paginate(10)
-        ->withQueryString();
+        $users = User::with('projectMembers', 'cohort')
+            ->when($search, function ($query) use ($search) {
+                $query->where('first_name', 'like', "%$search%")
+                    ->orWhere('last_name',  'like', "%$search%")
+                    ->orWhere('email',      'like', "%$search%")
+                    ->orWhere('document',   'like', "%$search%");
+            })
+            ->when($filter === 'LEADER', function ($query) {
+                $query->whereHas('projectMembers', fn($q) => $q->where('project_role', 'LEADER'));
+            })
+            ->when($filter === 'MEMBER', function ($query) {
+                $query->whereHas('projectMembers', fn($q) => $q->where('project_role', 'MEMBER'));
+            })
+            ->when($cohort, function ($query) use ($cohort) {
+                $query->where('cohort_id', $cohort);
+            })
+            ->orderBy('created_at', $sort)
+            ->paginate(10)
+            ->withQueryString();
 
-    $totalUsers   = User::count();
-    $totalLeaders = User::whereHas('projectMembers', fn($q) => $q->where('project_role', 'LEADER'))->count();
-    $totalMembers = User::where('status', 1)->count();
+        $totalUsers   = User::count();
+        $totalLeaders = User::whereHas('projectMembers', fn($q) => $q->where('project_role', 'LEADER'))->count();
+        $totalMembers = User::where('status', 1)->count();
 
-    $projects = Project::all();
-    $cohorts  = Cohort::all();
+        $projects = Project::all();
+        $cohorts  = Cohort::all();
 
-    return view('users.index', compact(
-        'users', 'projects', 'cohorts',
-        'totalUsers', 'totalLeaders', 'totalMembers',
-        'sort'
-    ));
-}
+        return view('users.index', compact(
+            'users',
+            'projects',
+            'cohorts',
+            'totalUsers',
+            'totalLeaders',
+            'totalMembers',
+            'sort'
+        ));
+    }
 
     // CREAR
     public function create()
@@ -72,7 +77,17 @@ class UserController extends Controller
             'document'   => ['required', 'string'],
             'password'   => ['required', 'confirmed'],
             'role'       => ['required', new Enum(RoleEnum::class)],
+            'center_id'  => ['nullable', 'exists:centers,id'],
         ]);
+
+        if (
+            Auth::user()->role === 'COORDINATOR' &&
+            $request->center_id != Auth::user()->center_id
+        ) {
+            return redirect()->back()->withErrors([
+                'center_id' => 'Los coordinadores solo pueden asignar usuarios a su propio centro.'
+            ]);
+        }
 
         $user = User::create([
             'first_name' => $request->first_name,
@@ -82,6 +97,7 @@ class UserController extends Controller
             'password'   => bcrypt($request->password),
             'role'       => $request->role,
             'cohort_id'  => $request->cohort_id,
+            'center_id'  => $request->center_id,
         ]);
 
         // Proyectos

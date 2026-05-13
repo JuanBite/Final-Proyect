@@ -10,6 +10,34 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // ========================= 
+        // COORDINATORS
+        // =========================
+
+        $user = new User;
+        $user->first_name = 'Laura';
+        $user->last_name = 'García';
+        $user->email = 'laura.garcia@sigpro.com';
+        $user->document = '12345678901';
+        $user->password = Hash::make('coordinator123');
+        $user->role = 'COORDINATOR';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->center_id = 1;
+        $user->save();
+
+        $user = new User;
+        $user->first_name = 'hernan';
+        $user->last_name = 'García';
+        $user->email = 'hernan.garcia@sigpro.com';
+        $user->document = '12345678902';
+        $user->password = Hash::make('coordinator123');
+        $user->role = 'COORDINATOR';
+        $user->status = 1;
+        $user->cohort_id = null;
+        $user->center_id = 2;
+        $user->save();
+
 
         // =========================
         // INSTRUCTORES
@@ -24,6 +52,7 @@ class UserSeeder extends Seeder
         $user->role = 'INSTRUCTOR';
         $user->status = 1;
         $user->cohort_id = null;
+        $user->center_id = 1;
         $user->save();
 
         $user = new User;
@@ -35,6 +64,7 @@ class UserSeeder extends Seeder
         $user->role = 'INSTRUCTOR';
         $user->status = 1;
         $user->cohort_id = null;
+        $user->center_id = 2;
         $user->save();
 
         $user = new User;
@@ -46,6 +76,7 @@ class UserSeeder extends Seeder
         $user->role = 'INSTRUCTOR';
         $user->status = 1;
         $user->cohort_id = null;
+        $user->center_id = 2;
         $user->save();
 
 
@@ -62,6 +93,7 @@ class UserSeeder extends Seeder
         $user->role = 'STUDENT';
         $user->status = 1;
         $user->cohort_id = 1;
+        $user->center_id = 1;
         $user->save();
 
         $user = new User;
@@ -73,6 +105,7 @@ class UserSeeder extends Seeder
         $user->role = 'STUDENT';
         $user->status = 1;
         $user->cohort_id = 1;
+        $user->center_id = 1;
         $user->save();
 
         $user = new User;
@@ -84,6 +117,7 @@ class UserSeeder extends Seeder
         $user->role = 'STUDENT';
         $user->status = 1;
         $user->cohort_id = 1;
+        $user->center_id = 2;
         $user->save();
 
         $user = new User;
@@ -95,6 +129,7 @@ class UserSeeder extends Seeder
         $user->role = 'STUDENT';
         $user->status = 1;
         $user->cohort_id = 2;
+        $user->center_id = 2;
         $user->save();
 
         $user = new User;
@@ -106,7 +141,13 @@ class UserSeeder extends Seeder
         $user->role = 'STUDENT';
         $user->status = 1;
         $user->cohort_id = 2;
+        $user->center_id = 2;
         $user->save();
+
+
+        // ========================= 
+        // ADMIN
+        // =========================
 
         $user = new User;
         $user->first_name = 'Juan David';
@@ -117,17 +158,19 @@ class UserSeeder extends Seeder
         $user->role = 'ADMIN';
         $user->status = 1;
         $user->cohort_id = null;
+        $user->center_id = null;
         $user->save();
 
         $user = new User;
         $user->first_name = 'Sebastian';
-        $user->last_name = 'Grijalva Pineda';
+        $user->last_name = 'Grajales Pineda';
         $user->email = 'Sebastiangp20044@gmail.com';
         $user->document = '13131451241';
         $user->password = Hash::make('Sebastian_123');
         $user->role = 'ADMIN';
         $user->status = 1;
         $user->cohort_id = null;
+        $user->center_id = null;
         $user->save();
 
         $user = new User;
@@ -139,6 +182,7 @@ class UserSeeder extends Seeder
         $user->role = 'ADMIN';
         $user->status = 1;
         $user->cohort_id = null;
+        $user->center_id = null;
         $user->save();
     }
 }

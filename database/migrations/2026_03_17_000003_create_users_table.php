@@ -15,15 +15,22 @@ return new class extends Migration
             $table->string('email', 150)->unique();
             $table->string('document', 11)->unique();
             $table->string('password');
-            $table->enum('role', ['ADMIN', 'INSTRUCTOR', 'STUDENT']);
+            $table->enum('role', ['ADMIN','COORDINATOR', 'INSTRUCTOR', 'STUDENT']);
             $table->boolean('status')->default(true);
+            
+             // relación con fichas
+            $table->foreignId('center_id')
+                   ->nullable()
+                   ->constrained('centers')
+                   ->nullOnDelete();
+            
 
             // relación con fichas
             $table->foreignId('cohort_id')
                   ->nullable()
                   ->constrained('cohorts')
                   ->nullOnDelete();
-
+            
             $table->timestamp('created_at')->useCurrent();
         });
     }

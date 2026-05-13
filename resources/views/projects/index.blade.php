@@ -15,7 +15,7 @@
 
         <form method="GET" action="{{ route('projects.index') }}" id="search-form" class="flex items-center w-full max-w-sm">
             <!-- Contenedor del buscador -->
-            <div class="w-full flex items-center gap-2.5 bg-[#1C2A40] border border-[#00C853]/20 rounded-xl px-4 py-2.5 transition-all duration-200 hover:border-[#00C853]/40 focus-within:border-[#00C853]/60">
+            <div class="flex items-center gap-2 bg-slate-700 border border-emerald-500/20 rounded-xl px-3 py-0.1 opacity-70 flex-1 sm:flex-none">
 
                 <!-- Icono de búsqueda -->
                 <svg class="w-5 h-5 text-slate-500 flex-shrink-0 transition-colors" fill="none" stroke="currentColor" stroke-width="2">
@@ -37,7 +37,7 @@
             <button type="submit" class="hidden"></button>
         </form>
 
-        <button @click="modalAbierto = true" type="button" class="flex items-center gap-2 px-5 py-3 bg-[#00C853] text-[#0A1628] font-semibold text-sm rounded-xl hover:brightness-110 transition-all cursor-pointer whitespace-nowrap flex-shrink-0">
+        <button @click="modalAbierto = true" type="button" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm bg-emerald-500 text-slate-900">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
@@ -45,6 +45,8 @@
             Nuevo
         </button>
     </div>
+
+    
 
     <!-- Cards -->
     <div id="projects-container" class="grid grid-cols-3 gap-5">

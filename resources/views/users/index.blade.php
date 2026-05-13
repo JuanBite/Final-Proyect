@@ -8,8 +8,8 @@
 <span class="font-syne font-bold text-sm text-[#E8F4FF]">Usuarios</span>
 @endsection
 
-<div x-data="{ createModalOpen: false, editModalOpen: false, deleteModalOpen: false, showModalOpen: false }"
-    x-init=" { createModalOpen = false, editModalOpen = false, deleteModalOpen = false, showModalOpen = false }"
+<div x-data="{ createModalOpen: false, editModalOpen: false, deleteModalOpen: false, currentUserId: null, showModalOpen: false }"
+    x-init=" { createModalOpen = false, editModalOpen = false, deleteModalOpen = false,currentUserId: null, showModalOpen = false }"
     class="p-2 space-y-4">
 
     {{-- 🔹 STATS --}}
@@ -159,7 +159,7 @@
                         @foreach($cohorts as $c)
                         <option value="{{ $c->id }}" {{ request('cohort')==$c->id ? 'selected' : '' }}
                             style="background:#1e293b; color:white;">
-                            {{ $c->cohort_number }} — {{ $c->program_name }}
+                            {{ $c->program_name }}
                         </option>
                         @endforeach
                     </select>
@@ -208,9 +208,9 @@
                     <th
                         class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[13%]">
                         Rol de Proyecto</th>
-                    <th
+                    {{-- <th
                         class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[22%]">
-                        Proyectos asignados</th>
+                        Proyectos asignados</th> --}}
                     <th
                         class="text-left px-4 py-3.5 text-xs uppercase tracking-widest text-slate-400 font-medium w-[10%]">
                         Estado</th>
@@ -295,7 +295,7 @@
                         @endif
                     </td>
 
-                    {{-- Proyectos --}}
+                    {{-- Proyectos
                     <td class="px-4 py-3.5">
                         <div class="flex flex-wrap gap-1">
                             @forelse($user->projects as $project)
@@ -307,7 +307,7 @@
                             <span class="text-xs text-slate-500 italic">Sin proyectos</span>
                             @endforelse
                         </div>
-                    </td>
+                    </td> --}}
 
                     {{-- Estado --}}
                     <td class="px-4 py-3.5">
@@ -439,17 +439,17 @@
                 <div class="flex justify-end gap-2">
                     <button type="button" @click="deleteModalOpen = false"
                         class="px-4 py-2 bg-slate-700 rounded-xl">Cancelar</button>
-                    @foreach($users as $user)
-                    <form x-show="currentUserId === {{ $user->id }}" method="POST"
-                        action="{{ route('users.destroy', $user->id) }}">
+                    <form method="POST" :action="`{{ url('users') }}/${currentUserId}`">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="px-4 py-2 bg-red-500 rounded-xl text-white">Eliminar</button>
+                        <button type="submit" class="px-4 py-2 bg-red-500 rounded-xl text-white">
+                            Eliminar
+                        </button>
                     </form>
-                    @endforeach
                 </div>
             </div>
         </div>
+
         {{-- MODAL SHOW --}}
         <div x-show="showModalOpen" @close-show-modal.window="showModalOpen=false; currentShowUserId=null"
             x-transition.opacity.duration.200ms
