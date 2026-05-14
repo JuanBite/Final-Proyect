@@ -35,7 +35,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Eliminar: solo ADMIN, REGIONAL_ADMIN, COORDINATOR
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])
-        ->middleware('role:ADMIN,REGIONAL_ADMIN,COORDINATOR')
+        ->middleware('role:ADMIN,REGIONAL_ADMIN,COORDINATOR,STUDENT')
         ->name('projects.destroy');
 
     // ── Tareas y entregas ─────────────────────────────────────────────────────

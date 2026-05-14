@@ -86,29 +86,6 @@
                     </div>
                 </div>
 
-                <!-- Sección: Avance -->
-                <div>
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Avance del proyecto</span>
-                        <div class="flex-1 h-px bg-[#FFD740]/15"></div>
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Porcentaje de
-                            avance</label>
-                        <div class="flex items-center gap-3">
-                            <input
-                                class="form-input bg-[#182236] border border-[#FFD740]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] text-center w-20 shrink-0 transition-all focus:border-[#FFD740]/40"
-                                type="number" name="progress" required min="0" max="100"
-                                value="{{ round($project->progress) }}" id="pctInputEdit"
-                                oninput="document.getElementById('pbarEdit').style.width=Math.min(100,Math.max(0,this.value))+'%'" />
-                            <div class="flex-1 h-2 bg-white/[0.06] rounded-full overflow-hidden">
-                                <div class="progress-fill h-full bg-gradient-to-r from-[#00963E] to-[#00C853] rounded-full"
-                                    id="pbarEdit" style="width: {{ round($project->progress) }}%"></div>
-                            </div>
-                            <span class="text-[13px] text-[#8AAABB] shrink-0">%</span>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Sección: Líder -->
                 <div>

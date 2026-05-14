@@ -71,7 +71,7 @@
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-sky-400 rounded-t-2xl"></div>
 
         <div class="flex items-start justify-between mb-6 relative z-10 px-8 py-7">
-            <div class="flex items-center gap-4">
+            <div class="flex items-top gap-4">
                 @php
                     $words    = explode(' ', $project->name);
                     $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
@@ -83,7 +83,7 @@
                 <div>
                     <h1 class="font-black text-2xl leading-tight" style="font-family:'Syne',sans-serif">
                         {{ $project->name }}</h1>
-                    <p class="text-sm text-slate-400 mt-1">{{ $project->description }}</p>
+                    <p class="text-sm text-slate-400 mt-1 leading-relaxed break-all">{{ $project->description }}</p>
                     <div class="flex gap-2 mt-2.5 flex-wrap">
                         <span
                             class="px-3 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
