@@ -266,4 +266,11 @@ class ProjectController extends Controller
             default => collect(),
         };
     }
+
+    public function publicIndex()
+    {
+        $projects = Project::select('name', 'description')->orderBy('created_at', 'desc')->get();
+
+        return view('projects.universal-search', compact('projects'));
+    }
 }

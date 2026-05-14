@@ -6,43 +6,41 @@ use App\Models\Cohort;
 use App\Models\Project;
 use App\Models\ProjectMember;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('viewAny', User::class); // ← NUEVO
+        $this->authorize('viewAny', User::class);
 
-        $authUser = auth()->user(); // ← NUEVO
+        $authUser = auth()->user();
         $search = $request->input('search');
         $filter = $request->input('filter');
         $sort = $request->input('sort', 'desc');
         $cohort = $request->input('cohort');
 
         $users = User::with('projectMembers', 'cohort')
-            // ← NUEVO: acotar al scope del usuario autenticado
-            ->when(! $authUser->isAdmin(), fn ($q) => $q->whereIn('center_id', $authUser->visibleCenterIds())
-            )
-            ->when($authUser->isInstructor(), fn ($q) => $q->where('cohort_id', $authUser->cohort_id)
-            )
-            // El resto sin cambios
-            ->when($search, fn ($q) => $q->where('first_name', 'like', "%$search%")
-                ->orWhere('last_name', 'like', "%$search%")
-                ->orWhere('email', 'like', "%$search%")
-                ->orWhere('document', 'like', "%$search%")
-            )
-            ->when($filter === 'LEADER', fn ($q) => $q->whereHas('projectMembers', fn ($q2) => $q2->where('project_role', 'LEADER'))
-            )
-            ->when($filter === 'MEMBER', fn ($q) => $q->whereHas('projectMembers', fn ($q2) => $q2->where('project_role', 'MEMBER'))
-            )
+            ->when(! $authUser->isAdmin(), fn ($q) => $q->whereIn('center_id', $authUser->visibleCenterIds()))
+            ->when($authUser->isInstructor(), fn ($q) => $q->where('cohort_id', $authUser->cohort_id))
+            ->when($search, function ($query) use ($search) {
+                $query->where('first_name', 'like', "%$search%")
+                    ->orWhere('last_name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%")
+                    ->orWhere('document', 'like', "%$search%")
+                    ->orWhereHas('cohort', function ($q) use ($search) {
+                        $q->where('program_name', 'like', "%$search%")
+                            ->orWhere('cohort_number', 'like', "%$search%");
+                    });
+            })
+            ->when($filter === 'LEADER', fn ($q) => $q->whereHas('projectMembers', fn ($q2) => $q2->where('project_role', 'LEADER')))
+            ->when($filter === 'MEMBER', fn ($q) => $q->whereHas('projectMembers', fn ($q2) => $q2->where('project_role', 'MEMBER')))
             ->when($cohort, fn ($q) => $q->where('cohort_id', $cohort))
             ->orderBy('created_at', $sort)
             ->paginate(10)
             ->withQueryString();
 
-        // ← NUEVO: stats también acotadas al scope
         $centerIds = $authUser->visibleCenterIds();
         $baseCount = fn () => User::when(! $authUser->isAdmin(), fn ($q) => $q->whereIn('center_id', $centerIds))
             ->when($authUser->isInstructor(), fn ($q) => $q->where('cohort_id', $authUser->cohort_id));
@@ -51,13 +49,17 @@ class UserController extends Controller
         $totalLeaders = $baseCount()->whereHas('projectMembers', fn ($q) => $q->where('project_role', 'LEADER'))->count();
         $totalMembers = $baseCount()->where('status', 1)->count();
 
-        // ← NUEVO: proyectos y fichas acotados al scope
         $projects = Project::visibleTo($authUser)->get();
         $cohorts = $this->cohortsForUser($authUser);
 
         return view('users.index', compact(
-            'users', 'projects', 'cohorts',
-            'totalUsers', 'totalLeaders', 'totalMembers', 'sort'
+            'users',
+            'projects',
+            'cohorts',
+            'totalUsers',
+            'totalLeaders',
+            'totalMembers',
+            'sort'
         ));
     }
 

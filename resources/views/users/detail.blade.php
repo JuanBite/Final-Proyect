@@ -375,79 +375,110 @@
             </div>
         </div>
 
-        <!-- RIGHT COL -->
         <div class="max-h-[780px] overflow-y-auto pr-2
     [&::-webkit-scrollbar]:w-1.5
     [&::-webkit-scrollbar-track]:bg-transparent
     [&::-webkit-scrollbar-thumb]:bg-white/10
     [&::-webkit-scrollbar-thumb]:rounded-full">
 
-            <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-5">
 
-                <!-- Proyectos asignados -->
-                @foreach($assignedProjects as $project)
-                @php
-                $role = $project->pivot->project_role;
-                $isLeader = $role === 'LEADER';
-                @endphp
-                <div
-                    class="bg-[#182236] border border-[#00C853]/15 rounded-xl hover:border-[#00C853]/30 hover:bg-emerald-500/5 transition-all overflow-hidden">
+        @if($assignedProjects->isEmpty())
+        {{-- Estado vacío --}}
+        <div class="flex flex-col items-center justify-center py-12 gap-4 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-500" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+            </div>
+            <div class="flex flex-col gap-1">
+                <p class="text-sm font-bold text-slate-300" style="font-family:'Syne',sans-serif">
+                    Sin proyectos asignados
+                </p>
+                <p class="text-xs text-slate-500">
+                    Este usuario no pertenece a ningún proyecto aún.
+                </p>
+            </div>
+        </div>
 
-                    {{-- Cabecera del proyecto --}}
-                    <div class="flex items-center gap-3.5 px-4 py-3.5">
-                        <div class="w-1 h-10 rounded shrink-0 {{ $isLeader ? 'bg-emerald-400' : 'bg-sky-400' }}"></div>
-                        <div class="flex-1">
-                            <p class="font-bold text-sm" style="font-family:'Syne',sans-serif">{{ $project->name }}</p>
-                            <p class="text-xs text-slate-400 mt-0.5">{{ $project->description ?? 'Sin descripción' }}
-                            </p>
-                        </div>
-                        <div class="flex flex-col items-end gap-1.5">
-                            <span class="px-2 py-0.5 rounded-md text-xs font-semibold uppercase tracking-wide
+        @else
+        {{-- Proyectos asignados --}}
+        @foreach($assignedProjects as $project)
+        @php
+        $role = $project->pivot->project_role;
+        $isLeader = $role === 'LEADER';
+        @endphp
+        <div
+            class="bg-[#182236] border border-[#00C853]/15 rounded-xl hover:border-[#00C853]/30 hover:bg-emerald-500/5 transition-all overflow-hidden">
+
+            {{-- Cabecera del proyecto --}}
+            <div class="flex items-center gap-3.5 px-4 py-3.5">
+                <div class="w-1 h-10 rounded shrink-0 {{ $isLeader ? 'bg-emerald-400' : 'bg-sky-400' }}"></div>
+                <div class="flex-1">
+                    <p class="font-bold text-sm" style="font-family:'Syne',sans-serif">{{ $project->name }}</p>
+                    <p class="text-xs text-slate-400 mt-0.5">{{ $project->description ?? 'Sin descripción' }}</p>
+                </div>
+                <div class="flex flex-col items-end gap-1.5">
+                    <span class="px-2 py-0.5 rounded-md text-xs font-semibold uppercase tracking-wide
                         {{ $isLeader
                             ? 'bg-emerald-500/12 text-emerald-400 border border-emerald-500/20'
                             : 'bg-sky-400/12 text-sky-400 border border-sky-400/20' }}">
-                                {{ $isLeader ? 'Líder' : 'Miembro' }}
-                            </span>
-                            <span class="font-black text-sm {{ $isLeader ? 'text-emerald-400' : 'text-sky-400' }}"
-                                style="font-family:'Syne',sans-serif">
-                                {{ number_format($project->progress, 0) }}%
-                            </span>
-                            <div class="w-20 h-1 bg-white/5 rounded-full overflow-hidden">
-                                <div class="h-full rounded-full {{ $isLeader ? 'bg-emerald-400' : 'bg-sky-400' }}"
-                                    style="width:{{ $project->progress }}%"></div>
-                            </div>
-                        </div>
+                        {{ $isLeader ? 'Líder' : 'Miembro' }}
+                    </span>
+                    <span class="font-black text-sm {{ $isLeader ? 'text-emerald-400' : 'text-sky-400' }}"
+                        style="font-family:'Syne',sans-serif">
+                        {{ number_format($project->progress, 0) }}%
+                    </span>
+                    <div class="w-20 h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full {{ $isLeader ? 'bg-emerald-400' : 'bg-sky-400' }}"
+                            style="width:{{ $project->progress }}%"></div>
                     </div>
+                </div>
+            </div>
 
-                    {{-- Miembros del proyecto --}}
-                    @if($project->members->count() > 0)
-                    <div class="border-t border-white/5 px-4 py-3">
-                        <div class="flex flex-wrap gap-2 max-h-24 overflow-y-auto pr-1
+            {{-- Miembros del proyecto --}}
+            @if($project->members->count() > 0)
+            <div class="border-t border-white/5 px-4 py-3">
+                <div class="flex flex-wrap gap-2 max-h-24 overflow-y-auto pr-1
                     [&::-webkit-scrollbar]:w-1
                     [&::-webkit-scrollbar-track]:bg-transparent
                     [&::-webkit-scrollbar-thumb]:bg-white/10
                     [&::-webkit-scrollbar-thumb]:rounded-full">
-                            @foreach($project->members as $member)
-                            @php $mIsLeader = $member->pivot->project_role === 'LEADER'; @endphp
-                            <div
-                                class="flex items-center gap-2 bg-[#1C2A40] border border-white/5 rounded-lg px-2.5 py-1.5">
-                                <div class="w-6 h-6 rounded-md bg-gradient-to-br {{ $mIsLeader ? 'from-emerald-700 to-emerald-400' : 'from-sky-700 to-sky-400' }} flex items-center justify-center font-black text-[10px] text-white shrink-0"
-                                    style="font-family:'Syne',sans-serif">
-                                    {{ strtoupper(substr($member->first_name,0,1)) }}{{
-                                    strtoupper(substr($member->last_name,0,1)) }}
-                                </div>
-                                <span class="text-xs text-slate-300">{{ $member->first_name }} {{ $member->last_name
-                                    }}</span>
-                                @if($mIsLeader)
-                                <span class="text-[10px] text-emerald-400 font-semibold">Líder</span>
-                                @endif
-                            </div>
-                            @endforeach
+                    @foreach($project->members as $member)
+                    @php $mIsLeader = $member->pivot->project_role === 'LEADER'; @endphp
+                    <div
+                        class="flex items-center gap-2 bg-[#1C2A40] border border-white/5 rounded-lg px-2.5 py-1.5">
+                        <div class="w-6 h-6 rounded-md bg-gradient-to-br {{ $mIsLeader ? 'from-emerald-700 to-emerald-400' : 'from-sky-700 to-sky-400' }} flex items-center justify-center font-black text-[10px] text-white shrink-0"
+                            style="font-family:'Syne',sans-serif">
+                            {{ strtoupper(substr($member->first_name,0,1)) }}{{ strtoupper(substr($member->last_name,0,1)) }}
                         </div>
+                        <span class="text-xs text-slate-300">{{ $member->first_name }} {{ $member->last_name }}</span>
+                        @if($mIsLeader)
+                        <span class="text-[10px] text-emerald-400 font-semibold">Líder</span>
+                        @endif
                     </div>
-                    @endif
+                    @endforeach
                 </div>
-                @endforeach
+            </div>
+            @endif
+        </div>
+        @endforeach
+        @endif
+
+        {{-- Modal (siempre presente en el DOM) --}}
+        <div x-show="editModalOpen" @close-edit-modal.window="editModalOpen=false; currentUserId=null"
+            x-transition.opacity.duration.200ms
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            @click.away="editModalOpen=false; document.body.style.overflow=''; currentUserId=null" x-cloak>
+            <div @click.stop>
+                @include('modals.edit.user')
+            </div>
+        </div>
+
+    </div>
+</div>
 
                 <!-- Modal -->
                 <div x-show="editModalOpen" @close-edit-modal.window="editModalOpen=false; currentUserId=null"

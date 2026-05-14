@@ -7,7 +7,7 @@ use App\Http\Controllers\{
     ProjectController, DashboardController, RegionController,
     UserController, GestionController, ProjectTaskController
 };
-
+Route::get('/projects/public', [ProjectController::class, 'publicIndex'])->name('projects.universal-search');
 Route::get('/', fn() => view('auth.login'));
 
 Route::middleware(['auth', 'active'])->group(function () {

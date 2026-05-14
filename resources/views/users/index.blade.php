@@ -102,8 +102,8 @@
                         <circle cx="11" cy="11" r="8" />
                         <path d="M21 21l-4.35-4.35" />
                     </svg>
-                    <input type="text" name="search" id="search-input" placeholder="Búsqueda"
-                        value="{{ request('search') }}"
+                    <input type="text" name="search" id="search-input"
+                        placeholder="Búsqueda por nombre, correo o ficha" value="{{ request('search') }}"
                         class="border-none outline-none text-slate-400 text-sm placeholder-slate-500 w-full sm:w-44 bg-slate-700"
                         oninput="toggleClearBtn(this); liveSearch(this.value)">
                     <button type="button" id="clear-search" onclick="clearSearch()"
@@ -150,30 +150,6 @@
                         Antiguos
                         @endif
                     </a>
-
-                    {{-- Filtro por ficha --}}
-                    <select name="cohort" onchange="this.form.submit()"
-                        class="px-3 py-1.5 rounded-full text-xs border transition-all bg-slate-700 border-white/10 outline-none cursor-pointer
-                {{ request('cohort') ? 'text-emerald-400 border-emerald-500/30 bg-emerald-500/15' : 'text-slate-400' }}">
-                        <option value="">Todas las fichas</option>
-                        @foreach($cohorts as $c)
-                        <option value="{{ $c->id }}" {{ request('cohort')==$c->id ? 'selected' : '' }}
-                            style="background:#1e293b; color:white;">
-                            {{ $c->program_name }}
-                        </option>
-                        @endforeach
-                    </select>
-
-                    {{-- Limpiar ficha --}}
-                    @if(request('cohort'))
-                    <a href="{{ route('users.index', request()->except('cohort')) }}"
-                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs border transition-all bg-slate-700 text-slate-400 border-white/10 hover:text-red-400 hover:border-red-400/30">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Limpiar ficha
-                    </a>
-                    @endif
                 </div>
 
                 <button type="submit" class="hidden"></button>
@@ -267,17 +243,11 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                             INSTRUCTOR
                         </span>
-                        @elseif($user->role === 'APRENDIZ')
+                        @else
                         <span
                             class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 text-slate-300 border border-slate-500/25">
                             <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                             APRENDIZ
-                        </span>
-                        @elseif($user->role === 'REGIONAL_ADMIN')
-                        <span
-                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium text-red-300 border border-red-500/25">
-                            <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
-                            REGIONAL ADMIN
                         </span>
                         @endif
                     </td>
@@ -481,32 +451,40 @@
         toggleClearBtn(input);
         document.getElementById('search-form').submit();
     }
-    let searchTimeout = null;
 
     function liveSearch(value) {
-        clearTimeout(searchTimeout);
+    const url    = new URL(window.location.href);
+    const params = url.searchParams;
 
-        // Debounce: espera 300ms después de que el usuario deje de escribir
-        searchTimeout = setTimeout(() => {
-            const params = new URLSearchParams(window.location.search);
-            params.set('search', value);
-            if (!value) params.delete('search');
-
-            fetch(`{{ route('users.index') }}?${params.toString()}`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(res => res.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    // Reemplaza solo la tabla/lista de usuarios
-                    document.getElementById('users-table').innerHTML =
-                        doc.getElementById('users-table').innerHTML;
-                });
-        }, 300);
+    if (value.trim() === '') {
+        params.delete('search');
+    } else {
+        params.set('search', value);
+        // Resetear a página 1 al buscar
+    params.delete('page');
+    setTimeout(() => {
+    window.location.href = url.toString();
+}, 1200);
     }
+
+    
+}
+
+function clearSearch() {
+    const url    = new URL(window.location.href);
+    url.searchParams.delete('search');
+    url.searchParams.delete('page');
+    window.location.href = url.toString();
+}
+
+function toggleClearBtn(input) {
+    const btn = document.getElementById('clear-search');
+    if (input.value.trim() !== '') {
+        btn.classList.remove('hidden');
+    } else {
+        btn.classList.add('hidden');
+    }
+}
 
 </script>
 

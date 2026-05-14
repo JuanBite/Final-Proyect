@@ -103,18 +103,58 @@
                             <div class="flex flex-col gap-1.5">
                                 <label
                                     class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Contraseña</label>
-                                <input
-                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40"
-                                    type="password" name="password" placeholder="•••••••• " />
+                                <div class="relative flex items-center">
+                                    <input
+                                        class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40 pr-10"
+                                        type="password" name="password" id="edit-password" placeholder="••••••••" />
+                                    <button type="button"
+                                        onclick="togglePassword('edit-password', 'eye-edit-open', 'eye-edit-closed')"
+                                        class="absolute right-3 text-[#8AAABB] hover:text-[#40C4FF] transition-colors">
+                                        <svg id="eye-edit-open" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        <svg id="eye-edit-closed" xmlns="http://www.w3.org/2000/svg"
+                                            class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.97 9.97 0 012.169-3.716M6.53 6.53A9.97 9.97 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.97 9.97 0 01-4.293 5.411M15 12a3 3 0 11-4.243-4.243M3 3l18 18" />
+                                        </svg>
+                                    </button>
+                                </div>
                                 <span class="text-[10px] text-[#8AAABB]">Dejar vacío para mantener la contraseña
                                     actual</span>
                             </div>
+
                             <div class="flex flex-col gap-1.5">
                                 <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Confirmar
                                     contraseña</label>
-                                <input
-                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40"
-                                    type="password" name="password_confirmation" placeholder="••••••••" />
+                                <div class="relative flex items-center">
+                                    <input
+                                        class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40 pr-10"
+                                        type="password" name="password_confirmation" id="edit-password-confirm"
+                                        placeholder="••••••••" />
+                                    <button type="button"
+                                        onclick="togglePassword('edit-password-confirm', 'eye-edit-confirm-open', 'eye-edit-confirm-closed')"
+                                        class="absolute right-3 text-[#8AAABB] hover:text-[#40C4FF] transition-colors">
+                                        <svg id="eye-edit-confirm-open" xmlns="http://www.w3.org/2000/svg"
+                                            class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        <svg id="eye-edit-confirm-closed" xmlns="http://www.w3.org/2000/svg"
+                                            class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.97 9.97 0 012.169-3.716M6.53 6.53A9.97 9.97 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.97 9.97 0 01-4.293 5.411M15 12a3 3 0 11-4.243-4.243M3 3l18 18" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -370,6 +410,21 @@
         getInitials(name) {
             return name.substring(0, 2).toUpperCase();
         }
+    }
+}
+function togglePassword(inputId, eyeOpenId, eyeClosedId) {
+    const input     = document.getElementById(inputId);
+    const eyeOpen   = document.getElementById(eyeOpenId);
+    const eyeClosed = document.getElementById(eyeClosedId);
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        eyeOpen.classList.add('hidden');
+        eyeClosed.classList.remove('hidden');
+    } else {
+        input.type = 'password';
+        eyeOpen.classList.remove('hidden');
+        eyeClosed.classList.add('hidden');
     }
 }
 </script>

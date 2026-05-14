@@ -76,7 +76,7 @@
                         @empty
 
                         <span class="text-sm text-gray-400">
-                            No se encuentran miembros
+                            No se encuentran participantes
                         </span>
 
                         @endforelse
