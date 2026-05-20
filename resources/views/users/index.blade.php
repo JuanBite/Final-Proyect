@@ -243,6 +243,12 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                             INSTRUCTOR
                         </span>
+                        @elseif($user->role === 'COORDINATOR')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-blue-500/12 text-blue-400 border border-blue-500/25">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                            COORDINADOR
+                        </span>
                         @else
                         <span
                             class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 text-slate-300 border border-slate-500/25">

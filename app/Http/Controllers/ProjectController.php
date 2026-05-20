@@ -58,10 +58,8 @@ class ProjectController extends Controller
             'description' => ['required', 'string'],
             'start_date' => ['required', 'date'],
             'due_date' => ['required', 'date', 'after_or_equal:start_date'],
-            'progress' => ['required', 'numeric', 'min:0', 'max:100'],
             // ← NUEVO: STUDENT usa su propia ficha y se autoasigna como líder
             'leader_id' => $user->isStudent() ? ['nullable'] : ['required', 'exists:users,id'],
-            'status' => ['required'],
             'team' => ['array'],
             // ← NUEVO: requerido para todos menos STUDENT
             'cohort_id' => $user->isStudent() ? ['nullable'] : ['required', 'exists:cohorts,id'],
@@ -87,9 +85,7 @@ class ProjectController extends Controller
                 'description' => $request->description,
                 'start_date' => $request->start_date,
                 'due_date' => $request->due_date,
-                'progress' => $request->progress,
                 'leader_id' => $leaderId,
-                'status' => $request->status,
                 'cohort_id' => $cohortId,               // ← NUEVO
                 'center_id' => $cohort->center_id,      // ← NUEVO
             ]);
@@ -184,7 +180,6 @@ class ProjectController extends Controller
             'description' => ['required', 'string'],
             'start_date' => ['required', 'date'],
             'due_date' => ['required', 'date', 'after_or_equal:start_date'],
-            'progress' => ['required', 'numeric', 'min:0', 'max:100'],
             'leader_id' => $user->isStudent() ? ['nullable'] : ['required', 'exists:users,id'], // ← NUEVO
             'status' => ['required', new Enum(EnumStatus::class)],
             'team' => ['array'],
@@ -200,7 +195,6 @@ class ProjectController extends Controller
                 'description' => $request->description,
                 'start_date' => $request->start_date,
                 'due_date' => $request->due_date,
-                'progress' => $request->progress,
                 'status' => $request->status,
             ];
 

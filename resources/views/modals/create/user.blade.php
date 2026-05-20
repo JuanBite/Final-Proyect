@@ -196,6 +196,26 @@
                         <div class="font-syne font-bold text-xs text-[#FFD740]">ADMIN</div>
                         <div class="text-[10px] text-[#8AAABB] mt-1">Administra</div>
                     </div>
+                    {{-- APRENDIZ --}}
+                    <div @click="selectedRole = 'COORDINATOR'"
+                        :class="selectedRole === 'COORDINATOR' ? 'border-blue-500/40 bg-blue-600/15' : 'border-blue-500/15 bg-[#182236]'"
+                        class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
+                        <div class="flex justify-center mb-1.5">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" stroke-width="1.8"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.75 5.25h16.5v13.5H3.75V5.25z" />
+
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5" />
+
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 14.25h3" />
+
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 14.25h1.5" />
+                            </svg>
+                        </div>
+                        <div class="font-syne font-bold text-xs text-blue-400">COORDINADOR</div>
+                        <div class="text-[10px] text-[#8AAABB] mt-1">Coordina</div>
+                    </div>
 
                 </div>
             </div>

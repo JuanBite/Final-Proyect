@@ -9,7 +9,7 @@ class UserPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR', 'INSTRUCTOR']);
+        return $user->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR', 'INSTRUCTOR', 'STUDENT']);
     }
 
     public function view(User $user, User $target): bool

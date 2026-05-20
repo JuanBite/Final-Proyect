@@ -61,7 +61,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     // ── Usuarios ──────────────────────────────────────────────────────────────
-    Route::middleware('role:ADMIN,REGIONAL_ADMIN,COORDINATOR,INSTRUCTOR')->group(function () {
+    Route::middleware('role:ADMIN,REGIONAL_ADMIN,COORDINATOR,INSTRUCTOR,STUDENT')->group(function () {
         Route::get('/users',        [UserController::class, 'index'])->name('users.index');
         Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
     });

@@ -81,8 +81,8 @@ class Project extends Model
             'ADMIN'          => $query,
             'REGIONAL_ADMIN' => $query->whereIn('center_id', $user->visibleCenterIds()),
             'COORDINATOR'    => $query->where('center_id', $user->center_id),
-            'INSTRUCTOR',
-            'STUDENT'        => $query->where('cohort_id', $user->cohort_id),
+            'INSTRUCTOR'     => $query->where('center_id', $user->center_id),
+            'STUDENT'        => $query->where('center_id', $user->center_id),
             default          => $query->whereRaw('0 = 1'), // nadie más ve nada
         };
     }

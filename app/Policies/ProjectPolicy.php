@@ -21,8 +21,8 @@ class ProjectPolicy
             'ADMIN'          => true,
             'REGIONAL_ADMIN' => in_array($project->center_id, $user->visibleCenterIds()),
             'COORDINATOR'    => $project->center_id === $user->center_id,
-            'INSTRUCTOR',
-            'STUDENT'        => $project->cohort_id === $user->cohort_id,
+            'INSTRUCTOR'     => $project->center_id === $user->center_id,
+            'STUDENT'        => $project->center_id === $user->center_id,
             default          => false,
         };
     }

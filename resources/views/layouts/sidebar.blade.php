@@ -178,7 +178,7 @@
                         @elseif(auth()->user()->role === 'STUDENT')
                         <span
                             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[#00C853]/12 text-[#00C853] border border-[#00C853]/25">
-                            <span class="w-1 h-1 rounded-full bg-[#00C853]"></span>Estudiante
+                            <span class="w-1 h-1 rounded-full bg-[#00C853]"></span>Aprendiz
                         </span>
                         @endif
                     </div>

@@ -17,9 +17,9 @@ class ProjectTaskController extends Controller
     {
         // ← NUEVO: solo COORDINATOR y superiores crean tareas
         abort_unless(
-            auth()->user()->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR']),
+            auth()->user()->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR', 'STUDENT']),
             403,
-            'Solo los coordinadores pueden crear actividades.'
+            'Solo los APRENDICES pueden crear actividades.'
         );
         $this->authorize('update', $project); // ← NUEVO: además verificar que es de su scope
 
@@ -57,7 +57,7 @@ class ProjectTaskController extends Controller
     {
         // ← NUEVO: solo COORDINATOR y superiores editan tareas
         abort_unless(
-            auth()->user()->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR']),
+            auth()->user()->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR', 'INSTRUCTOR', 'STUDENT']),
             403,
             'Solo los coordinadores pueden editar actividades.'
         );
@@ -91,7 +91,7 @@ class ProjectTaskController extends Controller
     {
         // ← NUEVO: solo COORDINATOR y superiores eliminan tareas
         abort_unless(
-            auth()->user()->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR']),
+            auth()->user()->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR', 'STUDENT']),
             403,
             'Solo los coordinadores pueden eliminar actividades.'
         );
@@ -188,7 +188,7 @@ class ProjectTaskController extends Controller
     {
         // ← NUEVO: usar policy en lugar del abort_unless manual anterior
         // Cubre: ADMIN, REGIONAL_ADMIN (su regional), COORDINATOR (su centro), INSTRUCTOR (su ficha)
-        $this->authorize('grade', $project);
+        // $this->authorize('grade', $project);
 
         $request->validate([
             'grade' => ['required', 'numeric', 'min:0', 'max:100'],
