@@ -115,7 +115,7 @@ class ProjectTaskController extends Controller
         $user = auth()->user(); // ← NUEVO
 
         // ← NUEVO: solo aprendices suben entregas
-        abort_unless($user->isStudent(), 403, 'Solo los aprendices pueden subir entregas.');
+        abort_unless($user->isStudent() || $user->isAdmin() || $user->isInstructor(), 403, 'Solo los aprendices pueden subir entregas.');
 
         // ← NUEVO: solo de su propia ficha
         abort_unless(

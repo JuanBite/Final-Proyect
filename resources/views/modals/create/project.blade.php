@@ -54,7 +54,7 @@
                 </div>
 
                 <!-- Sección: Avance -->
-                <div>
+                {{-- <div>
                     <div class="flex items-center gap-2 mb-4">
                         <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Avance inicial</span>
                         <div class="flex-1 h-px bg-[#00C853]/15"></div>
@@ -69,7 +69,7 @@
                             <span class="text-[13px] text-[#8AAABB] shrink-0">%</span>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Sección: Líder -->
                 <div>
@@ -148,7 +148,7 @@
                 </div>
 
                 <!-- Sección: Estado -->
-                <div x-data="{ status: 'IN_PROGRESS' }">
+                {{-- <div x-data="{ status: 'IN_PROGRESS' }">
                     <input type="hidden" name="status" :value="status">
                     <div>
                         <div class="flex items-center gap-2 mb-4">
@@ -194,7 +194,7 @@
 
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
 

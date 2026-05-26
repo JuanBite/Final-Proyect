@@ -30,7 +30,9 @@ class ProjectController extends Controller
         $projects = $query->orderBy('id', 'desc')->paginate(9)->withQueryString();
 
         // ← NUEVO: usuarios acotados al scope del usuario autenticado
-        $users = User::whereIn('center_id', $user->visibleCenterIds())->get();
+        $users = $user->role === 'ADMIN'
+            ? User::all()
+            : User::whereIn('center_id', $user->visibleCenterIds())->get();
 
         return view('projects.index', compact('projects', 'users'));
     }
@@ -41,7 +43,9 @@ class ProjectController extends Controller
 
         $user = auth()->user(); // ← NUEVO
         // ← NUEVO: usuarios y fichas acotados al scope
-        $users = User::whereIn('center_id', $user->visibleCenterIds())->get();
+        $users = $user->role === 'ADMIN'
+    ? User::all()
+    : User::whereIn('center_id', $user->visibleCenterIds())->get();
         $cohorts = $this->cohortsForUser($user); // ← NUEVO
 
         return view('modals.create.project', compact('users', 'cohorts')); // ← NUEVO: + cohorts
@@ -62,32 +66,37 @@ class ProjectController extends Controller
             'leader_id' => $user->isStudent() ? ['nullable'] : ['required', 'exists:users,id'],
             'team' => ['array'],
             // ← NUEVO: requerido para todos menos STUDENT
-            'cohort_id' => $user->isStudent() ? ['nullable'] : ['required', 'exists:cohorts,id'],
+            'cohort_id' => ($user->isStudent() || $user->isAdmin())
+                ? ['nullable', 'exists:cohorts,id']
+                : ['required', 'exists:cohorts,id'],
         ]);
 
-        // ← NUEVO: determinar cohort, leader y center según rol
         $cohortId = $user->isStudent() ? $user->cohort_id : $request->cohort_id;
         $leaderId = $user->isStudent() ? $user->id : $request->leader_id;
-        $cohort = Cohort::findOrFail($cohortId);
 
-        // ← NUEVO: verificar que la ficha esté dentro del scope
-        abort_unless(
-            in_array($cohortId, $user->visibleCohortIds()),
-            403,
-            'No puedes crear proyectos en esta ficha.'
-        );
+        $centerId = null;
+        if ($cohortId) {
+            $cohort   = Cohort::findOrFail($cohortId);
+            $centerId = $cohort->center_id;
+
+            abort_unless(
+                $user->isAdmin() || in_array($cohortId, $user->visibleCohortIds()),
+                403,
+                'No puedes crear proyectos en esta ficha.'
+            );
+        }
 
         DB::beginTransaction();
 
         try {
             $project = Project::create([
-                'name' => $request->name,
+                'name'        => $request->name,
                 'description' => $request->description,
-                'start_date' => $request->start_date,
-                'due_date' => $request->due_date,
-                'leader_id' => $leaderId,
-                'cohort_id' => $cohortId,               // ← NUEVO
-                'center_id' => $cohort->center_id,      // ← NUEVO
+                'start_date'  => $request->start_date,
+                'due_date'    => $request->due_date,
+                'leader_id'   => $leaderId,
+                'cohort_id'   => $cohortId,  // null si ADMIN no eligió ficha
+                'center_id'   => $centerId,  // null si ADMIN no eligió ficha
             ]);
 
             ProjectMember::create([
@@ -116,7 +125,7 @@ class ProjectController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return back()->withErrors('Error al crear proyecto: '.$e->getMessage());
+            return back()->withErrors('Error al crear proyecto: ' . $e->getMessage());
         }
     }
 
@@ -126,7 +135,10 @@ class ProjectController extends Controller
 
         $this->authorize('view', $project); // ← NUEVO
 
-        $users = User::whereIn('center_id', [auth()->user()->center_id])->get(); // ← NUEVO: acotado al centro
+        $authUser = auth()->user();
+    $users = $authUser->isAdmin()
+        ? User::all()
+        : User::whereIn('center_id', [$authUser->center_id])->get();
 
         $filterYear = (int) $request->get('filter_year', now()->year);
         $filterMonth = (int) $request->get('filter_month', now()->month);
@@ -163,7 +175,9 @@ class ProjectController extends Controller
         $this->authorize('update', $project); // ← NUEVO
 
         $user = auth()->user(); // ← NUEVO
-        $users = User::whereIn('center_id', $user->visibleCenterIds())->get(); // ← NUEVO
+        $users = $user->role === 'ADMIN'
+            ? User::all()
+            : User::whereIn('center_id', $user->visibleCenterIds())->get();
         $cohorts = $this->cohortsForUser($user); // ← NUEVO
 
         return view('modals.edit.project', compact('project', 'users', 'cohorts')); // ← NUEVO: + cohorts
@@ -235,7 +249,7 @@ class ProjectController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return back()->withErrors('Error al actualizar: '.$e->getMessage());
+            return back()->withErrors('Error al actualizar: ' . $e->getMessage());
         }
     }
 
@@ -261,9 +275,8 @@ class ProjectController extends Controller
         };
     }
     public function publicIndex()
-{
-    $projects = Project::select('name', 'description')->orderBy('created_at', 'desc')->get();
-    return view('projects.universal-search', compact('projects'));
-}
-    
+    {
+        $projects = Project::select('name', 'description')->orderBy('created_at', 'desc')->get();
+        return view('projects.universal-search', compact('projects'));
+    }
 }

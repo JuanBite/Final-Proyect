@@ -324,15 +324,15 @@
             </div>
         </div>
     </div>
-        <div class="mt-6">
-    @if($tab === 'regions')
+    <div class="mt-6">
+        @if($tab === 'regions')
         {{ $regions->links() }}
-    @elseif($tab === 'centers')
+        @elseif($tab === 'centers')
         {{ $centers->links() }}
-    @elseif($tab === 'cohorts')
+        @elseif($tab === 'cohorts')
         {{ $cohorts->links() }}
-    @endif
-</div>
+        @endif
+    </div>
 
     {{-- MODAL CREAR / EDITAR --}}
     <div x-show="modal" x-transition.opacity.duration.200ms @click.away="modal=false; document.body.style.overflow=''"
@@ -371,10 +371,9 @@
 
                                     <option value="">Seleccione una región</option>
 
-                                    @foreach($regions as $region)
-                                    <option value="{{ $region->id }}">
-                                        {{ $region->name }}
-                                    </option>
+                                    {{-- SELECT REGIONES --}}
+                                    @foreach($allRegions as $region)
+                                    <option value="{{ $region->id }}">{{ $region->name }}</option>
                                     @endforeach
 
                                 </select>
@@ -387,10 +386,9 @@
 
                                     <option value="">Seleccione un centro</option>
 
-                                    @foreach($centers as $center)
-                                    <option value="{{ $center->id }}">
-                                        {{ $center->name }}
-                                    </option>
+                                    {{-- SELECT CENTROS --}}
+                                    @foreach($allCenters as $center)
+                                    <option value="{{ $center->id }}">{{ $center->name }}</option>
                                     @endforeach
 
                                 </select>

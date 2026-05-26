@@ -41,14 +41,14 @@ Route::middleware(['auth', 'active'])->group(function () {
     // ── Tareas y entregas ─────────────────────────────────────────────────────
     Route::prefix('projects/{project}/tasks')->name('project-tasks.')->group(function () {
         // Tareas: solo COORDINATOR y superiores
-        Route::middleware('role:STUDENT')->group(function () {
+        Route::middleware('role:ADMIN,STUDENT')->group(function () {
             Route::post('/',         [ProjectTaskController::class, 'store'])->name('store');
             Route::put('/{task}',    [ProjectTaskController::class, 'update'])->name('update');
             Route::delete('/{task}', [ProjectTaskController::class, 'destroy'])->name('destroy');
         });
 
         // Entregas: solo aprendices
-        Route::middleware('role:STUDENT')->group(function () {
+        Route::middleware('role:ADMIN,INSTRUCTOR,STUDENT')->group(function () {
             Route::post('/{task}/submissions',                    [ProjectTaskController::class, 'storeSubmission'])->name('submissions.store');
             Route::delete('/{task}/submissions/{submission}',     [ProjectTaskController::class, 'destroySubmission'])->name('submissions.destroy');
         });

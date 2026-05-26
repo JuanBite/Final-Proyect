@@ -76,11 +76,19 @@ class GestionController extends Controller
         }
 
         return view('gestion.index', [
-            'tab' => $tab,
-            'allowedTabs' => $allowedTabs,               // ← NUEVO: para ocultar tabs en la vista
-            'regions' => $regionsQuery->paginate(12)->withQueryString(),
-            'centers' => $centersQuery->paginate(12)->withQueryString(),
-            'cohorts' => $cohortsQuery->paginate(8)->withQueryString(),
-        ]);
+    'tab'        => $tab,
+    'allowedTabs' => $allowedTabs,
+    'regions'    => $regionsQuery->paginate(12)->withQueryString(),
+    'centers'    => $centersQuery->paginate(12)->withQueryString(),
+    'cohorts'    => $cohortsQuery->paginate(8)->withQueryString(),
+
+    // ← NUEVO: para los selects del modal, sin paginar ni filtrar por search
+    'allRegions' => Region::when($user->isRegionalAdmin(),
+                        fn($q) => $q->where('id', $user->region_id)
+                    )->orderBy('name')->get(),
+
+    'allCenters' => Center::whereIn('id', $user->visibleCenterIds())
+                        ->orderBy('name')->get(),
+]);
     }
 }

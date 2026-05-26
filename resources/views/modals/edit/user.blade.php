@@ -81,9 +81,8 @@
                                     Ficha <span class="text-[#40C4FF]">*</span>
                                 </label>
                                 <select name="cohort_id"
-                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40"
-                                    required>
-                                    <option value="" disabled>Selecciona una ficha</option>
+                                    class="form-input bg-[#182236] border border-[#40C4FF]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all focus:border-[#40C4FF]/40">
+                                    <option value="">— Sin ficha —</option>
                                     @foreach($cohorts as $cohort)
                                     <option value="{{ $cohort->id }}" {{ $user->cohort_id == $cohort->id ? 'selected' :
                                         '' }}>
@@ -170,7 +169,7 @@
                             </div>
                             <div class="grid grid-cols-3 gap-3">
 
-                                <!-- INSTRUCTOR -->
+                                <!-- INSTRUCTOR — visible para todos -->
                                 <div @click="role = 'INSTRUCTOR'"
                                     :class="role === 'INSTRUCTOR' ? 'bg-[#00C853]/20 border-[#00C853] text-[#00C853] shadow-lg scale-[1.02]' : 'text-[#8AAABB] hover:bg-[#00C853]/10'"
                                     class="flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
@@ -183,7 +182,7 @@
                                     <span class="text-[9px] mt-0.5 opacity-70">Gestiona y dirige</span>
                                 </div>
 
-                                <!-- STUDENT -->
+                                <!-- STUDENT — visible para todos -->
                                 <div @click="role = 'STUDENT'"
                                     :class="role === 'STUDENT' ? 'bg-[#40C4FF]/20 border-[#40C4FF] text-[#40C4FF] shadow-lg scale-[1.02]' : 'text-[#8AAABB] hover:bg-[#40C4FF]/10'"
                                     class="flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
@@ -196,7 +195,38 @@
                                     <span class="text-[9px] mt-0.5 opacity-70">Participa</span>
                                 </div>
 
-                                <!-- ADMIN -->
+                                @if(!auth()->user()->isCoordinator())
+                                <!-- COORDINATOR — visible para todos -->
+                                <div @click="role = 'COORDINATOR'"
+                                    :class="role === 'COORDINATOR' ? 'bg-blue-600/20 border-blue-400 text-blue-400 shadow-lg scale-[1.02]' : 'text-[#8AAABB] hover:bg-blue-500/10'"
+                                    class="flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
+                                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3.75 5.25h16.5v13.5H3.75V5.25z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 14.25h3" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 14.25h1.5" />
+                                    </svg>
+                                    <span class="font-syne font-bold text-[11px]">COORDINADOR</span>
+                                    <span class="text-[9px] mt-0.5 opacity-70">Coordina</span>
+                                </div>
+                                @endif
+
+                                {{-- REGIONAL ADMIN y ADMIN — solo visibles para ADMIN --}}
+                                @if(auth()->user()->isAdmin())
+                                <div @click="role = 'REGIONAL_ADMIN'"
+                                    :class="role === 'REGIONAL_ADMIN' ? 'bg-purple-500/20 border-purple-400 text-purple-400 shadow-lg scale-[1.02]' : 'text-[#8AAABB] hover:bg-purple-500/10'"
+                                    class="flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
+                                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c-.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+                                    </svg>
+                                    <span class="font-syne font-bold text-[11px]">REGIONAL ADMIN</span>
+                                    <span class="text-[9px] mt-0.5 opacity-70">Gestiona regional</span>
+                                </div>
+
                                 <div @click="role = 'ADMIN'"
                                     :class="role === 'ADMIN' ? 'bg-[#FFD740]/20 border-[#FFD740] text-[#FFD740] shadow-lg scale-[1.02]' : 'text-[#8AAABB] hover:bg-[#FFD740]/10'"
                                     class="flex-1 px-3 py-2.5 rounded-xl border bg-[#182236] cursor-pointer text-center text-xs transition-all duration-200 flex flex-col items-center">
@@ -210,6 +240,7 @@
                                     <span class="font-syne font-bold text-[11px]">ADMIN</span>
                                     <span class="text-[9px] mt-0.5 opacity-70">Administra</span>
                                 </div>
+                                @endif
 
                             </div>
                         </div>

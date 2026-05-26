@@ -60,19 +60,67 @@
                             class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none"
                             type="text" placeholder="Ej: 10025***" required />
                     </div>
+                    {{-- REGIÓN — solo ADMIN elige, REGIONAL_ADMIN se arrastra automáticamente --}}
+                    @if(auth()->user()->isAdmin())
+                    <div class="col-span-2 grid grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-1.5">
+                            <label
+                                class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Región</label>
+                            <select name="region_id" id="select-region"
+                                class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none"
+                                onchange="filterCentersByRegion(this.value)">
+                                <option value="">— Sin región —</option>
+                                @foreach($regions as $region)
+                                <option value="{{ $region->id }}">{{ $region->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Centro de formación</label>
+                            <select name="center_id" id="select-center"
+                                class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none">
+                                <option value="0">— Sin centro —</option>
+                                @foreach($centers as $center)
+                                <option value="{{ $center->id }}" data-region="{{ $center->region_id }}">
+                                    {{ $center->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    @elseif(auth()->user()->isRegionalAdmin())
+                    {{-- REGIONAL_ADMIN: región fija, elige centro de su regional --}}
+                    <input type="hidden" name="region_id" value="{{ auth()->user()->region_id }}">
+                    <div class="col-span-2 flex flex-col gap-1.5">
+                        <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">
+                            Centro de formación <span class="text-[#40C4FF]">*</span>
+                        </label>
+                        <select name="center_id" required
+                            class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none">
+                            <option value="">— Selecciona un centro —</option>
+                            @foreach($centers as $center)
+                            <option value="{{ $center->id }}">{{ $center->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+
+                    {{-- FICHA — opcional para ADMIN, oculta para REGIONAL_ADMIN (se asigna después) --}}
+                    @if(!auth()->user()->isRegionalAdmin())
                     <div class="flex flex-col gap-1.5">
                         <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">
-                            Ficha <span class="text-[#40C4FF]">*</span>
+                            Ficha @if(!auth()->user()->isAdmin())<span class="text-[#40C4FF]">*</span>@endif
                         </label>
                         <select name="cohort_id"
                             class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none"
-                            required>
-                            <option value="" disabled selected>Selecciona una ficha</option>
+                            {{ auth()->user()->isAdmin() ? '' : 'required' }}>
+                            <option value="">— Sin ficha —</option>
                             @foreach($cohorts as $cohort)
                             <option value="{{ $cohort->id }}">{{ $cohort->program_name }}</option>
                             @endforeach
                         </select>
                     </div>
+                    @endif
                     <div class="col-span-2 flex flex-col gap-1.5">
                         <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Correo
                             electrónico <span class="text-[#40C4FF]">*</span></label>
@@ -150,7 +198,7 @@
                 <input type="hidden" name="role" :value="selectedRole">
                 <div class="grid grid-cols-3 gap-3">
 
-                    {{-- INSTRUCTOR --}}
+                    {{-- INSTRUCTOR — visible para todos --}}
                     <div @click="selectedRole = 'INSTRUCTOR'"
                         :class="selectedRole === 'INSTRUCTOR' ? 'border-green-500/30 bg-green-500/10' : 'border-[#00C853]/15 bg-[#182236]'"
                         class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
@@ -165,7 +213,7 @@
                         <div class="text-[10px] text-[#8AAABB] mt-1">Gestiona y dirige</div>
                     </div>
 
-                    {{-- APRENDIZ --}}
+                    {{-- APRENDIZ — visible para todos --}}
                     <div @click="selectedRole = 'STUDENT'"
                         :class="selectedRole === 'STUDENT' ? 'border-blue-500/30 bg-blue-500/10' : 'border-[#00C853]/15 bg-[#182236]'"
                         class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
@@ -180,7 +228,44 @@
                         <div class="text-[10px] text-[#8AAABB] mt-1">Participa</div>
                     </div>
 
-                    {{-- ADMIN --}}
+                    {{-- COORDINADOR — visible para todos --}}
+                     @if(!auth()->user()->isCoordinator())
+                    <div @click="selectedRole = 'COORDINATOR'"
+                        :class="selectedRole === 'COORDINATOR' ? 'border-blue-500/40 bg-blue-600/15' : 'border-blue-500/15 bg-[#182236]'"
+                        class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
+                        <div class="flex justify-center mb-1.5">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" stroke-width="1.8"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.75 5.25h16.5v13.5H3.75V5.25z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 14.25h3" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 14.25h1.5" />
+                            </svg>
+                        </div>
+                        <div class="font-syne font-bold text-xs text-blue-400">COORDINADOR</div>
+                        <div class="text-[10px] text-[#8AAABB] mt-1">Coordina</div>
+                    </div>
+                    @endif
+
+
+                    {{-- REGIONAL ADMIN — solo ADMIN --}}
+                    @if(auth()->user()->isAdmin())
+                    <div @click="selectedRole = 'REGIONAL_ADMIN'"
+                        :class="selectedRole === 'REGIONAL_ADMIN' ? 'border-purple-500/30 bg-purple-500/10' : 'border-[#00C853]/15 bg-[#182236]'"
+                        class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
+                        <div class="flex justify-center mb-1.5">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" stroke-width="1.8"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+                            </svg>
+                        </div>
+                        <div class="font-syne font-bold text-xs text-purple-400">REGIONAL ADMIN</div>
+                        <div class="text-[10px] text-[#8AAABB] mt-1">Gestiona regional</div>
+                    </div>
+
+                    {{-- ADMIN — solo ADMIN --}}
                     <div @click="selectedRole = 'ADMIN'"
                         :class="selectedRole === 'ADMIN' ? 'border-yellow-500/30 bg-yellow-500/10' : 'border-[#00C853]/15 bg-[#182236]'"
                         class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
@@ -196,26 +281,7 @@
                         <div class="font-syne font-bold text-xs text-[#FFD740]">ADMIN</div>
                         <div class="text-[10px] text-[#8AAABB] mt-1">Administra</div>
                     </div>
-                    {{-- APRENDIZ --}}
-                    <div @click="selectedRole = 'COORDINATOR'"
-                        :class="selectedRole === 'COORDINATOR' ? 'border-blue-500/40 bg-blue-600/15' : 'border-blue-500/15 bg-[#182236]'"
-                        class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
-                        <div class="flex justify-center mb-1.5">
-                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" stroke-width="1.8"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3.75 5.25h16.5v13.5H3.75V5.25z" />
-
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5" />
-
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 14.25h3" />
-
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 14.25h1.5" />
-                            </svg>
-                        </div>
-                        <div class="font-syne font-bold text-xs text-blue-400">COORDINADOR</div>
-                        <div class="text-[10px] text-[#8AAABB] mt-1">Coordina</div>
-                    </div>
+                    @endif
 
                 </div>
             </div>
@@ -327,6 +393,23 @@
 
     </form>
     <script>
+        function filterCentersByRegion(regionId) {
+    const centerSelect = document.getElementById('select-center');
+    const options = centerSelect.querySelectorAll('option');
+
+    options.forEach(opt => {
+        if (!opt.value) return; // opción vacía siempre visible
+        opt.style.display = (!regionId || opt.dataset.region == regionId) ? '' : 'none';
+    });
+
+    // Reset selección si el centro actual no pertenece a la nueva región
+    if (regionId && centerSelect.value) {
+        const selected = centerSelect.querySelector(`option[value="${centerSelect.value}"]`);
+        if (selected && selected.dataset.region != regionId) {
+            centerSelect.value = '';
+        }
+    }
+}
         function projectAssignerCreate() {
     return {
         projects: @json($projects),

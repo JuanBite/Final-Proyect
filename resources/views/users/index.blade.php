@@ -102,8 +102,8 @@
                         <circle cx="11" cy="11" r="8" />
                         <path d="M21 21l-4.35-4.35" />
                     </svg>
-                    <input type="text" name="search" id="search-input"
-                        placeholder="Búsqueda por nombre, correo o ficha" value="{{ request('search') }}"
+                    <input type="text" name="search" id="search-input" placeholder="Búsqueda por nombre, correo o ficha"
+                        value="{{ request('search') }}"
                         class="border-none outline-none text-slate-400 text-sm placeholder-slate-500 w-full sm:w-44 bg-slate-700"
                         oninput="toggleClearBtn(this); liveSearch(this.value)">
                     <button type="button" id="clear-search" onclick="clearSearch()"
@@ -236,6 +236,12 @@
                             class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-yellow-500/12 text-yellow-400 border border-yellow-500/25">
                             <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
                             ADMIN
+                        </span>
+                        @elseif($user->role === 'REGIONAL_ADMIN')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium bg-purple-500/12 text-purple-400 border border-purple-500/25">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                            REGIONAL ADMIN
                         </span>
                         @elseif($user->role === 'INSTRUCTOR')
                         <span

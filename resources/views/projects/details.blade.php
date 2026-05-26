@@ -4,65 +4,67 @@
 
 @section('content')
 @section('breadcrumbs')
-    <span class="text-[#00C853]/30">›</span>
-    <a href="{{ url('projects') }}"
-        class="text-[11px] uppercase tracking-[1.5px] text-[#8AAABB] hover:text-[#00C853] transition-colors">
-        Proyectos
-    </a>
-    <span class="text-[#00C853]/30">›</span>
-    <span class="font-syne font-bold text-sm text-[#E8F4FF]">{{ $project->name }}</span>
+<span class="text-[#00C853]/30">›</span>
+<a href="{{ url('projects') }}"
+    class="text-[11px] uppercase tracking-[1.5px] text-[#8AAABB] hover:text-[#00C853] transition-colors">
+    Proyectos
+</a>
+<span class="text-[#00C853]/30">›</span>
+<span class="font-syne font-bold text-sm text-[#E8F4FF]">{{ $project->name }}</span>
 @endsection
 
 @php
-    $monthNames = [
-        1 => 'Enero',
-        2 => 'Febrero',
-        3 => 'Marzo',
-        4 => 'Abril',
-        5 => 'Mayo',
-        6 => 'Junio',
-        7 => 'Julio',
-        8 => 'Agosto',
-        9 => 'Septiembre',
-        10 => 'Octubre',
-        11 => 'Noviembre',
-        12 => 'Diciembre',
-    ];
-    $years = range(now()->year - 2, now()->year + 3);
+$monthNames = [
+1 => 'Enero',
+2 => 'Febrero',
+3 => 'Marzo',
+4 => 'Abril',
+5 => 'Mayo',
+6 => 'Junio',
+7 => 'Julio',
+8 => 'Agosto',
+9 => 'Septiembre',
+10 => 'Octubre',
+11 => 'Noviembre',
+12 => 'Diciembre',
+];
+$years = range(now()->year - 2, now()->year + 3);
 
-    $submissionsJson = [];
-    foreach ($submissionsMap as $taskId => $weeks) {
-        $submissionsJson[$taskId] = [];
-        foreach ($weeks as $week => $subs) {
-            $submissionsJson[$taskId][$week] = collect($subs)
-                ->map(
-                    fn($s) => [
-                        'id'         => $s->id,
-                        'filename'   => $s->original_filename ?? basename($s->file_path ?? 'archivo'),
-                        'url'        => $s->file_path ? asset('storage/' . $s->file_path) : null,
-                        'mime'       => $s->mime_type ?? '',
-                        'is_image'   => str_starts_with($s->mime_type ?? '', 'image/'),
-                        'comments'   => $s->comments ?? '',
-                        'grade'      => $s->grade,
-                        'feedback'   => $s->feedback ?? '',
-                        'grade_url'  => url("projects/{$project->id}/tasks/{$taskId}/submissions/{$s->id}/grade"),
-                        'delete_url' => url("projects/{$project->id}/tasks/{$taskId}/submissions/{$s->id}"),
+$submissionsJson = [];
+foreach ($submissionsMap as $taskId => $weeks) {
+$submissionsJson[$taskId] = [];
+foreach ($weeks as $week => $subs) {
+$submissionsJson[$taskId][$week] = collect($subs)
+->map(
+fn($s) => [
+'id' => $s->id,
+'filename' => $s->original_filename ?? basename($s->file_path ?? 'archivo'),
+'url' => $s->file_path ? asset('storage/' . $s->file_path) : null,
+'mime' => $s->mime_type ?? '',
+'is_image' => str_starts_with($s->mime_type ?? '', 'image/'),
+'comments' => $s->comments ?? '',
+'grade' => $s->grade,
+'feedback' => $s->feedback ?? '',
+'grade_url' => url("projects/{$project->id}/tasks/{$taskId}/submissions/{$s->id}/grade"),
+'delete_url' => url("projects/{$project->id}/tasks/{$taskId}/submissions/{$s->id}"),
 
-                    ],
-                )
-                ->values()
-                ->toArray();
-        }
-    }
+],
+)
+->values()
+->toArray();
+}
+}
 @endphp
 
 @php $canGrade = in_array(auth()->user()->role, ['ADMIN', 'INSTRUCTOR']); @endphp
 {{-- ── JSON de submissions en elemento seguro, fuera del atributo x-data ── --}}
-<script id="submissions-data" type="application/json">@json($submissionsJson)</script>
+<script id="submissions-data" type="application/json">
+    @json($submissionsJson)
+</script>
 
 {{-- ═══════════════════════════════════════════════════════════════════════════════
-     SCOPE PRINCIPAL: modales editar/eliminar proyecto
-     ═══════════════════════════════════════════════════════════════════════════════ --}}
+SCOPE PRINCIPAL: modales editar/eliminar proyecto
+═══════════════════════════════════════════════════════════════════════════════ --}}
 <div x-data="{ modalEditarAbierto: false, modalEliminarAbierto: false }" class="flex flex-col gap-6">
 
     {{-- ── Tarjeta cabecera del proyecto ─────────────────────────────────────── --}}
@@ -73,8 +75,8 @@
         <div class="flex items-start justify-between mb-6 relative z-10 px-8 py-7">
             <div class="flex items-top gap-4">
                 @php
-                    $words    = explode(' ', $project->name);
-                    $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                $words = explode(' ', $project->name);
+                $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
                 @endphp
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-700 to-emerald-400 flex items-center justify-center font-black text-lg text-slate-900 shrink-0"
                     style="font-family:'Syne',sans-serif">
@@ -156,20 +158,21 @@
             <span class="text-xs uppercase tracking-widest text-slate-400 shrink-0">Equipo:</span>
             <div class="flex gap-1.5">
                 @forelse($project->team as $member)
-                    @php $initials = strtoupper(substr($member->first_name, 0, 1) . substr($member->last_name, 0, 1)); @endphp
-                    <div class="w-8 h-8 rounded-lg border-2 border-slate-800 flex items-center justify-center font-black text-xs text-white"
-                        style="font-family:'Syne',sans-serif;background:linear-gradient(to bottom right,#6366f1,#8b5cf6)"
-                        title="{{ $member->first_name }} {{ $member->last_name }}">
-                        {{ $initials }}
-                    </div>
+                @php $initials = strtoupper(substr($member->first_name, 0, 1) . substr($member->last_name, 0, 1));
+                @endphp
+                <div class="w-8 h-8 rounded-lg border-2 border-slate-800 flex items-center justify-center font-black text-xs text-white"
+                    style="font-family:'Syne',sans-serif;background:linear-gradient(to bottom right,#6366f1,#8b5cf6)"
+                    title="{{ $member->first_name }} {{ $member->last_name }}">
+                    {{ $initials }}
+                </div>
                 @empty
-                    <span class="text-slate-400 text-sm">Sin miembros</span>
+                <span class="text-slate-400 text-sm">Sin miembros</span>
                 @endforelse
             </div>
             <div class="text-sm text-slate-400">
                 @forelse($project->team as $member)
-                    <span>{{ $member->first_name }} {{ $member->last_name }}</span>
-                    @if (!$loop->last), @endif
+                <span>{{ $member->first_name }} {{ $member->last_name }}</span>
+                @if (!$loop->last), @endif
                 @empty
                 @endforelse
             </div>
@@ -177,11 +180,12 @@
     </div>
 
     {{-- ═══════════════════════════════════════════════════════════════════════════
-         GANTT — scope Alpine independiente
-         ═══════════════════════════════════════════════════════════════════════════ --}}
+    GANTT — scope Alpine independiente
+    ═══════════════════════════════════════════════════════════════════════════ --}}
 
     {{-- ✅ FIX PRINCIPAL:
-         - allSubmissions se carga en init() desde el <script type="application/json"> seguro
+    - allSubmissions se carga en init() desde el <script type="application/json">
+        seguro
          - Se elimina @json() del atributo x-data para evitar que caracteres especiales rompan el parser JS
          - El listener usa @open-entrega.window con kebab-case consistente
          - Las celdas usan $dispatch('open-entrega', ...) con kebab-case
@@ -562,11 +566,16 @@
                     @csrf
 
                     <div>
-                        <label class="text-xs uppercase tracking-widest text-slate-400 mb-1.5 block">Fase</label>
-                        <input type="text" name="phase" required placeholder="ej: INVESTIGACIÓN"
-                            class="w-full bg-[#0e1a2d] border border-[#00C853]/20 text-slate-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500/60 placeholder-slate-600"
-                            value="{{ old('phase') }}">
-                    </div>
+    <label class="text-xs uppercase tracking-widest text-slate-400 mb-1.5 block">Fase</label>
+    <select name="phase" required
+        class="w-full bg-[#0e1a2d] border border-[#00C853]/20 text-slate-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-emerald-500/60">
+        <option value="" style="background:#0e1a2d">— Selecciona una fase —</option>
+        <option value="ANALISIS"   style="background:#0e1a2d" {{ old('phase') === 'ANALISIS'   ? 'selected' : '' }}>ANÁLISIS</option>
+        <option value="PLANEACION" style="background:#0e1a2d" {{ old('phase') === 'PLANEACION' ? 'selected' : '' }}>PLANEACIÓN</option>
+        <option value="EJECUCION"  style="background:#0e1a2d" {{ old('phase') === 'EJECUCION'  ? 'selected' : '' }}>EJECUCIÓN</option>
+        <option value="EVALUACION" style="background:#0e1a2d" {{ old('phase') === 'EVALUACION' ? 'selected' : '' }}>EVALUACIÓN</option>
+    </select>
+</div>
 
                     <div>
                         <label class="text-xs uppercase tracking-widest text-slate-400 mb-1.5 block">Título de la actividad</label>
