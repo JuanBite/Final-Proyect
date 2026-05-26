@@ -16,6 +16,23 @@ return Application::configure(basePath: dirname(__DIR__))
             'active' => \App\Http\Middleware\EnsureUserIsActive::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
-    })->create();
+    ->withExceptions(function (Exceptions $exceptions) {
+
+    $exceptions->renderable(function (\Illuminate\Auth\Access\AuthorizationException $e, $request) {
+        return redirect()->back()
+            ->with('error', 'No tienes permiso para realizar esta acción.');
+    });
+
+    $exceptions->renderable(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, $request) {
+        if ($e->getStatusCode() === 403) {
+            return redirect()->back()
+                ->with('error', 'No tienes permiso para realizar esta acción.');
+        }
+        if ($e->getStatusCode() === 404) {
+            return redirect()->back()
+                ->with('warning', 'Página no encontrada.');
+        }
+    });
+
+})
+    ->create();

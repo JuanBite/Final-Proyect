@@ -25,6 +25,12 @@ class Cohort extends Model
         return $this->belongsTo(Center::class);
     }
 
+    public function instructors()
+    {
+        return $this->belongsToMany(User::class, 'cohort_user')
+            ->where('role', 'INSTRUCTOR');
+    }
+
     public function users()
     {
         return $this->hasMany(User::class);

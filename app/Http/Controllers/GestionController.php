@@ -18,8 +18,8 @@ class GestionController extends Controller
         // ← NUEVO: tabs permitidos según rol
         $allowedTabs = match ($user->role) {
             'ADMIN' => ['regions', 'centers', 'cohorts'],
-            'REGIONAL_ADMIN' => ['regions', 'centers', 'cohorts'],
-            'COORDINATOR' => ['centers', 'cohorts'],
+            'REGIONAL_ADMIN' => ['centers', 'cohorts'],
+            'COORDINATOR' => ['cohorts'],
             'INSTRUCTOR' => ['cohorts'],
             default => ['cohorts'],
         };
@@ -62,7 +62,7 @@ class GestionController extends Controller
                 $q->whereIn('center_id', $user->visibleCenterIds()) // ← NUEVO
             )                                                        // ← NUEVO
             ->when($user->isInstructor(), fn ($q) =>                 // ← NUEVO
-                $q->where('id', $user->cohort_id)                   // ← NUEVO
+                $q->whereIn('id', $user->cohorts()->pluck('cohorts.id'))                   // ← NUEVO
             );                                                       // ← NUEVO
         if ($search && $tab === 'cohorts') {
             $cohortsQuery->where(function ($q) use ($search) {

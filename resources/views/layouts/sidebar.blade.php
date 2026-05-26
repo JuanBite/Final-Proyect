@@ -70,7 +70,7 @@
 
 
         {{-- SECCIÓN ADMIN --}}
-        @if(in_array(auth()->user()->role, ['ADMIN', 'REGIONAL_ADMIN','COORDINATOR']))
+        @if(in_array(auth()->user()->role, ['ADMIN', 'REGIONAL_ADMIN','COORDINATOR', 'INSTRUCTOR']))
 
         <span id="label-admin" class="hidden text-[9px] tracking-[2px] uppercase text-[#8AAABB] px-2 py-1 mt-4">
             Admin
@@ -80,7 +80,7 @@
 
 
         {{-- GESTIÓN SOLO ADMIN --}}
-        @if(in_array(auth()->user()->role, ['ADMIN', 'REGIONAL_ADMIN']))
+        @if(in_array(auth()->user()->role, ['ADMIN', 'REGIONAL_ADMIN','COORDINATOR', 'INSTRUCTOR']))
 
         <a href="{{ url('gestion') }}"
             class="sidebar-link flex items-center gap-3 px-0 justify-center py-2.5 rounded-xl text-[13.5px] border transition-all
@@ -101,7 +101,7 @@
 
 
         {{-- USERS ADMIN Y COORDINADOR --}}
-        @if(in_array(auth()->user()->role, ['ADMIN', 'REGIONAL_ADMIN','COORDINATOR']))
+        @if(in_array(auth()->user()->role, ['ADMIN', 'REGIONAL_ADMIN','COORDINATOR', 'INSTRUCTOR']))
 
         <a href="{{ url('users') }}"
             class="sidebar-link flex items-center gap-3 px-0 justify-center py-2.5 rounded-xl text-[13.5px] border transition-all

@@ -27,8 +27,8 @@ class CohortController extends Controller
             'cohort_number' => ['required', 'string', 'max:150'],
             'program_name'  => ['nullable', 'string', 'max:150'],
             'center_id'     => ['required', 'exists:centers,id'],
-            'start_date'    => ['nullable', 'date'],
-            'end_date'      => ['nullable', 'date', 'after_or_equal:start_date'],
+            'start_date'    => ['date'],
+            'end_date'      => ['date', 'after_or_equal:start_date'],
         ]);
 
         $cohort = new Cohort();

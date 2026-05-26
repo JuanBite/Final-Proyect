@@ -288,9 +288,14 @@
                             </td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    <button type="button"
-                                        @click="openModal('edit', @js(['id'=>$cohort->id,'cohort_number'=>$cohort->cohort_number,'program_name'=>$cohort->program_name,'center_id'=>$cohort->center_id]), 'cohorts')"
-                                        class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-emerald-500/20 hover:text-emerald-400 transition-all cursor-pointer">
+                                    <button type="button" @click="openModal('edit', @js([
+    'id'           => $cohort->id,
+    'cohort_number'=> $cohort->cohort_number,
+    'program_name' => $cohort->program_name,
+    'center_id'    => $cohort->center_id,
+    'start_date' => $cohort->start_date ? \Carbon\Carbon::parse($cohort->start_date)->format('Y-m-d') : null,
+'end_date'   => $cohort->end_date   ? \Carbon\Carbon::parse($cohort->end_date)->format('Y-m-d')   : null,
+]), 'cohorts')" class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-emerald-500/20 hover:text-emerald-400 transition-all cursor-pointer">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
                                             viewBox="0 0 24 24">
                                             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
@@ -308,7 +313,17 @@
                                             <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
                                         </svg>
                                     </button>
+                                    {{-- 👁 Ver aprendices de esta ficha --}}
+                                    <a href="{{ route('users.index', ['search' => $cohort->cohort_number]) }}"
+                                        class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-sky-500/20 hover:text-sky-400 transition-all cursor-pointer">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
+                                            viewBox="0 0 24 24">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    </a>
                                 </div>
+                                
                             </td>
                         </tr>
                         @empty
@@ -359,7 +374,7 @@
                             <label class="text-xs text-slate-400 uppercase tracking-widest" x-text="f.label "></label>
 
                             <!-- INPUT NORMAL -->
-                            <template x-if="f.key !== 'region_id' && f.key !== 'center_id'">
+                            <template x-if="f.key !== 'region_id' && f.key !== 'center_id' && f.type !== 'date'">
                                 <input :name="f.key" x-model="form[f.key]" :placeholder="f.label"
                                     class="bg-[#182236] border border-[#00C853]/20 rounded px-3 py-2 text-sm">
                             </template>
@@ -393,7 +408,11 @@
 
                                 </select>
                             </template>
-
+                            <!-- DATE INPUTS -->
+                            <template x-if="f.type === 'date'">
+                                <input type="date" :name="f.key" x-model="form[f.key]"
+                                    class="bg-[#182236] border border-[#00C853]/20 rounded px-3 py-2 text-sm text-slate-300">
+                            </template>
                         </div>
                     </template>
                 </div>
@@ -500,9 +519,9 @@ function liveSearch(value) {
     tabs: [],
 
     cols: {
-        regions: ['name', 'code'],
+        regions: ['name', 'code'], 
         centers: ['name', 'code', 'region_id'],
-        cohorts: ['program_name', 'cohort_number', 'center_id', 'region_id']
+        cohorts: ['cohort_number', 'program_name', 'center_id', 'region_id']
     },
 
     labels: {
@@ -510,8 +529,10 @@ function liveSearch(value) {
         code: 'Código',
         region_id: 'Región',
         center_id: 'Centro',
-        cohort_number: 'Programa',
-        program_name: 'Número ficha'
+        cohort_number: 'Número ficha', 
+        program_name: 'Programa',
+        start_date: 'Fecha inicio',
+        end_date: 'Fecha fin',
     },
 
     storeRoutes: {
@@ -529,23 +550,29 @@ function liveSearch(value) {
     init() {
 
         // 🔥 CONTROL DE TABS POR ROL
-        if (this.role === 'INSTRUCTOR') {
-            this.tabs = [
-                { key: 'cohorts', label: 'Fichas' }
-            ];
+const tabsByRole = {
+    'ADMIN':          [
+        { key: 'regions', label: 'Regiones' },
+        { key: 'centers', label: 'Centros' },
+        { key: 'cohorts', label: 'Fichas' }
+    ],
+    'REGIONAL_ADMIN': [
+        { key: 'centers', label: 'Centros' },
+        { key: 'cohorts', label: 'Fichas' }
+    ],
+    'COORDINATOR':    [
+        { key: 'cohorts', label: 'Fichas' }
+    ],
+    'INSTRUCTOR':     [
+        { key: 'cohorts', label: 'Fichas' }
+    ],
+};
 
-            // 🔥 seguridad extra (si intentan forzar URL)
-            if (this.tab !== 'cohorts') {
-                this.tab = 'cohorts';
-            }
+this.tabs = tabsByRole[this.role] ?? [{ key: 'cohorts', label: 'Fichas' }];
 
-        } else {
-            this.tabs = [
-                { key: 'regions', label: 'Regiones' },
-                { key: 'centers', label: 'Centros' },
-                { key: 'cohorts', label: 'Fichas' }
-            ];
-        }
+if (!this.tabs.some(t => t.key === this.tab)) {
+    this.tab = this.tabs[0].key;
+} 
     },
 
     get formFields() {
@@ -554,7 +581,9 @@ function liveSearch(value) {
                 ...this.cols[this.tab]
                     .filter(c => c !== 'region_id' && c !== 'center_id')
                     .map(c => ({ key: c, label: this.labels[c] })),
-                { key: 'center_id', label: 'Centro' }
+                { key: 'center_id', label: 'Centro' },
+                { key: 'start_date',  label: 'Fecha inicio', type: 'date' },
+                { key: 'end_date',    label: 'Fecha fin',    type: 'date' },  
             ];
         }
         return this.cols[this.tab].map(c => ({ key: c, label: this.labels[c] }));

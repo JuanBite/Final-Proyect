@@ -13,9 +13,16 @@ class User extends Authenticatable
     public $timestamps = false;
 
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'document',
-        'password', 'role', 'status',
-        'region_id', 'center_id', 'cohort_id',
+        'first_name',
+        'last_name',
+        'email',
+        'document',
+        'password',
+        'role',
+        'status',
+        'region_id',
+        'center_id',
+        'cohort_id',
     ];
 
     protected $hidden = ['password'];
@@ -35,6 +42,11 @@ class User extends Authenticatable
     public function cohort()
     {
         return $this->belongsTo(Cohort::class);
+    }
+
+    public function cohorts()
+    {
+        return $this->belongsToMany(Cohort::class, 'cohort_user');
     }
 
     public function projects()
@@ -109,17 +121,17 @@ class User extends Authenticatable
     /**
      * IDs de fichas (cohorts) que este usuario puede ver.
      */
-    public function visibleCohortIds(): array
-    {
-        return match ($this->role) {
-            'ADMIN' => Cohort::pluck('id')->toArray(),
-            'REGIONAL_ADMIN' => Cohort::whereIn('center_id', $this->visibleCenterIds())->pluck('id')->toArray(),
-            'COORDINATOR' => Cohort::where('center_id', $this->center_id)->pluck('id')->toArray(),
-            'INSTRUCTOR',
-            'STUDENT' => $this->cohort_id ? [$this->cohort_id] : [],
-            default => [],
-        };
-    }
+   public function visibleCohortIds(): array
+{
+    return match ($this->role) {
+        'ADMIN'          => Cohort::pluck('id')->toArray(),
+        'REGIONAL_ADMIN' => Cohort::whereIn('center_id', $this->visibleCenterIds())->pluck('id')->toArray(),
+        'COORDINATOR'    => Cohort::where('center_id', $this->center_id)->pluck('id')->toArray(),
+        'INSTRUCTOR'     => $this->cohorts()->pluck('cohorts.id')->toArray(), // ← pivot
+        'STUDENT'        => $this->cohort_id ? [$this->cohort_id] : [],       // ← sigue igual
+        default          => [],
+    };
+}
 
     /**
      * ¿Puede este usuario gestionar un centro específico?

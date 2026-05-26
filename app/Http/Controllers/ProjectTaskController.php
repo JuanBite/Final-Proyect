@@ -111,56 +111,69 @@ class ProjectTaskController extends Controller
     }
 
     public function storeSubmission(Request $request, Project $project, ProjectTask $task)
-    {
-        $user = auth()->user(); // ← NUEVO
+{
+    $user = auth()->user();
 
-        // ← NUEVO: solo aprendices suben entregas
-        abort_unless($user->isStudent() || $user->isAdmin() || $user->isInstructor(), 403, 'Solo los aprendices pueden subir entregas.');
+    abort_unless(
+        $user->isStudent() || $user->isAdmin() || $user->isInstructor(),
+        403,
+        'Solo los aprendices o instructores pueden subir entregas.'
+    );
 
-        // ← NUEVO: solo de su propia ficha
+    // ✅ Verificación de ficha según rol — separadas, sin pisar una a la otra
+    if ($user->isStudent()) {
         abort_unless(
             $project->cohort_id === $user->cohort_id,
             403,
             'No perteneces a la ficha de este proyecto.'
         );
-
-        $request->validate([
-            'file' => ['required', 'file', 'max:20480'],
-            'comments' => ['nullable', 'string'],
-            'week_number' => ['required', 'integer', 'between:1,4'],
-            'filter_year' => ['required', 'integer'],
-            'filter_month' => ['required', 'integer', 'between:1,12'],
-        ]);
-
-        $file = $request->file('file');
-        $month = $request->filter_month;
-        $week = $request->week_number;
-        $year = $request->filter_year;
-        $projectSlug = Str::slug($project->name, '-').'-'.$project->id;
-        $monthAbbr = $this->monthAbbr($month);
-        $submissionDir = "{$monthAbbr}-s{$week}-{$year}";
-        $storagePath = "submissions/{$projectSlug}/{$submissionDir}";
-        $path = $file->store($storagePath, 'public');
-
-        Submission::create([
-            'project_id' => $project->id,
-            'task_id' => $task->id,
-            'file_path' => $path,
-            'original_filename' => $file->getClientOriginalName(),
-            'mime_type' => $file->getMimeType(),
-            'comments' => $request->comments,
-            'submitted_at' => now(),
-            'week_number' => $week,
-            'submission_month' => $month,
-            'submission_year' => $year,
-        ]);
-
-        return redirect()->route('projects.show', [
-            'project' => $project->id,
-            'filter_year' => $year,
-            'filter_month' => $month,
-        ])->with('success', 'Entrega subida correctamente.');
     }
+
+    if ($user->isInstructor()) {
+        abort_unless(
+            $user->cohorts()->where('cohorts.id', $project->cohort_id)->exists(),
+            403,
+            'No tienes asignada la ficha de este proyecto.'
+        );
+    }
+
+    $request->validate([
+        'file'         => ['required', 'file', 'max:20480'],
+        'comments'     => ['nullable', 'string'],
+        'week_number'  => ['required', 'integer', 'between:1,4'],
+        'filter_year'  => ['required', 'integer'],
+        'filter_month' => ['required', 'integer', 'between:1,12'],
+    ]);
+
+    $file          = $request->file('file');
+    $month         = $request->filter_month;
+    $week          = $request->week_number;
+    $year          = $request->filter_year;
+    $projectSlug   = Str::slug($project->name, '-') . '-' . $project->id;
+    $monthAbbr     = $this->monthAbbr($month);
+    $submissionDir = "{$monthAbbr}-s{$week}-{$year}";
+    $storagePath   = "submissions/{$projectSlug}/{$submissionDir}";
+    $path          = $file->store($storagePath, 'public');
+
+    Submission::create([
+        'project_id'        => $project->id,
+        'task_id'           => $task->id,
+        'file_path'         => $path,
+        'original_filename' => $file->getClientOriginalName(),
+        'mime_type'         => $file->getMimeType(),
+        'comments'          => $request->comments,
+        'submitted_at'      => now(),
+        'week_number'       => $week,
+        'submission_month'  => $month,
+        'submission_year'   => $year,
+    ]);
+
+    return redirect()->route('projects.show', [
+        'project'      => $project->id,
+        'filter_year'  => $year,
+        'filter_month' => $month,
+    ])->with('success', 'Entrega subida correctamente.');
+}
 
     public function destroySubmission(Project $project, ProjectTask $task, Submission $submission)
     {
@@ -170,6 +183,7 @@ class ProjectTaskController extends Controller
         $canDelete = $user->isAdmin()
             || ($user->isRegionalAdmin() && in_array($project->center_id, $user->visibleCenterIds()))
             || ($user->isCoordinator() && $project->center_id === $user->center_id)
+            || ($user->isInstructor() && $user->cohorts()->where('cohorts.id', $project->cohort_id)->exists())
             || ($user->isStudent() && $project->cohort_id === $user->cohort_id);
 
         abort_unless($canDelete, 403, 'No puedes eliminar esta entrega.');

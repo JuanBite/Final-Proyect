@@ -14,69 +14,73 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public function index(Request $request)
-    {
-        $this->authorize('viewAny', User::class);
+{
+    $this->authorize('viewAny', User::class);
 
-        $authUser = auth()->user();
-        $search = $request->input('search');
-        $filter = $request->input('filter');
-        $sort = $request->input('sort', 'desc');
-        $cohort = $request->input('cohort');
+    $authUser = auth()->user();
+    $search   = $request->input('search');
+    $filter   = $request->input('filter');
+    $sort     = $request->input('sort', 'desc');
+    $cohort   = $request->input('cohort');
 
-        $users = User::with('projectMembers', 'cohort')
-            ->when(! $authUser->isAdmin(), fn($q) => $q->whereIn('center_id', $authUser->visibleCenterIds()))
-            ->when($authUser->isInstructor(), fn($q) => $q->where('cohort_id', $authUser->cohort_id))
-            ->when($search, function ($query) use ($search) {
-                $query->where('first_name', 'like', "%$search%")
-                    ->orWhere('last_name', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%")
-                    ->orWhere('document', 'like', "%$search%")
-                    ->orWhereHas('cohort', function ($q) use ($search) {
-                        $q->where('program_name', 'like', "%$search%")
-                            ->orWhere('cohort_number', 'like', "%$search%");
-                    });
-            })
-            ->when($filter === 'LEADER', fn($q) => $q->whereHas('projectMembers', fn($q2) => $q2->where('project_role', 'LEADER')))
-            ->when($filter === 'MEMBER', fn($q) => $q->whereHas('projectMembers', fn($q2) => $q2->where('project_role', 'MEMBER')))
-            ->when($cohort, fn($q) => $q->where('cohort_id', $cohort))
-            ->orderBy('created_at', $sort)
-            ->paginate(10)
-            ->withQueryString();
+    // ✅ IDs de fichas del instructor (desde pivot)
+    $instructorCohortIds = $authUser->isInstructor()
+        ? $authUser->cohorts()->pluck('cohorts.id')->toArray()
+        : [];
 
-        $centerIds = $authUser->visibleCenterIds();
-        $baseCount = fn() => User::when(! $authUser->isAdmin(), fn($q) => $q->whereIn('center_id', $centerIds))
-            ->when($authUser->isInstructor(), fn($q) => $q->where('cohort_id', $authUser->cohort_id));
+    $users = User::with('projectMembers', 'cohort')
+        ->when(! $authUser->isAdmin(), fn($q) =>
+            $q->whereIn('center_id', $authUser->visibleCenterIds())
+        )
+        ->when($authUser->isInstructor(), fn($q) =>           // ✅ filtra por fichas del pivot
+            $q->whereIn('cohort_id', $instructorCohortIds)
+        )
+        ->when($search, function ($query) use ($search) {
+            $query->where('first_name', 'like', "%$search%")
+                ->orWhere('last_name', 'like', "%$search%")
+                ->orWhere('email', 'like', "%$search%")
+                ->orWhere('document', 'like', "%$search%")
+                ->orWhereHas('cohort', function ($q) use ($search) {
+                    $q->where('program_name', 'like', "%$search%")
+                        ->orWhere('cohort_number', 'like', "%$search%");
+                });
+        })
+        ->when($filter === 'LEADER', fn($q) => $q->whereHas('projectMembers', fn($q2) => $q2->where('project_role', 'LEADER')))
+        ->when($filter === 'MEMBER', fn($q) => $q->whereHas('projectMembers', fn($q2) => $q2->where('project_role', 'MEMBER')))
+        ->when($cohort, fn($q) => $q->where('cohort_id', $cohort))
+        ->orderBy('created_at', $sort)
+        ->paginate(10)
+        ->withQueryString();
 
-        $totalUsers = $baseCount()->count();
-        $totalLeaders = $baseCount()->whereHas('projectMembers', fn($q) => $q->where('project_role', 'LEADER'))->count();
-        $totalMembers = $baseCount()->where('status', 1)->count();
+    $centerIds = $authUser->visibleCenterIds();
 
-        $projects = Project::visibleTo($authUser)->get();
-        $cohorts = $this->cohortsForUser($authUser);
+    $baseCount = fn() => User::when(! $authUser->isAdmin(), fn($q) =>
+            $q->whereIn('center_id', $centerIds)
+        )
+        ->when($authUser->isInstructor(), fn($q) =>           // ✅ mismo filtro para los stats
+            $q->whereIn('cohort_id', $instructorCohortIds)
+        );
 
-        // En create() — reemplaza las líneas de $regions y $centers
-        $regions = $authUser->isAdmin() ? Region::orderBy('name')->get() : collect();
-        $centers = ($authUser->isAdmin() || $authUser->isRegionalAdmin())
-            ? Center::with('region')
+    $totalUsers   = $baseCount()->count();
+    $totalLeaders = $baseCount()->whereHas('projectMembers', fn($q) => $q->where('project_role', 'LEADER'))->count();
+    $totalMembers = $baseCount()->where('status', 1)->count();
+
+    $projects = Project::visibleTo($authUser)->get();
+    $cohorts  = $this->cohortsForUser($authUser);
+
+    $regions = $authUser->isAdmin() ? Region::orderBy('name')->get() : collect();
+    $centers = ($authUser->isAdmin() || $authUser->isRegionalAdmin())
+        ? Center::with('region')
             ->when($authUser->isRegionalAdmin(), fn($q) => $q->where('region_id', $authUser->region_id))
             ->orderBy('name')->get()
-            : collect();
+        : collect();
 
-    
-        
-
-        return view('users.index', compact(
-            'users',
-            'projects',
-            'cohorts',
-            'totalUsers',
-            'totalLeaders',
-            'totalMembers',
-            'sort',
-            'regions',
-            'centers'
-        ));
-    }
+    return view('users.index', compact(
+        'users', 'projects', 'cohorts',
+        'totalUsers', 'totalLeaders', 'totalMembers',
+        'sort', 'regions', 'centers'
+    ));
+}
 
     public function create()
     {
@@ -95,8 +99,6 @@ class UserController extends Controller
             : collect();
 
         return view('modals.create.user', compact('projects', 'cohorts', 'regions', 'centers'));
-
-        
     }
 
     public function store(Request $request)
@@ -161,7 +163,9 @@ class UserController extends Controller
             'region_id'  => $request->region_id, // ← NUEVO
 
         ]);
-
+        if ($user->role === 'INSTRUCTOR' && $request->filled('cohort_ids')) {
+            $user->cohorts()->sync($request->cohort_ids);
+        }
         if ($request->projects) {
             foreach ($request->projects as $projectId) {
                 // ← NUEVO: verificar que el proyecto esté en el scope antes de asignar

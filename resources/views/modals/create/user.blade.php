@@ -76,7 +76,8 @@
                             </select>
                         </div>
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Centro de formación</label>
+                            <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Centro de
+                                formación</label>
                             <select name="center_id" id="select-center"
                                 class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none">
                                 <option value="0">— Sin centro —</option>
@@ -105,20 +106,59 @@
                     </div>
                     @endif
 
-                    {{-- FICHA — opcional para ADMIN, oculta para REGIONAL_ADMIN (se asigna después) --}}
+                    {{-- FICHA — multi-select estilo teamSelector --}}
                     @if(!auth()->user()->isRegionalAdmin())
                     <div class="flex flex-col gap-1.5">
                         <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">
                             Ficha @if(!auth()->user()->isAdmin())<span class="text-[#40C4FF]">*</span>@endif
                         </label>
-                        <select name="cohort_id"
-                            class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none"
-                            {{ auth()->user()->isAdmin() ? '' : 'required' }}>
-                            <option value="">— Sin ficha —</option>
-                            @foreach($cohorts as $cohort)
-                            <option value="{{ $cohort->id }}">{{ $cohort->program_name }}</option>
-                            @endforeach
-                        </select>
+
+                        <div x-data="cohortSelector()">
+
+                            <select @change="addCohort($event)"
+                                class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all">
+                                <option value="">— Seleccionar ficha —</option>
+                                @foreach($cohorts as $cohort)
+                                <option value="{{ $cohort->id }}" data-name="{{ $cohort->program_name }}"
+                                    style="background:#111D30; color:white;">
+                                    {{ $cohort->program_name }}
+                                </option>
+                                @endforeach
+                            </select>
+
+                            <!-- INPUTS OCULTOS -->
+                            <template x-for="id in selected" :key="id">
+                                <input type="hidden" name="cohort_ids[]" :value="id">
+                            </template>
+
+                            <!-- FICHAS SELECCIONADAS -->
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                <template x-for="cohort in selectedCohorts" :key="cohort.id">
+                                    <div
+                                        class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#182236] border border-[#00C853]/15">
+
+                                        <!-- Iniciales -->
+                                        <div class="w-[26px] h-[26px] rounded-lg bg-[#00C853] flex items-center justify-center text-[9px] text-black font-bold"
+                                            x-text="cohort.name.substring(0, 2).toUpperCase()">
+                                        </div>
+
+                                        <!-- Nombre -->
+                                        <span class="text-[12.5px]" x-text="cohort.name"></span>
+
+                                        <!-- Botón eliminar -->
+                                        <button type="button" @click="removeCohort(cohort.id)"
+                                            class="ml-2 text-red-400 hover:text-red-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+
+                        </div>
                     </div>
                     @endif
                     <div class="col-span-2 flex flex-col gap-1.5">
@@ -197,7 +237,7 @@
                 </div>
                 <input type="hidden" name="role" :value="selectedRole">
                 <div class="grid grid-cols-3 gap-3">
-
+                    @if(!auth()->user()->isRegionalAdmin())
                     {{-- INSTRUCTOR — visible para todos --}}
                     <div @click="selectedRole = 'INSTRUCTOR'"
                         :class="selectedRole === 'INSTRUCTOR' ? 'border-green-500/30 bg-green-500/10' : 'border-[#00C853]/15 bg-[#182236]'"
@@ -227,9 +267,10 @@
                         <div class="font-syne font-bold text-xs text-[#40C4FF]">APRENDIZ</div>
                         <div class="text-[10px] text-[#8AAABB] mt-1">Participa</div>
                     </div>
+                    @endif
 
                     {{-- COORDINADOR — visible para todos --}}
-                     @if(!auth()->user()->isCoordinator())
+                    @if(!auth()->user()->isCoordinator())
                     <div @click="selectedRole = 'COORDINATOR'"
                         :class="selectedRole === 'COORDINATOR' ? 'border-blue-500/40 bg-blue-600/15' : 'border-blue-500/15 bg-[#182236]'"
                         class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
@@ -286,8 +327,11 @@
                 </div>
             </div>
 
+
+            {{-- innecesario, debatible --}}
+
             <!-- Proyectos -->
-            <div x-data="projectAssignerCreate()">
+            {{-- <div x-data="projectAssignerCreate()">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="text-[9px] tracking-[2px] uppercase text-[#8AAABB]">Asignar a proyectos</span>
                     <div class="flex-1 h-px bg-[#00C853]/15"></div>
@@ -348,6 +392,9 @@
                         </div>
                     </div>
 
+
+
+
                     <!-- Proyectos seleccionados -->
                     <div class="flex flex-wrap gap-2 mt-2">
                         <template x-for="project in selectedProjects" :key="project.id">
@@ -371,7 +418,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
         </div>
 
@@ -394,62 +441,88 @@
     </form>
     <script>
         function filterCentersByRegion(regionId) {
-    const centerSelect = document.getElementById('select-center');
-    const options = centerSelect.querySelectorAll('option');
+        const centerSelect = document.getElementById('select-center');
+        const options = centerSelect.querySelectorAll('option');
 
-    options.forEach(opt => {
-        if (!opt.value) return; // opción vacía siempre visible
-        opt.style.display = (!regionId || opt.dataset.region == regionId) ? '' : 'none';
-    });
+        options.forEach(opt => {
+            if (!opt.value) return;
+            opt.style.display = (!regionId || opt.dataset.region == regionId) ? '' : 'none';
+        });
 
-    // Reset selección si el centro actual no pertenece a la nueva región
-    if (regionId && centerSelect.value) {
-        const selected = centerSelect.querySelector(`option[value="${centerSelect.value}"]`);
-        if (selected && selected.dataset.region != regionId) {
-            centerSelect.value = '';
-        }
-    }
-}
-        function projectAssignerCreate() {
-    return {
-        projects: @json($projects),
-        selected: [],
-
-        get selectedProjects() {
-            return this.projects.filter(project => this.selected.includes(project.id));
-        },
-
-        addProject(id) {
-            if (!id) return;
-            if (!this.selected.includes(id)) {
-                this.selected.push(id);
+        if (regionId && centerSelect.value) {
+            const selected = centerSelect.querySelector(`option[value="${centerSelect.value}"]`);
+            if (selected && selected.dataset.region != regionId) {
+                centerSelect.value = '';
             }
-        },
-
-        removeProject(id) {
-            this.selected = this.selected.filter(p => p !== id);
-        },
-
-        getInitials(name) {
-            return name.substring(0, 2).toUpperCase();
         }
     }
-}
-function togglePassword(inputId, eyeOpenId, eyeClosedId) {
-    const input     = document.getElementById(inputId);
-    const eyeOpen   = document.getElementById(eyeOpenId);
-    const eyeClosed = document.getElementById(eyeClosedId);
 
-    if (input.type === 'password') {
-        input.type = 'text';
-        eyeOpen.classList.add('hidden');
-        eyeClosed.classList.remove('hidden');
-    } else {
-        input.type = 'password';
-        eyeOpen.classList.remove('hidden');
-        eyeClosed.classList.add('hidden');
+    function projectAssignerCreate() {
+        return {
+            projects: @json($projects),
+            selected: [],
+
+            get selectedProjects() {
+                return this.projects.filter(project => this.selected.includes(project.id));
+            },
+
+            addProject(id) {
+                if (!id) return;
+                if (!this.selected.includes(id)) {
+                    this.selected.push(id);
+                }
+            },
+
+            removeProject(id) {
+                this.selected = this.selected.filter(p => p !== id);
+            },
+
+            getInitials(name) {
+                return name.substring(0, 2).toUpperCase();
+            }
+        }
     }
-}
 
+    function cohortSelector() {
+        return {
+            selected: [],
+            selectedCohorts: [],
+
+            addCohort(event) {
+                const id   = parseInt(event.target.value);
+                const name = event.target.selectedOptions[0]?.dataset.name;
+
+                if (!id || this.selected.includes(id)) {
+                    event.target.value = '';
+                    return;
+                }
+
+                this.selected.push(id);
+                this.selectedCohorts.push({ id, name });
+                event.target.value = '';
+            },
+
+            removeCohort(id) {
+                this.selected        = this.selected.filter(s => s !== id);
+                this.selectedCohorts = this.selectedCohorts.filter(c => c.id !== id);
+            }
+        }
+    }
+
+    function togglePassword(inputId, eyeOpenId, eyeClosedId) {
+        const input     = document.getElementById(inputId);
+        const eyeOpen   = document.getElementById(eyeOpenId);
+        const eyeClosed = document.getElementById(eyeClosedId);
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            eyeOpen.classList.add('hidden');
+            eyeClosed.classList.remove('hidden');
+        } else {
+            input.type = 'password';
+            eyeOpen.classList.remove('hidden');
+            eyeClosed.classList.add('hidden');
+        }
+    }
     </script>
 </div>

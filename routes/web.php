@@ -76,7 +76,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     });
 
     // ── Gestión (Regiones, Centros, Fichas) ───────────────────────────────────
-    Route::middleware('role:ADMIN,REGIONAL_ADMIN,COORDINATOR')->group(function () {
+    Route::middleware('role:ADMIN,REGIONAL_ADMIN,COORDINATOR,INSTRUCTOR')->group(function () {
         Route::get('/gestion', [GestionController::class, 'index'])->name('gestion');
 
         Route::middleware('role:ADMIN,REGIONAL_ADMIN')->group(function () {
