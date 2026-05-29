@@ -290,6 +290,7 @@
                             </td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center gap-1.5">
+                                    @if(!auth()->user()->isInstructor())
                                     <button type="button" @click="openModal('edit', @js([
     'id'           => $cohort->id,
     'cohort_number'=> $cohort->cohort_number,
@@ -315,6 +316,7 @@
                                             <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
                                         </svg>
                                     </button>
+                                    @endif
                                     {{-- 👁 Ver aprendices de esta ficha --}}
                                     <a href="{{ route('users.index', ['search' => $cohort->cohort_number]) }}"
                                         class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-sky-500/20 hover:text-sky-400 transition-all cursor-pointer">
