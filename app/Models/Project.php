@@ -76,16 +76,21 @@ class Project extends Model
      * Uso: Project::visibleTo(auth()->user())->get()
      */
     public function scopeVisibleTo($query, User $user)
-    {
-        return match ($user->role) {
-            'ADMIN'          => $query,
-            'REGIONAL_ADMIN' => $query->whereIn('center_id', $user->visibleCenterIds()),
-            'COORDINATOR'    => $query->where('center_id', $user->center_id),
-            'INSTRUCTOR'     => $query->where('center_id', $user->center_id),
-            'STUDENT'        => $query->where('center_id', $user->center_id),
-            default          => $query->whereRaw('0 = 1'), // nadie más ve nada
-        };
-    }
+{
+    return match ($user->role) {
+        'ADMIN'          => $query,
+        'REGIONAL_ADMIN' => $query->whereIn('center_id', $user->visibleCenterIds()),
+        'COORDINATOR'    => $query->where('center_id', $user->center_id),
+
+        // ✅ INSTRUCTOR: proyectos cuya cohort esté anclada a él
+        'INSTRUCTOR' => $query->whereIn('cohort_id', $user->visibleCohortIds()),
+
+        // ✅ STUDENT: solo proyectos de su ficha
+        'STUDENT' => $query->where('cohort_id', $user->cohort_id),
+
+        default => $query->whereRaw('0 = 1'),
+    };
+}
 
     // ─── Atributos calculados ─────────────────────────────────────────────────
 
@@ -107,5 +112,21 @@ class Project extends Model
     public function getProgressCircumferenceAttribute(): float
     {
         return 2 * pi() * 18;
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        $map = [
+            'in_progress' => 'En progreso',
+            'not_started' => 'Sin iniciar',
+            'completed'   => 'Completado',
+            'on_hold'     => 'En espera',
+            'cancelled'   => 'Cancelado',
+            'archived'    => 'Archivado',
+        ];
+
+        $key = strtolower($this->status ?? '');
+
+        return $map[$key] ?? ucwords(str_replace('_', ' ', $key));
     }
 }

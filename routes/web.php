@@ -3,10 +3,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
-    ProfileController, CenterController, CohortController,
-    ProjectController, DashboardController, RegionController,
-    UserController, GestionController, ProjectTaskController
+    ProfileController,
+    CenterController,
+    CohortController,
+    ProjectController,
+    DashboardController,
+    RegionController,
+    UserController,
+    GestionController,
+    ProjectTaskController,
+    NotificationController
 };
+
 Route::get('/projects/public', [ProjectController::class, 'publicIndex'])->name('projects.universal-search');
 Route::get('/', fn() => view('auth.login'));
 
@@ -54,10 +62,17 @@ Route::middleware(['auth', 'active'])->group(function () {
         });
 
         // Calificar: instructor, coordinador, admin
-        Route::post('/{task}/submissions/{submission}/grade',
-            [ProjectTaskController::class, 'gradeSubmission'])
+        Route::post(
+            '/{task}/submissions/{submission}/grade',
+            [ProjectTaskController::class, 'gradeSubmission']
+        )
             ->middleware('role:ADMIN,REGIONAL_ADMIN,COORDINATOR,INSTRUCTOR')
             ->name('submissions.grade');
+
+        Route::get(
+            '/{task}/submissions/{submission}/download',
+            [ProjectTaskController::class, 'downloadSubmission']
+        )->name('submissions.download');
     });
 
     // ── Usuarios ──────────────────────────────────────────────────────────────
@@ -93,7 +108,14 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::middleware('role:ADMIN')->group(function () {
         Route::post('/regions',           [RegionController::class, 'store'])->name('regions.store');
         Route::put('/regions/{region}',   [RegionController::class, 'update'])->name('regions.update');
-        Route::delete('/regions/{region}',[RegionController::class, 'destroy'])->name('regions.destroy');
+        Route::delete('/regions/{region}', [RegionController::class, 'destroy'])->name('regions.destroy');
+    });
+
+    // ── Notificaciones ────────────────────────────────────────────────────────
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::post('/{id}/read',  [NotificationController::class, 'markAsRead'])->name('read');
+        Route::post('/read-all',   [NotificationController::class, 'markAllAsRead'])->name('readAll');
+        Route::delete('/{id}',     [NotificationController::class, 'destroy'])->name('destroy');
     });
 });
 

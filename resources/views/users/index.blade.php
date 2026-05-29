@@ -155,6 +155,7 @@
                 <button type="submit" class="hidden"></button>
             </form>
 
+            @if(!auth()->user()->isInstructor())
             {{-- Botón nuevo usuario --}}
             <button @click="createModalOpen = true"
                 class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm bg-emerald-500 text-slate-900">
@@ -164,6 +165,7 @@
                 </svg>
                 Nuevo usuario
             </button>
+            @endif
 
         </div>
     </div>

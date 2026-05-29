@@ -23,7 +23,7 @@ return new class extends Migration
             $table->text('comments')->nullable();
             $table->dateTime('submitted_at')->useCurrent();
 
-            $table->decimal('grade', 4, 2)->nullable();
+            $table->decimal('grade', 5, 2)->nullable();
             $table->text('feedback')->nullable();
         });
     }

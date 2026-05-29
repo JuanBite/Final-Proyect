@@ -36,7 +36,7 @@
 
             <button type="submit" class="hidden"></button>
         </form>
-
+        
         <button @click="modalAbierto = true" type="button" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm bg-emerald-500 text-slate-900">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <line x1="12" y1="5" x2="12" y2="19" />
@@ -107,7 +107,7 @@
 
                         </div>
                         <span class="text-[11px] font-medium px-3 py-1 rounded-full bg-[#FFD740]/12 text-[#FFD740] border border-[#FFD740]/25">
-                            {{ ucwords(str_replace('_', ' ', strtolower($project->status))) }}
+                            {{ $project->status_label }}
                         </span>
                     </div>
                 </div>

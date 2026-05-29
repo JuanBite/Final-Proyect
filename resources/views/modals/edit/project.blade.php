@@ -154,7 +154,7 @@
                 </div>
 
                 <!-- Sección: Estado -->
-                <div x-data="{ status: '{{ $project->status ?? 'IN_PROGRESS' }}' }">
+                {{-- <div x-data="{ status: '{{ $project->status ?? 'IN_PROGRESS' }}' }">
                     <input type="hidden" name="status" :value="status">
                     <div>
                         <div class="flex items-center gap-2 mb-4">
@@ -207,7 +207,7 @@
 
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
         </div>

@@ -19,9 +19,9 @@ class DashboardController extends Controller
             ->with(['leader', 'members'])
             ->orderByRaw("
                 CASE status 
-                    WHEN '".EnumStatus::DELAYED->value."' THEN 1
-                    WHEN '".EnumStatus::IN_PROGRESS->value."' THEN 2
-                    WHEN '".EnumStatus::COMPLETED->value."' THEN 3
+                    WHEN '" . EnumStatus::DELAYED->value . "' THEN 1
+                    WHEN '" . EnumStatus::IN_PROGRESS->value . "' THEN 2
+                    WHEN '" . EnumStatus::COMPLETED->value . "' THEN 3
                 END
             ")
             ->orderBy('due_date')
@@ -51,14 +51,20 @@ class DashboardController extends Controller
                 'total_cohorts' => Cohort::where('center_id', $user->center_id)->count(),
             ],
             'INSTRUCTOR' => [
-                // ← NUEVO: entregas sin calificar de sus fichas
-                'por_calificar' => Submission::whereHas('task.project', fn ($q) => $q->where('cohort_id', $user->cohort_id)
+                // ✅ Todas sus fichas, no solo cohort_id
+                'por_calificar' => Submission::whereHas(
+                    'task.project',
+                    fn($q) =>
+                    $q->whereIn('cohort_id', $user->visibleCohortIds())
                 )->whereNull('grade')->count(),
-                'aprendices' => User::where('cohort_id', $user->cohort_id)
+
+                'aprendices' => User::whereIn('cohort_id', $user->visibleCohortIds())
                     ->where('role', 'STUDENT')->count(),
             ],
             'STUDENT' => [
-                'mis_entregas' => Submission::whereHas('task.project', fn ($q) => $q->where('cohort_id', $user->cohort_id)
+                'mis_entregas' => Submission::whereHas(
+                    'task.project',
+                    fn($q) => $q->where('cohort_id', $user->cohort_id)
                 )->count(),
             ],
             default => [],
@@ -108,13 +114,13 @@ class DashboardController extends Controller
 
             return $daysLeft >= 0 && $daysLeft <= 14 && $p->status !== EnumStatus::COMPLETED->value;
         })->map(function ($p) {
-            $p->leader_name = $p->leader ? trim($p->leader->first_name.' '.$p->leader->last_name) : '—';
+            $p->leader_name = $p->leader ? trim($p->leader->first_name . ' ' . $p->leader->last_name) : '—';
 
             return $p;
         })->sortBy('due_date')->take(5);
 
         $upcoming = $projects
-            ->filter(fn ($p) => $p->due_date && $p->status !== EnumStatus::COMPLETED->value)
+            ->filter(fn($p) => $p->due_date && $p->status !== EnumStatus::COMPLETED->value)
             ->sortBy('due_date')
             ->take(7);
 

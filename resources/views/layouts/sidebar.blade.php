@@ -142,6 +142,11 @@
                             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/12 text-red-400 border border-red-500/25">
                             <span class="w-1 h-1 rounded-full bg-red-400"></span>Admin
                         </span>
+                        @elseif(auth()->user()->role === 'REGIONAL_ADMIN')
+                        <span
+                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-purple-500/12 text-purple-400 border border-purple-500/25">
+                            <span class="w-1 h-1 rounded-full bg-purple-400"></span>Admin Regional
+                        </span>
                         @elseif(auth()->user()->role === 'INSTRUCTOR')
                         <span
                             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/12 text-blue-400 border border-blue-500/25">

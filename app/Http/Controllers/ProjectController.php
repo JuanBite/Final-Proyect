@@ -175,7 +175,6 @@ class ProjectController extends Controller
             'start_date'  => ['required', 'date'],
             'due_date'    => ['required', 'date', 'after_or_equal:start_date'],
             'leader_id'   => $user->isStudent() ? ['nullable'] : ['required', 'exists:users,id'],
-            'status'      => ['required', new Enum(EnumStatus::class)],
             'team'        => ['array'],
         ]);
 
@@ -187,7 +186,6 @@ class ProjectController extends Controller
                 'description' => $request->description,
                 'start_date'  => $request->start_date,
                 'due_date'    => $request->due_date,
-                'status'      => $request->status,
             ];
 
             if (! $user->isStudent()) {

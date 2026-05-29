@@ -47,6 +47,7 @@ fn($s) => [
 'feedback' => $s->feedback ?? '',
 'grade_url' => url("projects/{$project->id}/tasks/{$taskId}/submissions/{$s->id}/grade"),
 'delete_url' => url("projects/{$project->id}/tasks/{$taskId}/submissions/{$s->id}"),
+'download_url' => url("projects/{$project->id}/tasks/{$taskId}/submissions/{$s->id}/download"),
 
 ],
 )
@@ -87,9 +88,18 @@ SCOPE PRINCIPAL: modales editar/eliminar proyecto
                         {{ $project->name }}</h1>
                     <p class="text-sm text-slate-400 mt-1 leading-relaxed break-all">{{ $project->description }}</p>
                     <div class="flex gap-2 mt-2.5 flex-wrap">
+                        @php
+                        $__sv = $project->status?->value ?? $project->status;
+                        $__statusText = match (strtoupper((string) $__sv)) {
+                        'IN_PROGRESS' => 'En progreso',
+                        'COMPLETED' => 'Completado',
+                        'DELAYED' => 'Retrasado',
+                        default => ucwords(str_replace('_', ' ', strtolower((string) $__sv))),
+                        };
+                        @endphp
                         <span
                             class="px-3 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                            ● {{ ucwords(str_replace('_', ' ', strtolower($project->status))) }}
+                            ● {{ $__statusText }}
                         </span>
                         <span
                             class="px-3 py-0.5 rounded-full text-xs font-medium bg-yellow-400/15 text-yellow-400 border border-yellow-400/30">
@@ -199,6 +209,12 @@ SCOPE PRINCIPAL: modales editar/eliminar proyecto
             currentSubmissions: [],
             allSubmissions: {},
 
+            /* Delete modals state */
+            modalDeleteActivity: false,
+            deletingActivity: { action: '', title: '' },
+            modalDeleteSubmission: false,
+            deletingSubmission: { action: '', filename: '' },
+
             init() {
                 const el = document.getElementById('submissions-data');
                 if (el) {
@@ -219,6 +235,8 @@ SCOPE PRINCIPAL: modales editar/eliminar proyecto
             }
         }"
         @open-entrega.window="openEntrega($event.detail.taskId, $event.detail.week)"
+        @confirm-activity-delete.window="deletingActivity = $event.detail; modalDeleteActivity = true"
+        @confirm-submission-delete.window="deletingSubmission = $event.detail; modalDeleteSubmission = true"
         class="bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden hover:border-[#00C853]/35 hover:shadow-2xl hover:shadow-black/30 transition-all">
 
         {{-- ── Header Gantt ──────────────────────────────────────────────── --}}
@@ -467,21 +485,16 @@ SCOPE PRINCIPAL: modales editar/eliminar proyecto
                                     </div>
 
                                     <div x-show="!editing" class="flex items-center justify-center">
-                                        <form action="{{ route('project-tasks.destroy', [$project->id, $task->id]) }}"
-                                            method="POST"
-                                            onsubmit="return confirm('¿Eliminar actividad «{{ addslashes($task->title) }}»? Esto también eliminará sus entregas.')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all cursor-pointer"
-                                                title="Eliminar actividad">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                                    stroke-width="2" viewBox="0 0 24 24">
-                                                    <polyline points="3 6 5 6 21 6" />
-                                                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                                                </svg>
-                                            </button>
-                                        </form>
+                                        <button type="button"
+                                            @click="$dispatch('confirm-activity-delete', { action: '{{ route('project-tasks.destroy', [$project->id, $task->id]) }}', title: '{{ addslashes($task->title) }}' })"
+                                            class="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all cursor-pointer"
+                                            title="Eliminar actividad">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
+                                                <polyline points="3 6 5 6 21 6" />
+                                                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                                            </svg>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -714,104 +727,114 @@ SCOPE PRINCIPAL: modales editar/eliminar proyecto
                     class="text-[10px] text-slate-500 truncate mt-0.5"></p>
             </div>
 
-            <a :href="sub.url" target="_blank"
-                class="p-1.5 rounded-lg text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all opacity-0 group-hover/sub:opacity-100"
-                title="Ver / descargar">
+           <a :href="sub.download_url"
+    class="p-1.5 rounded-lg text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all opacity-0 group-hover/sub:opacity-100"
+    title="Descargar archivo">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                 </svg>
             </a>
 
-            <form :action="sub.delete_url" method="POST"
-                @submit.prevent="if(confirm('¿Eliminar esta entrega?')) $el.submit()">
-                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="_method" value="DELETE">
-                <button type="submit"
-                    class="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover/sub:opacity-100 cursor-pointer"
-                    title="Eliminar entrega">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                    </svg>
-                </button>
-            </form>
+            <button type="button"
+                @click="$dispatch('confirm-submission-delete', { action: sub.delete_url, filename: sub.filename })"
+                class="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover/sub:opacity-100 cursor-pointer"
+                title="Eliminar entrega">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                </svg>
+            </button>
         </div>
 
         {{-- ── Calificación (solo visible para admin/instructor) ── --}}
         @if($canGrade)
-        <div x-data="{ gradingOpen: false }"
-             class="border-t border-emerald-500/10 pt-2 mt-0.5">
+    {{-- Vista de CALIFICADOR (instructor/coordinador) --}}
+    <div x-data="{ gradingOpen: false }" class="border-t border-emerald-500/10 pt-2 mt-0.5">
 
-            {{-- Badge de nota actual --}}
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span class="text-[10px] uppercase tracking-widest text-slate-500">Calificación:</span>
-                    <span x-show="sub.grade !== null && sub.grade !== undefined"
-                        class="text-xs font-black px-2 py-0.5 rounded-full"
-                        :class="sub.grade >= 60
-                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                            : 'bg-red-500/20 text-red-400 border border-red-500/30'"
-                        x-text="sub.grade + '/100'">
-                    </span>
-                    <span x-show="sub.grade === null || sub.grade === undefined"
-                        class="text-[10px] text-slate-600 italic">Sin calificar</span>
-                </div>
-                <button @click="gradingOpen = !gradingOpen" type="button"
-                    class="text-[10px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer"
-                    :class="gradingOpen
-                        ? 'bg-slate-700 text-slate-300 border-slate-600'
-                        : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25 hover:bg-emerald-500/20'"
-                    x-text="gradingOpen ? 'Cancelar' : (sub.grade !== null && sub.grade !== undefined ? 'Editar nota' : '+ Calificar')">
-                </button>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] uppercase tracking-widest text-slate-500">Calificación:</span>
+                <span x-show="sub.grade !== null && sub.grade !== undefined"
+                    class="text-xs font-black px-2 py-0.5 rounded-full"
+                    :class="sub.grade >= 60
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-red-500/20 text-red-400 border border-red-500/30'"
+                    x-text="sub.grade + '/100'">
+                </span>
+                <span x-show="sub.grade === null || sub.grade === undefined"
+                    class="text-[10px] text-slate-600 italic">Sin calificar</span>
             </div>
-
-            {{-- Feedback existente --}}
-            <p x-show="sub.feedback && !gradingOpen"
-               x-text="'💬 ' + sub.feedback"
-               class="text-[10px] text-slate-500 mt-1 italic leading-relaxed"></p>
-
-            {{-- Formulario de calificación --}}
-            <div x-show="gradingOpen"
-                 x-transition:enter="transition ease-out duration-150"
-                 x-transition:enter-start="opacity-0 -translate-y-1"
-                 x-transition:enter-end="opacity-100 translate-y-0"
-                 class="mt-2.5">
-                <form :action="sub.grade_url" method="POST" class="flex flex-col gap-2.5">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <input type="hidden" name="_method" value="POST">
-
-                    <div class="flex items-center gap-3">
-                        <div class="flex-1">
-                            <label class="text-[10px] uppercase tracking-widest text-slate-400 mb-1 block">
-                                Nota <span class="text-slate-600">(0 – 100)</span>
-                            </label>
-                            <input type="number" name="grade" min="0" max="100" required
-                                :value="sub.grade ?? ''"
-                                placeholder="ej: 85"
-                                class="w-full bg-[#111d30] border border-emerald-500/30 text-slate-200 text-sm rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-400 placeholder-slate-600">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="text-[10px] uppercase tracking-widest text-slate-400 mb-1 block">
-                            Retroalimentación <span class="text-slate-600">(opcional)</span>
-                        </label>
-                        <textarea name="feedback" rows="2"
-                            placeholder="Observaciones para el estudiante..."
-                            :value="sub.feedback ?? ''"
-                            class="w-full bg-[#111d30] border border-emerald-500/30 text-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-400 placeholder-slate-600 resize-none"></textarea>
-                    </div>
-
-                    <div class="flex justify-end">
-                        <button type="submit"
-                            class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500 text-slate-900 hover:bg-emerald-400 transition-all cursor-pointer">
-                            Guardar calificación
-                        </button>
-                    </div>
-                </form>
-            </div>
+            <button @click="gradingOpen = !gradingOpen" type="button"
+                class="text-[10px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer"
+                :class="gradingOpen
+                    ? 'bg-slate-700 text-slate-300 border-slate-600'
+                    : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25 hover:bg-emerald-500/20'"
+                x-text="gradingOpen ? 'Cancelar' : (sub.grade !== null && sub.grade !== undefined ? 'Editar nota' : '+ Calificar')">
+            </button>
         </div>
-        @endif
+
+        <p x-show="sub.feedback && !gradingOpen"
+           x-text="'💬 ' + sub.feedback"
+           class="text-[10px] text-slate-500 mt-1 italic leading-relaxed"></p>
+
+        <div x-show="gradingOpen"
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 -translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="mt-2.5">
+            <form :action="sub.grade_url" method="POST" class="flex flex-col gap-2.5">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="_method" value="POST">
+                <div class="flex items-center gap-3">
+                    <div class="flex-1">
+                        <label class="text-[10px] uppercase tracking-widest text-slate-400 mb-1 block">
+                            Nota <span class="text-slate-600">(0 – 100)</span>
+                        </label>
+                        <input type="number" name="grade" min="0" max="100" required
+                            :value="sub.grade ?? ''"
+                            placeholder="ej: 85"
+                            class="w-full bg-[#111d30] border border-emerald-500/30 text-slate-200 text-sm rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-400 placeholder-slate-600">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase tracking-widest text-slate-400 mb-1 block">
+                        Retroalimentación <span class="text-slate-600">(opcional)</span>
+                    </label>
+                    <textarea name="feedback" rows="2"
+                        placeholder="Observaciones para el estudiante..."
+                        :value="sub.feedback ?? ''"
+                        class="w-full bg-[#111d30] border border-emerald-500/30 text-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-400 placeholder-slate-600 resize-none"></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit"
+                        class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500 text-slate-900 hover:bg-emerald-400 transition-all cursor-pointer">
+                        Guardar calificación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+@elseif(auth()->user()->isStudent())
+    {{-- ✅ Vista de STUDENT — solo lectura --}}
+    <div class="border-t border-emerald-500/10 pt-2 mt-0.5">
+        <div class="flex items-center gap-2">
+            <span class="text-[10px] uppercase tracking-widest text-slate-500">Tu nota:</span>
+            <span x-show="sub.grade !== null && sub.grade !== undefined"
+                class="text-xs font-black px-2 py-0.5 rounded-full"
+                :class="sub.grade >= 60
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-red-500/20 text-red-400 border border-red-500/30'"
+                x-text="sub.grade + '/100'">
+            </span>
+            <span x-show="sub.grade === null || sub.grade === undefined"
+                class="text-[10px] text-slate-600 italic">Pendiente de calificación</span>
+        </div>
+        <p x-show="sub.feedback"
+           x-text="'💬 ' + sub.feedback"
+           class="text-[10px] text-slate-500 mt-1 italic leading-relaxed"></p>
+    </div>
+@endif
 
     </div>
 </template>
@@ -874,6 +897,72 @@ SCOPE PRINCIPAL: modales editar/eliminar proyecto
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        {{-- ── MODAL: ELIMINAR ACTIVIDAD ── --}}
+        <div x-show="modalDeleteActivity"
+             @click.away="modalDeleteActivity = false"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+             x-cloak>
+            <div @click.stop
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 class="bg-[#1C2A40] border border-red-500/20 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+                <h2 class="text-lg font-bold text-red-400 mb-2">Eliminar actividad</h2>
+                <p class="text-sm text-slate-400 mb-6">¿Estás seguro de que deseas eliminar la actividad <strong x-text="deletingActivity.title"></strong>? Esto también eliminará sus entregas.</p>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" @click="modalDeleteActivity = false"
+                        class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-400 hover:text-white transition-all">Cancelar</button>
+
+                    <form :action="deletingActivity.action" method="POST" x-ref="deleteActivityForm">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" @click="$refs.deleteActivityForm.submit()"
+                            class="px-4 py-2 rounded-xl text-sm bg-red-500 text-white hover:bg-red-600 transition-all">Sí, eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- ── MODAL: ELIMINAR ENTREGA ── --}}
+        <div x-show="modalDeleteSubmission"
+             @click.away="modalDeleteSubmission = false"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+             x-cloak>
+            <div @click.stop
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 class="bg-[#1C2A40] border border-red-500/20 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+                <h2 class="text-lg font-bold text-red-400 mb-2">Eliminar entrega</h2>
+                <p class="text-sm text-slate-400 mb-6">¿Eliminar la entrega <strong x-text="deletingSubmission.filename"></strong>?</p>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" @click="modalDeleteSubmission = false"
+                        class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-400 hover:text-white transition-all">Cancelar</button>
+
+                    <form :action="deletingSubmission.action" method="POST" x-ref="deleteSubmissionForm">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" @click="$refs.deleteSubmissionForm.submit()"
+                            class="px-4 py-2 rounded-xl text-sm bg-red-500 text-white hover:bg-red-600 transition-all">Sí, eliminar</button>
+                    </form>
+                </div>
             </div>
         </div>
 

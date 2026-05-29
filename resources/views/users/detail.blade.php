@@ -46,6 +46,16 @@
                             </svg>
                             Admin
                         </span>
+                        @elseif($user->role === 'REGIONAL_ADMIN')
+                        <span
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-purple-500/12 text-purple-400 border border-purple-500/25">
+                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5"
+                                viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+                            </svg>
+                            Admin Regional
+                        </span>
                         @elseif($user->role === 'INSTRUCTOR')
                         <span
                             class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/12 text-emerald-400 border border-emerald-500/25">
@@ -74,7 +84,7 @@
                                 <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                                 <circle cx="9" cy="7" r="4" />
                             </svg>
-                            Estudiante
+                            Aprendiz
                         </span>
                         @endif
                     </span>
@@ -305,6 +315,38 @@
                             <p class="text-xs text-slate-400 mt-0.5">Acceso total al sistema</p>
                         </div>
                     </div>
+                    @elseif($user->role === 'REGIONAL_ADMIN')
+                    <div
+                        class="bg-purple-500/8 border border-purple-500/20 rounded-xl p-4 flex items-center gap-3.5 mb-4">
+                        <div
+                            class="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M6 20v-2a4 4 0 018 0v2" />
+                                <path d="M18 8l2 2-4 4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-purple-400" style="font-family:'Syne',sans-serif">Admin Regional</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Creacion de red de centros y coordinadores asignados a su regional</p>
+                        </div>
+                    </div>
+                    @elseif($user->role === 'COORDINATOR')
+                    <div
+                        class="bg-amber-500/8 border border-amber-500/20 rounded-xl p-4 flex items-center gap-3.5 mb-4">
+                        <div
+                            class="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M6 20v-2a4 4 0 018 0v2" />
+                                <path d="M18 8l2 2-4 4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-amber-400" style="font-family:'Syne',sans-serif">Coordinador</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Creacion de Instructores, Aprendices y Fichas</p>
+                        </div>
+                    </div>
                     @elseif($user->role === 'INSTRUCTOR')
                     <div
                         class="bg-emerald-500/8 border border-emerald-500/20 rounded-xl p-4 flex items-center gap-3.5 mb-4">
@@ -331,7 +373,7 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="font-bold text-sky-400" style="font-family:'Syne',sans-serif">Estudiante</p>
+                            <p class="font-bold text-sky-400" style="font-family:'Syne',sans-serif">Aprendiz</p>
                             <p class="text-xs text-slate-400 mt-0.5">Participación en proyectos asignados</p>
                         </div>
                     </div>
@@ -340,10 +382,12 @@
                     <!-- Permisos -->
                     @php
                     $can = [
+                    'Administrar gestion' => in_array($user->role, ['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR']),
                     'Crear y editar proyectos' => in_array($user->role, ['ADMIN', 'INSTRUCTOR']),
-                    'Asignar miembros al equipo' => in_array($user->role, ['ADMIN', 'INSTRUCTOR']),
+                    'Asignar integrantes al equipo' => in_array($user->role, ['ADMIN', 'STUDENT']),
+                    'Crear usuarios' => in_array($user->role, ['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR']),
                     'Actualizar avance del Gantt'=> in_array($user->role, ['ADMIN', 'INSTRUCTOR', 'STUDENT']),
-                    'Administrar usuarios' => $user->role === 'ADMIN',
+                    'Administrar usuarios' => in_array($user->role, ['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR']),
                     ];
                     @endphp
 

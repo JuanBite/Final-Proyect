@@ -22,28 +22,28 @@ class CohortController extends Controller
 
     // Store
     public function store(Request $request)
-    {
-        $validation = $request->validate([
-            'cohort_number' => ['required', 'string', 'max:150'],
-            'program_name'  => ['nullable', 'string', 'max:150'],
-            'center_id'     => ['required', 'exists:centers,id'],
-            'start_date'    => ['date'],
-            'end_date'      => ['date', 'after_or_equal:start_date'],
-        ]);
+{
+    $request->validate([
+        'cohort_number' => ['required', 'string', 'max:150', 'unique:cohorts,cohort_number'],
+        'program_name'  => ['nullable', 'string', 'max:150'],
+        'center_id'     => ['required', 'exists:centers,id'],
+        'start_date'    => ['nullable', 'date'],
+        'end_date'      => ['nullable', 'date', 'after_or_equal:start_date'],
+    ], [
+        'cohort_number.unique' => 'Ya existe una ficha con ese número.',
+    ]);
 
-        $cohort = new Cohort();
+    $cohort = Cohort::create([
+        'cohort_number' => $request->cohort_number,
+        'program_name'  => $request->program_name,
+        'center_id'     => $request->center_id,
+        'start_date'    => $request->start_date,
+        'end_date'      => $request->end_date,
+    ]);
 
-        $cohort->cohort_number = $request->cohort_number;
-        $cohort->program_name  = $request->program_name;
-        $cohort->center_id     = $request->center_id;
-        $cohort->start_date    = $request->start_date;
-        $cohort->end_date      = $request->end_date;
-
-        if ($cohort->save()) {
-            return redirect()->route('gestion', ['tab' => 'cohorts'])
-                ->with('success', 'Cohort ' . $cohort->cohort_number . $cohort->program_name . ' was successfully added.');
-        }
-    }
+    return redirect()->route('gestion', ['tab' => 'cohorts'])
+        ->with('success', 'Ficha ' . $cohort->cohort_number . ' creada exitosamente.');
+}
 
     // Show
     public function show(Cohort $cohort)
@@ -59,26 +59,28 @@ class CohortController extends Controller
 
     // Update
     public function update(Request $request, Cohort $cohort)
-    {
-        $validation = $request->validate([
-            'cohort_number' => ['required', 'string', 'max:20'],
-            'program_name'  => ['nullable', 'string', 'max:150'],
-            'center_id'     => ['required', 'exists:centers,id'],
-            'start_date'    => ['nullable', 'date'],
-            'end_date'      => ['nullable', 'date', 'after_or_equal:start_date'],
-        ]);
+{
+    $request->validate([
+        'cohort_number' => ['required', 'string', 'max:150', 'unique:cohorts,cohort_number,' . $cohort->id],
+        'program_name'  => ['nullable', 'string', 'max:150'],
+        'center_id'     => ['required', 'exists:centers,id'],
+        'start_date'    => ['nullable', 'date'],
+        'end_date'      => ['nullable', 'date', 'after_or_equal:start_date'],
+    ], [
+        'cohort_number.unique' => 'Ya existe una ficha con ese número.',
+    ]);
 
-        $cohort->cohort_number = $validation['cohort_number'];
-        $cohort->program_name  = $validation['program_name'];
-        $cohort->center_id     = $validation['center_id'];
-        $cohort->start_date    = $validation['start_date'] ?? null;
-        $cohort->end_date      = $validation['end_date'] ?? null;
+    $cohort->update([
+        'cohort_number' => $request->cohort_number,
+        'program_name'  => $request->program_name,
+        'center_id'     => $request->center_id,
+        'start_date'    => $request->start_date,
+        'end_date'      => $request->end_date,
+    ]);
 
-        if ($cohort->save()) {
-            return redirect()->route('gestion', ['tab' => 'cohorts'])
-                ->with('success', 'Cohort ' . $cohort->cohort_number . $cohort->program_name . ' was successfully updated.');
-        }
-    }
+    return redirect()->route('gestion', ['tab' => 'cohorts'])
+        ->with('success', 'Ficha ' . $cohort->cohort_number . ' actualizada exitosamente.');
+}
 
     // 🔹 ELIMINAR
     public function destroy(Cohort $cohort)

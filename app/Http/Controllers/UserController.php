@@ -14,73 +14,87 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public function index(Request $request)
-{
-    $this->authorize('viewAny', User::class);
+    {
+        $this->authorize('viewAny', User::class);
 
-    $authUser = auth()->user();
-    $search   = $request->input('search');
-    $filter   = $request->input('filter');
-    $sort     = $request->input('sort', 'desc');
-    $cohort   = $request->input('cohort');
+        $authUser = auth()->user();
+        $search   = $request->input('search');
+        $filter   = $request->input('filter');
+        $sort     = $request->input('sort', 'desc');
+        $cohort   = $request->input('cohort');
 
-    // ✅ IDs de fichas del instructor (desde pivot)
-    $instructorCohortIds = $authUser->isInstructor()
-        ? $authUser->cohorts()->pluck('cohorts.id')->toArray()
-        : [];
+        // ✅ IDs de fichas del instructor (desde pivot)
+        $instructorCohortIds = $authUser->isInstructor()
+            ? $authUser->cohorts()->pluck('cohorts.id')->toArray()
+            : [];
 
-    $users = User::with('projectMembers', 'cohort')
-        ->when(! $authUser->isAdmin(), fn($q) =>
-            $q->whereIn('center_id', $authUser->visibleCenterIds())
-        )
-        ->when($authUser->isInstructor(), fn($q) =>           // ✅ filtra por fichas del pivot
-            $q->whereIn('cohort_id', $instructorCohortIds)
-        )
-        ->when($search, function ($query) use ($search) {
-            $query->where('first_name', 'like', "%$search%")
-                ->orWhere('last_name', 'like', "%$search%")
-                ->orWhere('email', 'like', "%$search%")
-                ->orWhere('document', 'like', "%$search%")
-                ->orWhereHas('cohort', function ($q) use ($search) {
-                    $q->where('program_name', 'like', "%$search%")
-                        ->orWhere('cohort_number', 'like', "%$search%");
-                });
-        })
-        ->when($filter === 'LEADER', fn($q) => $q->whereHas('projectMembers', fn($q2) => $q2->where('project_role', 'LEADER')))
-        ->when($filter === 'MEMBER', fn($q) => $q->whereHas('projectMembers', fn($q2) => $q2->where('project_role', 'MEMBER')))
-        ->when($cohort, fn($q) => $q->where('cohort_id', $cohort))
-        ->orderBy('created_at', $sort)
-        ->paginate(10)
-        ->withQueryString();
+        $users = User::with('projectMembers', 'cohort')
+            ->when(
+                ! $authUser->isAdmin(),
+                fn($q) =>
+                $q->whereIn('center_id', $authUser->visibleCenterIds())
+            )
+            ->when(
+                $authUser->isInstructor(),
+                fn($q) =>           // ✅ filtra por fichas del pivot
+                $q->whereIn('cohort_id', $instructorCohortIds)
+            )
+            ->when($search, function ($query) use ($search) {
+                $query->where('first_name', 'like', "%$search%")
+                    ->orWhere('last_name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%")
+                    ->orWhere('document', 'like', "%$search%")
+                    ->orWhereHas('cohort', function ($q) use ($search) {
+                        $q->where('program_name', 'like', "%$search%")
+                            ->orWhere('cohort_number', 'like', "%$search%");
+                    });
+            })
+            ->when($filter === 'LEADER', fn($q) => $q->whereHas('projectMembers', fn($q2) => $q2->where('project_role', 'LEADER')))
+            ->when($filter === 'MEMBER', fn($q) => $q->whereHas('projectMembers', fn($q2) => $q2->where('project_role', 'MEMBER')))
+            ->when($cohort, fn($q) => $q->where('cohort_id', $cohort))
+            ->orderBy('created_at', $sort)
+            ->paginate(10)
+            ->withQueryString();
 
-    $centerIds = $authUser->visibleCenterIds();
+        $centerIds = $authUser->visibleCenterIds();
 
-    $baseCount = fn() => User::when(! $authUser->isAdmin(), fn($q) =>
+        $baseCount = fn() => User::when(
+            ! $authUser->isAdmin(),
+            fn($q) =>
             $q->whereIn('center_id', $centerIds)
         )
-        ->when($authUser->isInstructor(), fn($q) =>           // ✅ mismo filtro para los stats
-            $q->whereIn('cohort_id', $instructorCohortIds)
-        );
+            ->when(
+                $authUser->isInstructor(),
+                fn($q) =>           // ✅ mismo filtro para los stats
+                $q->whereIn('cohort_id', $instructorCohortIds)
+            );
 
-    $totalUsers   = $baseCount()->count();
-    $totalLeaders = $baseCount()->whereHas('projectMembers', fn($q) => $q->where('project_role', 'LEADER'))->count();
-    $totalMembers = $baseCount()->where('status', 1)->count();
+        $totalUsers   = $baseCount()->count();
+        $totalLeaders = $baseCount()->whereHas('projectMembers', fn($q) => $q->where('project_role', 'LEADER'))->count();
+        $totalMembers = $baseCount()->where('status', 1)->count();
 
-    $projects = Project::visibleTo($authUser)->get();
-    $cohorts  = $this->cohortsForUser($authUser);
+        $projects = Project::visibleTo($authUser)->get();
+        $cohorts  = $this->cohortsForUser($authUser);
 
-    $regions = $authUser->isAdmin() ? Region::orderBy('name')->get() : collect();
-    $centers = ($authUser->isAdmin() || $authUser->isRegionalAdmin())
-        ? Center::with('region')
+        $regions = $authUser->isAdmin() ? Region::orderBy('name')->get() : collect();
+        $centers = ($authUser->isAdmin() || $authUser->isRegionalAdmin())
+            ? Center::with('region')
             ->when($authUser->isRegionalAdmin(), fn($q) => $q->where('region_id', $authUser->region_id))
             ->orderBy('name')->get()
-        : collect();
+            : collect();
 
-    return view('users.index', compact(
-        'users', 'projects', 'cohorts',
-        'totalUsers', 'totalLeaders', 'totalMembers',
-        'sort', 'regions', 'centers'
-    ));
-}
+        return view('users.index', compact(
+            'users',
+            'projects',
+            'cohorts',
+            'totalUsers',
+            'totalLeaders',
+            'totalMembers',
+            'sort',
+            'regions',
+            'centers'
+        ));
+    }
 
     public function create()
     {
@@ -151,18 +165,24 @@ class UserController extends Controller
             $request->merge(['region_id' => $authUser->region_id]);
         }
 
+        // Para STUDENT tomamos el primer cohort_ids[] como cohort_id directo
+        $cohortId = $request->cohort_id;
+        if ($request->role === 'STUDENT' && $request->filled('cohort_ids')) {
+            $cohortId = $request->cohort_ids[0];
+        }
+
         $user = User::create([
             'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'document' => $request->document,
-            'password' => bcrypt($request->password),
-            'role' => $request->role,
-            'cohort_id' => $request->cohort_id,
-            'center_id' => $request->center_id,
-            'region_id'  => $request->region_id, // ← NUEVO
-
+            'last_name'  => $request->last_name,
+            'email'      => $request->email,
+            'document'   => $request->document,
+            'password'   => bcrypt($request->password),
+            'role'       => $request->role,
+            'cohort_id'  => $cohortId,
+            'center_id'  => $request->center_id,
+            'region_id'  => $request->region_id,
         ]);
+
         if ($user->role === 'INSTRUCTOR' && $request->filled('cohort_ids')) {
             $user->cohorts()->sync($request->cohort_ids);
         }
@@ -219,13 +239,19 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $this->authorize('update', $user); // ← NUEVO
+        $this->authorize('update', $user);
+        $authUser = auth()->user();
+        $projects = Project::visibleTo($authUser)->get();
+        $cohorts  = $this->cohortsForUser($authUser);
 
-        $authUser = auth()->user(); // ← NUEVO
-        $projects = Project::visibleTo($authUser)->get(); // ← NUEVO
-        $cohorts = $this->cohortsForUser($authUser);     // ← NUEVO
+        $regions = $authUser->isAdmin() ? Region::orderBy('name')->get() : collect();
+        $centers = ($authUser->isAdmin() || $authUser->isRegionalAdmin())
+            ? Center::with('region')
+            ->when($authUser->isRegionalAdmin(), fn($q) => $q->where('region_id', $authUser->region_id))
+            ->orderBy('name')->get()
+            : collect();
 
-        return view('modals.edit.user', compact('user', 'projects', 'cohorts'));
+        return view('modals.edit.user', compact('user', 'projects', 'cohorts', 'regions', 'centers'));
     }
 
     public function update(Request $request, $id)
@@ -236,29 +262,45 @@ class UserController extends Controller
 
         $authUser = auth()->user(); // ← NUEVO
 
+
+        $cohortId = $request->cohort_id;
+        if ($request->role === 'STUDENT' && $request->filled('cohort_ids')) {
+            $cohortId = $request->cohort_ids[0];
+        }
+        if ($request->role === 'INSTRUCTOR') {
+            $cohortId = null;
+        }
+
         $user->update([
             'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'document' => $request->document,
-            'email' => $request->email,
-            'role' => $request->role,
-            'status' => $request->status,
-            'cohort_id' => $request->cohort_id,
-            // ← NUEVO: COORDINATOR no puede reasignar centro
-            'center_id' => $authUser->isCoordinator() || $authUser->isRegionalAdmin() ? $user->center_id : $request->center_id,
+            'last_name'  => $request->last_name,
+            'document'   => $request->document,
+            'email'      => $request->email,
+            'role'       => $request->role,
+            'status'     => $request->status,
+            'cohort_id'  => $cohortId,
+            'center_id'  => $authUser->isCoordinator() || $authUser->isRegionalAdmin() ? $user->center_id : $request->center_id,
         ]);
+
+
+        if ($request->role === 'INSTRUCTOR') {
+            $user->cohorts()->sync($request->filled('cohort_ids') ? $request->cohort_ids : []);
+        } else {
+
+            $user->cohorts()->detach();
+        }
 
         if ($request->filled('password')) {
             $user->update(['password' => bcrypt($request->password)]);
         }
 
-        // ← NUEVO: filtrar proyectos fuera del scope antes de sincronizar
+
         $allowedProjectIds = Project::visibleTo($authUser)->pluck('id')->toArray();
         $projectsToSync = collect($request->projects ?? [])
             ->filter(fn($pid) => in_array($pid, $allowedProjectIds))
             ->toArray();
 
-        $user->projects()->sync($projectsToSync); // era: sync($request->projects ?? [])
+        $user->projects()->sync($projectsToSync);
 
         if ($request->redirect_to === 'show') {
             return redirect()->route('users.show', $user->id)
@@ -271,7 +313,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $this->authorize('delete', $user); // ← NUEVO
+        $this->authorize('delete', $user);
 
         $user->delete();
 
@@ -279,7 +321,7 @@ class UserController extends Controller
             ->with('success', 'Usuario eliminado');
     }
 
-    // ← NUEVO: helpers privados ────────────────────────────────────────────────
+
 
     private function cohortsForUser(User $authUser)
     {

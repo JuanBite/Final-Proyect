@@ -22,24 +22,24 @@ class CenterController extends Controller
 
     // Store
     public function store(Request $request)
-    {
-        $validation = $request->validate([
-            'name'          => ['required', 'string'],
-            'code'          => ['required', 'string'],
-            'region_id'     => ['required', 'string'],
-           
-        ]);
-        $center = new Center();
-        $center->name        = $request       ->name;
-        $center->code        = $request       ->code;
-        $center->region_id   = $request       ->region_id;
-        
-       
+{
+    $request->validate([
+        'name'      => ['required', 'string'],
+        'code'      => ['required', 'string', 'unique:centers,code'],
+        'region_id' => ['required', 'exists:region,id'],
+    ], [
+        'code.unique' => 'Ya existe un centro con ese código.',
+    ]);
 
-        if ($center->save()) {
-            return redirect()->route('gestion', ['tab' => 'centers'])->with('success', 'Center ' . $center->name . ' was successfully added.');
-        }
-    }
+    $center = Center::create([
+        'name'      => $request->name,
+        'code'      => $request->code,
+        'region_id' => $request->region_id,
+    ]);
+
+    return redirect()->route('gestion', ['tab' => 'centers'])
+        ->with('success', 'Centro ' . $center->name . ' creado exitosamente.');
+}
 
     // Show
     public function show(Center $center)
@@ -53,20 +53,24 @@ class CenterController extends Controller
     }
     // Update
     public function update(Request $request, Center $center)
-    {
-        $validation = $request->validate([
-            'name'          => ['required', 'string'],
-            'code'          => ['required', 'string'],
-            'region_id'     => ['required', 'string'],
-           
-        ]);
+{
+    $request->validate([
+        'name'      => ['required', 'string'],
+        'code'      => ['required', 'string', 'unique:centers,code,' . $center->id],
+        'region_id' => ['required', 'exists:regions,id'],
+    ], [
+        'code.unique' => 'Ya existe un centro con ese código.',
+    ]);
 
+    $center->update([
+        'name'      => $request->name,
+        'code'      => $request->code,
+        'region_id' => $request->region_id,
+    ]);
 
-        $center->update($validation);
-
-        return redirect()->route('gestion', ['tab' => 'centers'])
-            ->with('success', 'Center ' . $center->name . ' was successfully updated.');
-    }
+    return redirect()->route('gestion', ['tab' => 'centers'])
+        ->with('success', 'Centro ' . $center->name . ' actualizado exitosamente.');
+}
     // Delete
     public function destroy(Center $center)
     {

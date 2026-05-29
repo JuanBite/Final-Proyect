@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Enum;
+use App\Notifications\EntregaSubidaNotification;
+use App\Notifications\EntregaCalificadaNotification;
 
 class ProjectTaskController extends Controller
 {
@@ -50,7 +52,7 @@ class ProjectTaskController extends Controller
         ]);
 
         return redirect()->route('projects.show', $project->id)
-            ->with('success', 'Actividad "'.$request->title.'" añadida al cronograma.');
+            ->with('success', 'Actividad "' . $request->title . '" añadida al cronograma.');
     }
 
     public function update(Request $request, Project $project, ProjectTask $task)
@@ -111,69 +113,81 @@ class ProjectTaskController extends Controller
     }
 
     public function storeSubmission(Request $request, Project $project, ProjectTask $task)
-{
-    $user = auth()->user();
+    {
+        $user = auth()->user();
 
-    abort_unless(
-        $user->isStudent() || $user->isAdmin() || $user->isInstructor(),
-        403,
-        'Solo los aprendices o instructores pueden subir entregas.'
-    );
-
-    // ✅ Verificación de ficha según rol — separadas, sin pisar una a la otra
-    if ($user->isStudent()) {
         abort_unless(
-            $project->cohort_id === $user->cohort_id,
+            $user->isStudent() || $user->isAdmin() || $user->isInstructor(),
             403,
-            'No perteneces a la ficha de este proyecto.'
+            'Solo los aprendices o instructores pueden subir entregas.'
         );
+
+        // ✅ Verificación de ficha según rol — separadas, sin pisar una a la otra
+        if ($user->isStudent()) {
+            abort_unless(
+                $project->cohort_id === $user->cohort_id,
+                403,
+                'No perteneces a la ficha de este proyecto.'
+            );
+        }
+
+        if ($user->isInstructor()) {
+            abort_unless(
+                $user->cohorts()->where('cohorts.id', $project->cohort_id)->exists(),
+                403,
+                'No tienes asignada la ficha de este proyecto.'
+            );
+        }
+
+        $request->validate([
+            'file'         => ['required', 'file', 'max:20480'],
+            'comments'     => ['nullable', 'string'],
+            'week_number'  => ['required', 'integer', 'between:1,4'],
+            'filter_year'  => ['required', 'integer'],
+            'filter_month' => ['required', 'integer', 'between:1,12'],
+        ]);
+
+        $file          = $request->file('file');
+        $month         = $request->filter_month;
+        $week          = $request->week_number;
+        $year          = $request->filter_year;
+        $projectSlug   = Str::slug($project->name, '-') . '-' . $project->id;
+        $monthAbbr     = $this->monthAbbr($month);
+        $submissionDir = "{$monthAbbr}-s{$week}-{$year}";
+        $storagePath   = "submissions/{$projectSlug}/{$submissionDir}";
+        $path          = $file->store($storagePath, 'public');
+
+        $submission = Submission::create([   // ✅ asignar a $submission
+            'project_id'        => $project->id,
+            'task_id'           => $task->id,
+            'file_path'         => $path,
+            'original_filename' => $file->getClientOriginalName(),
+            'mime_type'         => $file->getMimeType(),
+            'comments'          => $request->comments,
+            'submitted_at'      => now(),
+            'week_number'       => $week,
+            'submission_month'  => $month,
+            'submission_year'   => $year,
+        ]);
+
+        // ✅ Autocalificar si es instructor
+        if ($user->isInstructor()) {
+            $submission->update([
+                'grade'    => 100.00,
+                'feedback' => 'Calificado automáticamente por el instructor.',
+            ]);
+        }
+        $instructores = $project->cohort->instructors;
+        foreach ($instructores as $instructor) {
+            $instructor->notify(new EntregaSubidaNotification($submission, $project, $task));
+        }
+
+        return redirect()->route('projects.show', [
+            'project'      => $project->id,
+            'filter_year'  => $year,
+            'filter_month' => $month,
+        ])->with('success', 'Entrega subida correctamente.');
     }
-
-    if ($user->isInstructor()) {
-        abort_unless(
-            $user->cohorts()->where('cohorts.id', $project->cohort_id)->exists(),
-            403,
-            'No tienes asignada la ficha de este proyecto.'
-        );
-    }
-
-    $request->validate([
-        'file'         => ['required', 'file', 'max:20480'],
-        'comments'     => ['nullable', 'string'],
-        'week_number'  => ['required', 'integer', 'between:1,4'],
-        'filter_year'  => ['required', 'integer'],
-        'filter_month' => ['required', 'integer', 'between:1,12'],
-    ]);
-
-    $file          = $request->file('file');
-    $month         = $request->filter_month;
-    $week          = $request->week_number;
-    $year          = $request->filter_year;
-    $projectSlug   = Str::slug($project->name, '-') . '-' . $project->id;
-    $monthAbbr     = $this->monthAbbr($month);
-    $submissionDir = "{$monthAbbr}-s{$week}-{$year}";
-    $storagePath   = "submissions/{$projectSlug}/{$submissionDir}";
-    $path          = $file->store($storagePath, 'public');
-
-    Submission::create([
-        'project_id'        => $project->id,
-        'task_id'           => $task->id,
-        'file_path'         => $path,
-        'original_filename' => $file->getClientOriginalName(),
-        'mime_type'         => $file->getMimeType(),
-        'comments'          => $request->comments,
-        'submitted_at'      => now(),
-        'week_number'       => $week,
-        'submission_month'  => $month,
-        'submission_year'   => $year,
-    ]);
-
-    return redirect()->route('projects.show', [
-        'project'      => $project->id,
-        'filter_year'  => $year,
-        'filter_month' => $month,
-    ])->with('success', 'Entrega subida correctamente.');
-}
 
     public function destroySubmission(Project $project, ProjectTask $task, Submission $submission)
     {
@@ -214,6 +228,19 @@ class ProjectTaskController extends Controller
             'feedback' => $request->feedback,
         ]);
 
+        // Notificar a los estudiantes de la ficha que subieron esa entrega
+        $submission->load(['task.project']);
+        $estudiante = \App\Models\User::find($submission->submitted_by ?? null);
+
+        // Notificar a todos los estudiantes de la ficha
+        $estudiantes = \App\Models\User::where('cohort_id', $project->cohort_id)
+            ->where('role', 'STUDENT')
+            ->get();
+
+        foreach ($estudiantes as $estudiante) {
+            $estudiante->notify(new EntregaCalificadaNotification($submission, $project, $task));
+        }
+
         return back()->with('success', 'Entrega calificada correctamente.');
     }
 
@@ -235,9 +262,37 @@ class ProjectTaskController extends Controller
     private function monthAbbr(int $month): string
     {
         return match ($month) {
-            1 => 'ene', 2 => 'feb', 3 => 'mar', 4 => 'abr',
-            5 => 'may', 6 => 'jun', 7 => 'jul', 8 => 'ago',
-            9 => 'sep', 10 => 'oct', 11 => 'nov', 12 => 'dic',
+            1 => 'ene',
+            2 => 'feb',
+            3 => 'mar',
+            4 => 'abr',
+            5 => 'may',
+            6 => 'jun',
+            7 => 'jul',
+            8 => 'ago',
+            9 => 'sep',
+            10 => 'oct',
+            11 => 'nov',
+            12 => 'dic',
         };
+    }
+
+    public function downloadSubmission(Project $project, ProjectTask $task, Submission $submission)
+    {
+        $user = auth()->user();
+
+        $canDownload = $user->isAdmin()
+            || ($user->isRegionalAdmin() && in_array($project->center_id, $user->visibleCenterIds()))
+            || ($user->isCoordinator() && $project->center_id === $user->center_id)
+            || ($user->isInstructor() && $user->cohorts()->where('cohorts.id', $project->cohort_id)->exists())
+            || ($user->isStudent() && $project->cohort_id === $user->cohort_id);
+
+        abort_unless($canDownload, 403, 'No puedes descargar esta entrega.');
+        abort_unless(Storage::disk('public')->exists($submission->file_path), 404, 'Archivo no encontrado.');
+
+        return Storage::disk('public')->download(
+            $submission->file_path,
+            $submission->original_filename  // ← nombre original al descargar
+        );
     }
 }

@@ -46,13 +46,16 @@ class ProjectPolicy
     }
 
     public function delete(User $user, Project $project): bool
-    {
-        return match ($user->role) {
-            'ADMIN'          => true,
-            'REGIONAL_ADMIN' => in_array($project->center_id, $user->visibleCenterIds()),
-            'COORDINATOR'    => $project->center_id === $user->center_id, 
-            'STUDENT'        => $project->center_id === $user->center_id, 
-            default          => false,
-        };
-    }
+{
+    return match ($user->role) {
+        'ADMIN'          => true,
+        'REGIONAL_ADMIN' => in_array($project->center_id, $user->visibleCenterIds()),
+        'COORDINATOR'    => $project->center_id === $user->center_id,
+        'STUDENT'     => $project->members()
+                                ->where('user_id', $user->id)
+                                ->where('project_role', 'LEADER')
+                                ->exists(),
+        default          => false, // STUDENT y cualquier otro: nunca
+    };
+}
 }

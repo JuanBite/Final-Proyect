@@ -79,7 +79,8 @@
                             <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">Centro de
                                 formación</label>
                             <select name="center_id" id="select-center"
-                                class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none">
+                                class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none"
+                                onchange="filterCohortsByCenter(this.value)">
                                 <option value="0">— Sin centro —</option>
                                 @foreach($centers as $center)
                                 <option value="{{ $center->id }}" data-region="{{ $center->region_id }}">
@@ -97,6 +98,7 @@
                             Centro de formación <span class="text-[#40C4FF]">*</span>
                         </label>
                         <select name="center_id" required
+                        onchange="filterCohortsByCenter(this.value)"
                             class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full outline-none">
                             <option value="">— Selecciona un centro —</option>
                             @foreach($centers as $center)
@@ -107,24 +109,25 @@
                     @endif
 
                     {{-- FICHA — multi-select estilo teamSelector --}}
-                    @if(!auth()->user()->isRegionalAdmin())
+                    @if(auth()->user()->isCoordinator() || auth()->user()->isAdmin()) {{-- COORDINATOR no elige ficha, se arrastra por centro --}}
                     <div class="flex flex-col gap-1.5">
                         <label class="text-[11px] uppercase tracking-[1px] text-[#8AAABB] font-medium">
-                            Ficha @if(!auth()->user()->isAdmin())<span class="text-[#40C4FF]">*</span>@endif
+                            Ficha @if(!auth()->user()->isAdmin() )<span class="text-[#40C4FF]">*</span>@endif
                         </label>
 
                         <div x-data="cohortSelector()">
 
-                            <select @change="addCohort($event)"
+                            <select id="select-cohort" @change="addCohort($event)"
                                 class="bg-[#182236] border border-[#00C853]/15 rounded-xl px-3.5 py-[11px] text-[#E8F4FF] text-[13.5px] w-full transition-all">
                                 <option value="">— Seleccionar ficha —</option>
                                 @foreach($cohorts as $cohort)
-                                <option value="{{ $cohort->id }}" data-name="{{ $cohort->program_name }}"
-                                    style="background:#111D30; color:white;">
-                                    {{ $cohort->program_name }}
+                                <option value="{{ $cohort->id }}" data-center="{{ $cohort->center_id }}"
+                                    data-name="{{ $cohort->cohort_number }}">
+                                    {{ $cohort->cohort_number }}
                                 </option>
                                 @endforeach
                             </select>
+
 
                             <!-- INPUTS OCULTOS -->
                             <template x-for="id in selected" :key="id">
@@ -237,6 +240,59 @@
                 </div>
                 <input type="hidden" name="role" :value="selectedRole">
                 <div class="grid grid-cols-3 gap-3">
+                    {{-- REGIONAL ADMIN — solo ADMIN --}}
+                    @if(auth()->user()->isAdmin())
+                    
+
+                    {{-- ADMIN — solo ADMIN --}}
+                    <div @click="selectedRole = 'ADMIN'"
+                        :class="selectedRole === 'ADMIN' ? 'border-yellow-500/30 bg-yellow-500/10' : 'border-[#00C853]/15 bg-[#182236]'"
+                        class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
+                        <div class="flex justify-center mb-1.5">
+                            <svg class="w-6 h-6 text-[#FFD740]" fill="none" stroke="currentColor" stroke-width="1.8"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                        </div>
+                        <div class="font-syne font-bold text-xs text-[#FFD740]">ADMIN</div>
+                        <div class="text-[10px] text-[#8AAABB] mt-1">Administra</div>
+                    </div>
+                    <div @click="selectedRole = 'REGIONAL_ADMIN'"
+                        :class="selectedRole === 'REGIONAL_ADMIN' ? 'border-purple-500/30 bg-purple-500/10' : 'border-[#00C853]/15 bg-[#182236]'"
+                        class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
+                        <div class="flex justify-center mb-1.5">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" stroke-width="1.8"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+                            </svg>
+                        </div>
+                        <div class="font-syne font-bold text-xs text-purple-400">REGIONAL ADMIN</div>
+                        <div class="text-[10px] text-[#8AAABB] mt-1">Gestiona regional</div>
+                    </div>
+                    @endif
+                    {{-- COORDINADOR — visible para todos --}}
+                    @if(!auth()->user()->isCoordinator())
+                    <div @click="selectedRole = 'COORDINATOR'"
+                        :class="selectedRole === 'COORDINATOR' ? 'border-blue-500/40 bg-blue-600/15' : 'border-blue-500/15 bg-[#182236]'"
+                        class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
+                        <div class="flex justify-center mb-1.5">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" stroke-width="1.8"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.75 5.25h16.5v13.5H3.75V5.25z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 14.25h3" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 14.25h1.5" />
+                            </svg>
+                        </div>
+                        <div class="font-syne font-bold text-xs text-blue-400">COORDINADOR</div>
+                        <div class="text-[10px] text-[#8AAABB] mt-1">Coordina</div>
+                    </div>
+                    @endif
                     @if(!auth()->user()->isRegionalAdmin())
                     {{-- INSTRUCTOR — visible para todos --}}
                     <div @click="selectedRole = 'INSTRUCTOR'"
@@ -266,61 +322,6 @@
                         </div>
                         <div class="font-syne font-bold text-xs text-[#40C4FF]">APRENDIZ</div>
                         <div class="text-[10px] text-[#8AAABB] mt-1">Participa</div>
-                    </div>
-                    @endif
-
-                    {{-- COORDINADOR — visible para todos --}}
-                    @if(!auth()->user()->isCoordinator())
-                    <div @click="selectedRole = 'COORDINATOR'"
-                        :class="selectedRole === 'COORDINATOR' ? 'border-blue-500/40 bg-blue-600/15' : 'border-blue-500/15 bg-[#182236]'"
-                        class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
-                        <div class="flex justify-center mb-1.5">
-                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" stroke-width="1.8"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3.75 5.25h16.5v13.5H3.75V5.25z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 14.25h3" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 14.25h1.5" />
-                            </svg>
-                        </div>
-                        <div class="font-syne font-bold text-xs text-blue-400">COORDINADOR</div>
-                        <div class="text-[10px] text-[#8AAABB] mt-1">Coordina</div>
-                    </div>
-                    @endif
-
-
-                    {{-- REGIONAL ADMIN — solo ADMIN --}}
-                    @if(auth()->user()->isAdmin())
-                    <div @click="selectedRole = 'REGIONAL_ADMIN'"
-                        :class="selectedRole === 'REGIONAL_ADMIN' ? 'border-purple-500/30 bg-purple-500/10' : 'border-[#00C853]/15 bg-[#182236]'"
-                        class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
-                        <div class="flex justify-center mb-1.5">
-                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" stroke-width="1.8"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
-                            </svg>
-                        </div>
-                        <div class="font-syne font-bold text-xs text-purple-400">REGIONAL ADMIN</div>
-                        <div class="text-[10px] text-[#8AAABB] mt-1">Gestiona regional</div>
-                    </div>
-
-                    {{-- ADMIN — solo ADMIN --}}
-                    <div @click="selectedRole = 'ADMIN'"
-                        :class="selectedRole === 'ADMIN' ? 'border-yellow-500/30 bg-yellow-500/10' : 'border-[#00C853]/15 bg-[#182236]'"
-                        class="rounded-xl p-3.5 cursor-pointer text-center border transition-all">
-                        <div class="flex justify-center mb-1.5">
-                            <svg class="w-6 h-6 text-[#FFD740]" fill="none" stroke="currentColor" stroke-width="1.8"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                            </svg>
-                        </div>
-                        <div class="font-syne font-bold text-xs text-[#FFD740]">ADMIN</div>
-                        <div class="text-[10px] text-[#8AAABB] mt-1">Administra</div>
                     </div>
                     @endif
 
@@ -456,6 +457,22 @@
             }
         }
     }
+    function filterCohortsByCenter(centerId) {
+        const cohortSelect = document.getElementById('select-cohort');
+        const options = cohortSelect.querySelectorAll('option');
+
+        options.forEach(opt => {
+            if (!opt.value) return;
+            opt.style.display = (!centerId || opt.dataset.center == centerId) ? '' : 'none';
+        });
+
+        if (centerId && cohortSelect.value) {
+            const selected = cohortSelect.querySelector(`option[value="${cohortSelect.value}"]`);
+            if (selected && selected.dataset.center != centerId) {
+                cohortSelect.value = '';
+            }
+        }
+    }
 
     function projectAssignerCreate() {
         return {
@@ -484,30 +501,30 @@
     }
 
     function cohortSelector() {
-        return {
-            selected: [],
-            selectedCohorts: [],
+    return {
+        selected: [],
+        selectedCohorts: [],
 
-            addCohort(event) {
-                const id   = parseInt(event.target.value);
-                const name = event.target.selectedOptions[0]?.dataset.name;
+        addCohort(event) {
+            const id   = parseInt(event.target.value);
+            const name = event.target.selectedOptions[0]?.dataset.name ?? '';
 
-                if (!id || this.selected.includes(id)) {
-                    event.target.value = '';
-                    return;
-                }
-
-                this.selected.push(id);
-                this.selectedCohorts.push({ id, name });
+            if (!id || this.selected.includes(id)) {
                 event.target.value = '';
-            },
-
-            removeCohort(id) {
-                this.selected        = this.selected.filter(s => s !== id);
-                this.selectedCohorts = this.selectedCohorts.filter(c => c.id !== id);
+                return;
             }
+
+            this.selected.push(id);
+            this.selectedCohorts.push({ id, name });
+            event.target.value = '';   // resetea el select para permitir agregar otro
+        },
+
+        removeCohort(id) {
+            this.selected        = this.selected.filter(s => s !== id);
+            this.selectedCohorts = this.selectedCohorts.filter(c => c.id !== id);
         }
     }
+}
 
     function togglePassword(inputId, eyeOpenId, eyeClosedId) {
         const input     = document.getElementById(inputId);

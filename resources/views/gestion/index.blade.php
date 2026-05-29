@@ -119,6 +119,7 @@
                         </button>
                     </template>
                 </div>
+                @if(!auth()->user()->isInstructor())
                 {{-- Nuevo --}}
                 <button @click="openModal('add')"
                     class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-emerald-500 text-slate-900 shadow-lg shadow-emerald-500/25 hover:bg-emerald-400 transition-all cursor-pointer">
@@ -128,6 +129,7 @@
                     </svg>
                     Nuevo registro
                 </button>
+                @endif
             </div>
         </div>
 
@@ -558,7 +560,7 @@ const tabsByRole = {
     ],
     'REGIONAL_ADMIN': [
         { key: 'centers', label: 'Centros' },
-        { key: 'cohorts', label: 'Fichas' }
+        
     ],
     'COORDINATOR':    [
         { key: 'cohorts', label: 'Fichas' }
