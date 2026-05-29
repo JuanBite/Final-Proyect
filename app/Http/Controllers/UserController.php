@@ -130,8 +130,13 @@ class UserController extends Controller
             // ← NUEVO: solo los roles que este usuario puede crear
             'role' => ['required', 'in:' . $this->allowedRoles()],
             'cohort_id' => $authUser->isAdmin() ? ['nullable', 'exists:cohorts,id'] : ['nullable', 'exists:cohorts,id'],
-            'region_id' => $authUser->isAdmin() ? ['nullable', 'exists:region,id'] : ['nullable'],
-            'center_id' => $authUser->isAdmin() ? ['nullable', 'exists:centers,id'] : ['nullable', 'exists:centers,id'],
+            'center_id' => $request->role === 'REGIONAL_ADMIN'
+                ? ['nullable']
+                : ($authUser->isAdmin() ? ['nullable', 'exists:centers,id'] : ['nullable', 'exists:centers,id']),
+
+            'region_id' => ($authUser->isAdmin() || $request->role === 'REGIONAL_ADMIN')
+                ? ['nullable', 'exists:region,id']
+                : ['nullable'],
         ]);
 
         // ← NUEVO: COORDINATOR solo asigna a su propio centro
@@ -179,7 +184,7 @@ class UserController extends Controller
             'password'   => bcrypt($request->password),
             'role'       => $request->role,
             'cohort_id'  => $cohortId,
-            'center_id'  => $request->center_id,
+            'center_id'  => $request->role === 'REGIONAL_ADMIN' ? null : $request->center_id,
             'region_id'  => $request->region_id,
         ]);
 
@@ -279,9 +284,13 @@ class UserController extends Controller
             'role'       => $request->role,
             'status'     => $request->status,
             'cohort_id'  => $cohortId,
-            'center_id'  => $authUser->isCoordinator() || $authUser->isRegionalAdmin() ? $user->center_id : $request->center_id,
+            'center_id'  => ($request->role === 'REGIONAL_ADMIN' || !$request->center_id)
+                ? null
+                : ($authUser->isCoordinator() || $authUser->isRegionalAdmin()
+                    ? $user->center_id
+                    : $request->center_id),
+            'region_id'  => $request->region_id ?: null, // también sanitizar region_id
         ]);
-
 
         if ($request->role === 'INSTRUCTOR') {
             $user->cohorts()->sync($request->filled('cohort_ids') ? $request->cohort_ids : []);
