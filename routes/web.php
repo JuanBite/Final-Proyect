@@ -12,13 +12,17 @@ use App\Http\Controllers\{
     UserController,
     GestionController,
     ProjectTaskController,
-    NotificationController
+    NotificationController,
+    ImportController
 };
 
 Route::get('/projects/public', [ProjectController::class, 'publicIndex'])->name('projects.universal-search');
 Route::get('/', fn() => view('auth.login'));
 
 Route::middleware(['auth', 'active'])->group(function () {
+
+    Route::post('/import/gestion', [ImportController::class, 'importGestion'])->name('import.gestion');
+    Route::post('/import/users',   [ImportController::class, 'importUsers'])->name('import.users');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

@@ -292,13 +292,14 @@
                                 <div class="flex items-center justify-center gap-1.5">
                                     @if(!auth()->user()->isInstructor())
                                     <button type="button" @click="openModal('edit', @js([
-    'id'           => $cohort->id,
-    'cohort_number'=> $cohort->cohort_number,
-    'program_name' => $cohort->program_name,
-    'center_id'    => $cohort->center_id,
-    'start_date' => $cohort->start_date ? \Carbon\Carbon::parse($cohort->start_date)->format('Y-m-d') : null,
-'end_date'   => $cohort->end_date   ? \Carbon\Carbon::parse($cohort->end_date)->format('Y-m-d')   : null,
-]), 'cohorts')" class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-emerald-500/20 hover:text-emerald-400 transition-all cursor-pointer">
+                                            'id'           => $cohort->id,
+                                            'cohort_number'=> $cohort->cohort_number,
+                                            'program_name' => $cohort->program_name,
+                                            'center_id'    => $cohort->center_id,
+                                            'start_date' => $cohort->start_date ? \Carbon\Carbon::parse($cohort->start_date)->format('Y-m-d') : null,
+                                        'end_date'   => $cohort->end_date   ? \Carbon\Carbon::parse($cohort->end_date)->format('Y-m-d')   : null,
+                                        ]), 'cohorts')"
+                                        class="w-8 h-8 rounded-lg bg-slate-600 border border-emerald-500/15 flex items-center justify-center text-slate-400 hover:bg-emerald-500/20 hover:text-emerald-400 transition-all cursor-pointer">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
                                             viewBox="0 0 24 24">
                                             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
@@ -327,7 +328,7 @@
                                         </svg>
                                     </a>
                                 </div>
-                                
+
                             </td>
                         </tr>
                         @empty
@@ -459,8 +460,9 @@
             </form>
         </div>
     </div>
-
-</div>
+    @php $importContext = 'gestion' @endphp
+    @include('modals.import._import_modals')
+</div> 
 
 @endsection
 
@@ -516,6 +518,8 @@ function liveSearch(value) {
     tab: '{{ $tab }}',
     modal: false,
     deleteModal: false,
+    importGestionModal: false,
+    importUsersModal: false,  
     mode: 'add',
     form: {},
 

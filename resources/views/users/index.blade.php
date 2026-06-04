@@ -8,8 +8,8 @@
 <span class="font-syne font-bold text-sm text-[#E8F4FF]">Usuarios</span>
 @endsection
 
-<div x-data="{ createModalOpen: false, editModalOpen: false, deleteModalOpen: false, currentUserId: null, showModalOpen: false }"
-    x-init=" { createModalOpen = false, editModalOpen = false, deleteModalOpen = false,currentUserId: null, showModalOpen = false }"
+<div x-data="{ createModalOpen: false, editModalOpen: false, deleteModalOpen: false, currentUserId: null, showModalOpen: false, importUsersModal: false, importGestionModal: false }"
+    x-init=" { createModalOpen = false, editModalOpen = false, deleteModalOpen = false,currentUserId: null, showModalOpen = false, importUsersModal = false, importGestionModal = false }"
     class="p-2 space-y-4">
 
     {{-- 🔹 STATS --}}
@@ -452,7 +452,11 @@
             @endforeach
         </div>
     </div>
+
+    @php $importContext = 'users' @endphp
+    @include('modals.import._import_modals')
 </div>
+
 <script>
     function toggleClearBtn(input) {
         const btn = document.getElementById('clear-search');
