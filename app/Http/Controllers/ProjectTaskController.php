@@ -12,26 +12,29 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Enum;
 use App\Notifications\EntregaSubidaNotification;
 use App\Notifications\EntregaCalificadaNotification;
+use App\Services\GanttGradeService; // ← NUEVO
 
 class ProjectTaskController extends Controller
 {
+    // ← NUEVO: constructor que inyecta el service
+    public function __construct(private GanttGradeService $gradeService) {}
+
     public function store(Request $request, Project $project)
     {
-        // ← NUEVO: solo COORDINATOR y superiores crean tareas
         abort_unless(
             auth()->user()->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR', 'STUDENT']),
             403,
             'Solo los APRENDICES pueden crear actividades.'
         );
-        $this->authorize('update', $project); // ← NUEVO: además verificar que es de su scope
+        $this->authorize('update', $project);
 
         $request->validate([
-            'phase' => ['required', 'string', 'max:100'],
-            'title' => ['required', 'string', 'max:150'],
+            'phase'       => ['required', 'string', 'max:100'],
+            'title'       => ['required', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
-            'start_date' => ['nullable', 'date'],
-            'due_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-            'status' => ['required', new Enum(TaskEnum::class)],
+            'start_date'  => ['nullable', 'date'],
+            'due_date'    => ['nullable', 'date', 'after_or_equal:start_date'],
+            'status'      => ['required', new Enum(TaskEnum::class)],
             'assigned_to' => ['nullable', 'exists:users,id'],
         ]);
 
@@ -40,14 +43,14 @@ class ProjectTaskController extends Controller
             ->max('sort_order') + 1;
 
         ProjectTask::create([
-            'project_id' => $project->id,
-            'phase' => strtoupper(trim($request->phase)),
-            'sort_order' => $sortOrder,
-            'title' => $request->title,
+            'project_id'  => $project->id,
+            'phase'       => strtoupper(trim($request->phase)),
+            'sort_order'  => $sortOrder,
+            'title'       => $request->title,
             'description' => $request->description,
-            'start_date' => $request->start_date,
-            'due_date' => $request->due_date,
-            'status' => $request->status,
+            'start_date'  => $request->start_date,
+            'due_date'    => $request->due_date,
+            'status'      => $request->status,
             'assigned_to' => $request->assigned_to,
         ]);
 
@@ -57,31 +60,30 @@ class ProjectTaskController extends Controller
 
     public function update(Request $request, Project $project, ProjectTask $task)
     {
-        // ← NUEVO: solo COORDINATOR y superiores editan tareas
         abort_unless(
             auth()->user()->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR', 'INSTRUCTOR', 'STUDENT']),
             403,
             'Solo los coordinadores pueden editar actividades.'
         );
-        $this->authorize('update', $project); // ← NUEVO
+        $this->authorize('update', $project);
 
         $request->validate([
-            'phase' => ['required', 'string', 'max:100'],
-            'title' => ['required', 'string', 'max:150'],
+            'phase'       => ['required', 'string', 'max:100'],
+            'title'       => ['required', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
-            'start_date' => ['nullable', 'date'],
-            'due_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-            'status' => ['required', new Enum(TaskEnum::class)],
+            'start_date'  => ['nullable', 'date'],
+            'due_date'    => ['nullable', 'date', 'after_or_equal:start_date'],
+            'status'      => ['required', new Enum(TaskEnum::class)],
             'assigned_to' => ['nullable', 'exists:users,id'],
         ]);
 
         $task->update([
-            'phase' => strtoupper(trim($request->phase)),
-            'title' => $request->title,
+            'phase'       => strtoupper(trim($request->phase)),
+            'title'       => $request->title,
             'description' => $request->description,
-            'start_date' => $request->start_date,
-            'due_date' => $request->due_date,
-            'status' => $request->status,
+            'start_date'  => $request->start_date,
+            'due_date'    => $request->due_date,
+            'status'      => $request->status,
             'assigned_to' => $request->assigned_to,
         ]);
 
@@ -91,13 +93,12 @@ class ProjectTaskController extends Controller
 
     public function destroy(Project $project, ProjectTask $task)
     {
-        // ← NUEVO: solo COORDINATOR y superiores eliminan tareas
         abort_unless(
             auth()->user()->hasRole(['ADMIN', 'REGIONAL_ADMIN', 'COORDINATOR', 'STUDENT']),
             403,
             'Solo los coordinadores pueden eliminar actividades.'
         );
-        $this->authorize('delete', $project); // ← NUEVO
+        $this->authorize('delete', $project);
 
         foreach ($task->submissions as $sub) {
             if ($sub->file_path) {
@@ -122,7 +123,6 @@ class ProjectTaskController extends Controller
             'Solo los aprendices o instructores pueden subir entregas.'
         );
 
-        // ✅ Verificación de ficha según rol — separadas, sin pisar una a la otra
         if ($user->isStudent()) {
             abort_unless(
                 $project->cohort_id === $user->cohort_id,
@@ -157,7 +157,7 @@ class ProjectTaskController extends Controller
         $storagePath   = "submissions/{$projectSlug}/{$submissionDir}";
         $path          = $file->store($storagePath, 'public');
 
-        $submission = Submission::create([   // ✅ asignar a $submission
+        $submission = Submission::create([
             'project_id'        => $project->id,
             'task_id'           => $task->id,
             'file_path'         => $path,
@@ -170,13 +170,18 @@ class ProjectTaskController extends Controller
             'submission_year'   => $year,
         ]);
 
-        // ✅ Autocalificar si es instructor
+        // Autocalificar si es instructor
         if ($user->isInstructor()) {
             $submission->update([
                 'grade'    => 100.00,
                 'feedback' => 'Calificado automáticamente por el instructor.',
             ]);
         }
+
+        // ← Recalcular siempre: una entrega nueva (con o sin nota)
+        //   convierte la semana de "vacía" a "pendiente=0" o "calificada"
+        $this->gradeService->recalculateProject($project);
+
         $instructores = $project->cohort->instructors;
         foreach ($instructores as $instructor) {
             $instructor->notify(new EntregaSubidaNotification($submission, $project, $task));
@@ -191,9 +196,8 @@ class ProjectTaskController extends Controller
 
     public function destroySubmission(Project $project, ProjectTask $task, Submission $submission)
     {
-        $user = auth()->user(); // ← NUEVO
+        $user = auth()->user();
 
-        // ← NUEVO: reemplaza el abort_unless anterior que no existía
         $canDelete = $user->isAdmin()
             || ($user->isRegionalAdmin() && in_array($project->center_id, $user->visibleCenterIds()))
             || ($user->isCoordinator() && $project->center_id === $user->center_id)
@@ -209,30 +213,29 @@ class ProjectTaskController extends Controller
 
         $submission->delete();
 
+        // ← NUEVO: recalcular porque al borrar una entrega calificada cambia el promedio
+        $this->gradeService->recalculateProject($project);
+
         return back()->with('success', 'Entrega eliminada.');
     }
 
     public function gradeSubmission(Request $request, Project $project, ProjectTask $task, Submission $submission)
     {
-        // ← NUEVO: usar policy en lugar del abort_unless manual anterior
-        // Cubre: ADMIN, REGIONAL_ADMIN (su regional), COORDINATOR (su centro), INSTRUCTOR (su ficha)
-        // $this->authorize('grade', $project);
-
         $request->validate([
-            'grade' => ['required', 'numeric', 'min:0', 'max:100'],
+            'grade'    => ['required', 'numeric', 'min:0', 'max:100'],
             'feedback' => ['nullable', 'string', 'max:500'],
         ]);
 
         $submission->update([
-            'grade' => $request->grade,
+            'grade'    => $request->grade,
             'feedback' => $request->feedback,
         ]);
 
-        // Notificar a los estudiantes de la ficha que subieron esa entrega
-        $submission->load(['task.project']);
-        $estudiante = \App\Models\User::find($submission->submitted_by ?? null);
+        // ← NUEVO: recalcular porque el instructor acaba de poner una nota
+        $this->gradeService->recalculateProject($project);
 
-        // Notificar a todos los estudiantes de la ficha
+        $submission->load(['task.project']);
+
         $estudiantes = \App\Models\User::where('cohort_id', $project->cohort_id)
             ->where('role', 'STUDENT')
             ->get();
@@ -244,7 +247,7 @@ class ProjectTaskController extends Controller
         return back()->with('success', 'Entrega calificada correctamente.');
     }
 
-    // ── Helpers sin cambios ───────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private function pruneEmptyDirectories(string $dir): void
     {
@@ -262,15 +265,15 @@ class ProjectTaskController extends Controller
     private function monthAbbr(int $month): string
     {
         return match ($month) {
-            1 => 'ene',
-            2 => 'feb',
-            3 => 'mar',
-            4 => 'abr',
-            5 => 'may',
-            6 => 'jun',
-            7 => 'jul',
-            8 => 'ago',
-            9 => 'sep',
+            1  => 'ene',
+            2  => 'feb',
+            3  => 'mar',
+            4  => 'abr',
+            5  => 'may',
+            6  => 'jun',
+            7  => 'jul',
+            8  => 'ago',
+            9  => 'sep',
             10 => 'oct',
             11 => 'nov',
             12 => 'dic',
@@ -292,7 +295,7 @@ class ProjectTaskController extends Controller
 
         return Storage::disk('public')->download(
             $submission->file_path,
-            $submission->original_filename  // ← nombre original al descargar
+            $submission->original_filename
         );
     }
 }

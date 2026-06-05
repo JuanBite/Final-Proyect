@@ -12,9 +12,9 @@ Incluir en gestion/index.blade.php y users/index.blade.php con:
 {{-- Botón que abre el modal correcto según la vista --}}
 @isset($importContext)
 @if($importContext === 'gestion')
-<div class="fixed bottom-4 right-4 z-10" x-show="!importGestionModal">
+<div class="fixed bottom-4 right-100 z-10" x-show="!importGestionModal">
     <button @click="importGestionModal = true"
-        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium bg-sky-500/90 text-white shadow-lg shadow-sky-500/30 border border-sky-500/25 hover:bg-sky-400 transition-all cursor-pointer">
+        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/30 border border-emerald-500/25 hover:bg-emerald-400 transition-all cursor-pointer">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />
@@ -24,9 +24,9 @@ Incluir en gestion/index.blade.php y users/index.blade.php con:
     </button>
 </div>
 @elseif($importContext === 'users')
-<div class="fixed bottom-4 right-4 z-10" x-show="!importUsersModal">
+<div class="fixed bottom-4 right-100 z-10" x-show="!importUsersModal">
     <button @click="importUsersModal = true"
-        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium bg-sky-500/90 text-white shadow-lg shadow-sky-500/30 border border-sky-500/25 hover:bg-sky-400 transition-all cursor-pointer">
+        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/30 border border-emerald-500/25 hover:bg-emerald-400 transition-all cursor-pointer">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />

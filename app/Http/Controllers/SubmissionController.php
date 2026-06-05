@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Submission;
+use App\Services\GanttGradeService; // ← NUEVO: importar el service
 
 class SubmissionController extends Controller
 {
+    // ← NUEVO: constructor que inyecta el service
+    public function __construct(private GanttGradeService $gradeService) {}
+
     // List
     public function index() {
         $submissions = Submission::orderBy("submitted_at", "desc")->paginate(20);
@@ -40,6 +44,11 @@ class SubmissionController extends Controller
         $submission->feedback     = $request->feedback;
 
         $submission->save();
+
+        // ← NUEVO: recalcular progreso del proyecto al crear una entrega con nota
+        if ($request->filled('grade')) {
+            $this->gradeService->recalculateProject($submission->project);
+        }
 
         return redirect('submissions')
             ->with('success', 'Entrega registrada correctamente.');
@@ -78,6 +87,10 @@ class SubmissionController extends Controller
 
         $submission->save();
 
+        // ← NUEVO: recalcular progreso del proyecto al actualizar (siempre,
+        //   porque el instructor puede estar poniendo o quitando una nota)
+        $this->gradeService->recalculateProject($submission->project);
+
         return redirect('submissions')
             ->with('success', 'Entrega actualizada correctamente.');
     }
@@ -85,10 +98,17 @@ class SubmissionController extends Controller
     // Eliminar
     public function destroy(Submission $submission)
     {
+        // ← NUEVO: guardar referencia al proyecto ANTES de borrar la submission
+        $project = $submission->project;
+
         $submission->delete();
+
+        // Recalcular porque al borrar una entrega cambia el peso de las demás
+        if ($project) {
+            $this->gradeService->recalculateProject($project);
+        }
 
         return redirect('submissions')
             ->with('success', 'Entrega eliminada correctamente.');
     }
 }
-
