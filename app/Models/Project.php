@@ -14,7 +14,7 @@ class Project extends Model
     protected $fillable = [
         'name', 'description', 'start_date', 'due_date',
         'progress', 'leader_id', 'status',
-        'cohort_id', 'center_id',  // ← nuevos
+        'cohort_id', 'center_id',
     ];
 
     protected $casts = [
@@ -69,28 +69,42 @@ class Project extends Model
         return $this->hasMany(Submission::class);
     }
 
-    // ─── Scope de visibilidad (usado en todos los controllers) ───────────────
+    // ─── Scope de visibilidad ─────────────────────────────────────────────────
+
+    public function scopeVisibleTo($query, User $user)
+    {
+        return match ($user->role) {
+            'ADMIN'          => $query,
+            'REGIONAL_ADMIN' => $query->whereIn('center_id', $user->visibleCenterIds()),
+            'COORDINATOR'    => $query->where('center_id', $user->center_id),
+            'INSTRUCTOR'     => $query->whereIn('cohort_id', $user->visibleCohortIds()),
+            'STUDENT'        => $query->where('cohort_id', $user->cohort_id),
+            default          => $query->whereRaw('0 = 1'),
+        };
+    }
+
+    // ─── Status automático ────────────────────────────────────────────────────
 
     /**
-     * Filtra proyectos según el rol del usuario.
-     * Uso: Project::visibleTo(auth()->user())->get()
+     * Recalcula y guarda el status según las reglas:
+     *  - progress >= 100                          → COMPLETED
+     *  - días restantes <= 14 AND progress < 70   → DELAYED
+     *  - cualquier otro caso                      → IN_PROGRESS
      */
-    public function scopeVisibleTo($query, User $user)
-{
-    return match ($user->role) {
-        'ADMIN'          => $query,
-        'REGIONAL_ADMIN' => $query->whereIn('center_id', $user->visibleCenterIds()),
-        'COORDINATOR'    => $query->where('center_id', $user->center_id),
+    public function recalculateStatus(): void
+    {
+        $daysLeft = (int) ceil(now()->floatDiffInDays($this->due_date, false));
 
-        // ✅ INSTRUCTOR: proyectos cuya cohort esté anclada a él
-        'INSTRUCTOR' => $query->whereIn('cohort_id', $user->visibleCohortIds()),
+        $newStatus = match (true) {
+            $this->progress >= 100                      => 'COMPLETED',
+            $daysLeft <= 14 && $this->progress < 70     => 'DELAYED',
+            default                                     => 'IN_PROGRESS',
+        };
 
-        // ✅ STUDENT: solo proyectos de su ficha
-        'STUDENT' => $query->where('cohort_id', $user->cohort_id),
-
-        default => $query->whereRaw('0 = 1'),
-    };
-}
+        if ($this->status !== $newStatus) {
+            $this->update(['status' => $newStatus]);
+        }
+    }
 
     // ─── Atributos calculados ─────────────────────────────────────────────────
 
@@ -118,11 +132,8 @@ class Project extends Model
     {
         $map = [
             'in_progress' => 'En progreso',
-            'not_started' => 'Sin iniciar',
             'completed'   => 'Completado',
-            'on_hold'     => 'En espera',
-            'cancelled'   => 'Cancelado',
-            'archived'    => 'Archivado',
+            'delayed'     => 'Retrasado',
         ];
 
         $key = strtolower($this->status ?? '');

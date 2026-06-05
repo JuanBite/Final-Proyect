@@ -13,31 +13,40 @@
         <h1 class="font-syne font-bold text-xl text-[#E8F4FF]">Tarjetas de <span class="text-[#00C853]">Proyecto</span>
         </h1>
 
-        <form method="GET" action="{{ route('projects.index') }}" id="search-form" class="flex items-center w-full max-w-sm">
+        <form method="GET" action="{{ route('projects.index') }}" id="search-form"
+            class="flex items-center w-full max-w-sm">
             <!-- Contenedor del buscador -->
-            <div class="flex items-center gap-2 bg-slate-700 border border-emerald-500/20 rounded-xl px-3 py-0.1 opacity-70 flex-1 sm:flex-none">
+            <div
+                class="flex items-center gap-2 bg-slate-700 border border-emerald-500/20 rounded-xl px-3 py-0.1 opacity-70 flex-1 sm:flex-none">
 
                 <!-- Icono de búsqueda -->
-                <svg class="w-5 h-5 text-slate-500 flex-shrink-0 transition-colors" fill="none" stroke="currentColor" stroke-width="2">
+                <svg class="w-5 h-5 text-slate-500 flex-shrink-0 transition-colors" fill="none" stroke="currentColor"
+                    stroke-width="2">
                     <circle cx="11" cy="11" r="8" />
                     <path d="M21 21l-4.35-4.35" />
                 </svg>
 
-                <input type="text" name="search" id="search-input" placeholder="Buscar proyecto..." value="{{ request('search') }}" class="bg-transparent text-sm text-slate-300 placeholder-slate-500 flex-1 min-w-0 
-           border-none outline-none ring-0 focus:ring-0 focus:outline-none" oninput="toggleClearBtn(this); liveSearch(this.value)">
-           
+                <input type="text" name="search" id="search-input" placeholder="Buscar proyecto..."
+                    value="{{ request('search') }}" class="bg-transparent text-sm text-slate-300 placeholder-slate-500 flex-1 min-w-0 
+           border-none outline-none ring-0 focus:ring-0 focus:outline-none"
+                    oninput="toggleClearBtn(this); liveSearch(this.value)">
+
                 <!-- Botón limpiar -->
-                <button type="button" id="clear-search" onclick="clearSearch()" class="flex-shrink-0 w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors {{ request('search') ? '' : 'hidden' }}" title="Limpiar búsqueda">
+                <button type="button" id="clear-search" onclick="clearSearch()"
+                    class="flex-shrink-0 w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors {{ request('search') ? '' : 'hidden' }}"
+                    title="Limpiar búsqueda">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                        <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
                     </svg>
                 </button>
             </div>
 
             <button type="submit" class="hidden"></button>
         </form>
-        
-        <button @click="modalAbierto = true" type="button" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm bg-emerald-500 text-slate-900">
+
+        <button @click="modalAbierto = true" type="button"
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm bg-emerald-500 text-slate-900">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
@@ -46,7 +55,7 @@
         </button>
     </div>
 
-    
+
 
     <!-- Cards -->
     <div id="projects-container" class="grid grid-cols-3 gap-5">
@@ -54,10 +63,13 @@
 
 
         <!-- Card: Gimnasio -->
-        <div class="card-hover bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden cursor-pointer hover:border-[#00C853]/35 hover:shadow-2xl hover:shadow-black/30">
+        <div
+            class="card-hover bg-[#1C2A40] border border-[#00C853]/15 rounded-2xl overflow-hidden cursor-pointer hover:border-[#00C853]/35 hover:shadow-2xl hover:shadow-black/30">
             <!-- Banner -->
-            <div class="h-[90px] bg-gradient-to-br from-[#182236] to-[#111D30] border-b border-[#00C853]/15 flex items-center justify-center relative overflow-hidden">
-                <div class="absolute inset-0" style="background: radial-gradient(circle at 30% 50%, rgba(0,200,83,0.12) 0%, transparent 70%)">
+            <div
+                class="h-[90px] bg-gradient-to-br from-[#182236] to-[#111D30] border-b border-[#00C853]/15 flex items-center justify-center relative overflow-hidden">
+                <div class="absolute inset-0"
+                    style="background: radial-gradient(circle at 30% 50%, rgba(0,200,83,0.12) 0%, transparent 70%)">
                 </div>
                 <span class="text-[20px] text-[#ffffff]">{{ $project->name }}<span class=""></span></span>
             </div>
@@ -89,9 +101,13 @@
 
                                 <svg class="absolute" width="56" height="56" viewBox="0 0 48 48">
                                     <!-- Fondo -->
-                                    <circle cx="24" cy="24" r="18" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="6" />
+                                    <circle cx="24" cy="24" r="18" fill="none" stroke="rgba(255,255,255,0.07)"
+                                        stroke-width="6" />
                                     <!-- Progreso -->
-                                    <circle cx="24" cy="24" r="18" fill="none" stroke="{{ $project->progress_color }}" stroke-width="6" stroke-dasharray="{{ $project->progress_circumference }}" stroke-dashoffset="{{ $project->progress_offset }}" stroke-linecap="round" transform="rotate(-90 24 24)" />
+                                    <circle cx="24" cy="24" r="18" fill="none" stroke="{{ $project->progress_color }}"
+                                        stroke-width="6" stroke-dasharray="{{ $project->progress_circumference }}"
+                                        stroke-dashoffset="{{ $project->progress_offset }}" stroke-linecap="round"
+                                        transform="rotate(-90 24 24)" />
                                 </svg>
 
                                 <!-- Texto -->
@@ -106,7 +122,15 @@
                             </div>
 
                         </div>
-                        <span class="text-[11px] font-medium px-3 py-1 rounded-full bg-[#FFD740]/12 text-[#FFD740] border border-[#FFD740]/25">
+                        @php
+                        $__sv2 = strtoupper((string)($project->status?->value ?? $project->status));
+                        $__cardStatusClass = match($__sv2) {
+                        'COMPLETED' => 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+                        'DELAYED' => 'bg-red-500/15 text-red-400 border-red-500/30',
+                        default => 'bg-yellow-400/15 text-yellow-400 border-yellow-400/30',
+                        };
+                        @endphp
+                        <span class="text-[11px] font-medium px-3 py-1 rounded-full border {{ $__cardStatusClass }}">
                             {{ $project->status_label }}
                         </span>
                     </div>
@@ -123,7 +147,9 @@
 
 
     <!-- MODAL -->
-    <div x-show="modalAbierto" x-transition.opacity class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center" style="display: none;" @click.away="modalAbierto = false" @keydown.escape.window="modalAbierto = false">
+    <div x-show="modalAbierto" x-transition.opacity
+        class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center" style="display: none;"
+        @click.away="modalAbierto = false" @keydown.escape.window="modalAbierto = false">
         <div x-show="modalAbierto" x-transition.scale.origin.center class="transform transition-all">
             @include('modals.create.project')
         </div>

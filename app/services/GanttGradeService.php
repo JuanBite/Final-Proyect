@@ -14,6 +14,7 @@ class GanttGradeService
 
         if ($tasks->isEmpty()) {
             $project->update(['progress' => 0]);
+            $project->recalculateStatus(); // ← NUEVO
             return 0;
         }
 
@@ -27,6 +28,7 @@ class GanttGradeService
 
         $progress = round($totalProgress, 2);
         $project->update(['progress' => $progress]);
+        $project->recalculateStatus(); // ← NUEVO
 
         return $progress;
     }
@@ -50,14 +52,6 @@ class GanttGradeService
         return round($taskGrade, 2);
     }
 
-    /**
-     * Calcula la nota de un mes (0-100).
-     *
-     * Solo divide entre las semanas que tienen submissions.
-     * Semanas sin nada subido no se cuentan.
-     * Semanas con submission sin calificar (grade null) = 0.
-     * Semanas con submission calificada = su nota.
-     */
     public function calculateMonthGrade(ProjectTask $task, int $year, int $month): float
     {
         $allByWeek = Submission::where('task_id', $task->id)
@@ -66,7 +60,6 @@ class GanttGradeService
             ->get()
             ->groupBy('week_number');
 
-        // Solo las semanas que tienen al menos una submission
         $activeWeeks = $allByWeek->count();
 
         if ($activeWeeks === 0) {
@@ -84,10 +77,6 @@ class GanttGradeService
         return round($monthGrade, 2);
     }
 
-    /**
-     * Promedio de las notas de una semana.
-     * grade null = 0 (pendiente de calificación).
-     */
     public function calculateWeekGrade(array $submissions): float
     {
         $count = count($submissions);
@@ -184,9 +173,6 @@ class GanttGradeService
         ];
     }
 
-    /**
-     * Meses que tienen al menos una submission en esta tarea.
-     */
     private function getActiveMonths(ProjectTask $task): array
     {
         $rows = Submission::where('task_id', $task->id)

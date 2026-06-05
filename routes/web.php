@@ -17,7 +17,13 @@ use App\Http\Controllers\{
 };
 
 Route::get('/projects/public', [ProjectController::class, 'publicIndex'])->name('projects.universal-search');
-Route::get('/', fn() => view('auth.login'));
+Route::get('/', function () {
+    return view('auth.login', [
+        'totalProjects' => \App\Models\Project::count(),
+        'totalUsers'    => \App\Models\User::count(),
+        'avgProgress'   => round(\App\Models\Project::avg('progress') ?? 0),
+    ]);
+});
 
 Route::middleware(['auth', 'active'])->group(function () {
 

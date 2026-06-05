@@ -21,14 +21,16 @@
             <div class="relative z-10">
                 <!-- Logo -->
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center font-bold text-white text-sm">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center font-bold text-white text-sm">
                         <img src="{{ asset('images/logo-sena.png') }}" alt="Logo SENA">
                     </div>
                     <span class="text-lg font-semibold tracking-widest text-gray-200">SIGPRO</span>
                 </div>
 
                 <div class="mt-16">
-                    <span class="text-xs px-4 py-1 rounded-full border border-green-500 text-green-400 inline-flex items-center gap-1">
+                    <span
+                        class="text-xs px-4 py-1 rounded-full border border-green-500 text-green-400 inline-flex items-center gap-1">
                         <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span> SISTEMA ACTIVO
                     </span>
 
@@ -46,50 +48,60 @@
                     <!-- Feature list with icons -->
                     <div class="mt-8 space-y-4 text-sm text-gray-300">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-md bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div
+                                class="w-8 h-8 rounded-md bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
                                 </svg>
                             </div>
-                            <p><span class="text-white font-medium">Gestión de proyectos</span> con cronograma Gantt editable</p>
+                            <p><span class="text-white font-medium">Gestión de proyectos</span> con cronograma Gantt
+                                editable</p>
                         </div>
 
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-md bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div
+                                class="w-8 h-8 rounded-md bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
                             </div>
-                            <p><span class="text-white font-medium">Control de equipos</span> con roles de Líder y Miembro</p>
+                            <p><span class="text-white font-medium">Control de equipos</span> con roles de Líder y
+                                Miembro</p>
                         </div>
 
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-md bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div
+                                class="w-8 h-8 rounded-md bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                                 </svg>
                             </div>
-                            <p><span class="text-white font-medium">Seguimiento en tiempo real</span> del avance de cada fase</p>
+                            <p><span class="text-white font-medium">Seguimiento en tiempo real</span> del avance de cada
+                                fase</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- STATS -->
-            <div class="relative z-10 grid grid-cols-3 gap-4 mt-10 bg-white/5 backdrop-blur-xl p-6 rounded-xl border border-white/10">
+            <div
+                class="relative z-10 grid grid-cols-3 gap-4 mt-10 bg-white/5 backdrop-blur-xl p-6 rounded-xl border border-white/10">
                 <div class="text-center">
-                    <p class="text-2xl font-bold text-green-400">5</p>
+                    <p class="text-2xl font-bold text-green-400">{{ $totalProjects }}</p>
                     <p class="text-xs text-gray-400">PROYECTOS</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-2xl font-bold text-cyan-400">6</p>
+                    <p class="text-2xl font-bold text-cyan-400">{{ $totalUsers }}</p>
                     <p class="text-xs text-gray-400">USUARIOS</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-2xl font-bold text-green-400">58%</p>
+                    <p class="text-2xl font-bold text-green-400">{{ $avgProgress }}%</p>
                     <p class="text-xs text-gray-400">AVANCE</p>
                 </div>
             </div>
@@ -163,13 +175,15 @@
                                 class="w-full pl-10 pr-10 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-green-400 outline-none text-sm text-gray-200 placeholder-gray-600 transition">
                             <button type="button" onclick="toggleLoginPassword()"
                                 class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition">
-                                <svg id="login-eye-open" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg id="login-eye-open" class="w-4 h-4" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
-                                <svg id="login-eye-closed" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg id="login-eye-closed" class="w-4 h-4 hidden" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.97 9.97 0 012.169-3.716M6.53 6.53A9.97 9.97 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.97 9.97 0 01-4.293 5.411M15 12a3 3 0 11-4.243-4.243M3 3l18 18" />
                                 </svg>
@@ -204,7 +218,8 @@
                 <div class="mt-12 text-center text-xs text-gray-600 space-y-1">
                     <p>¿Problemas para ingresar? Contacta al administrador</p>
                     <p>
-                        <a href="mailto:soporte@sigpro.edu.co" class="hover:text-gray-400 transition">soporte@sigpro.edu.co</a>
+                        <a href="mailto:soporte@sigpro.edu.co"
+                            class="hover:text-gray-400 transition">soporte@sigpro.edu.co</a>
                         <span class="mx-2">·</span>
                         <a href="#" class="hover:text-gray-400 transition">Política de pol</a>
                     </p>
@@ -212,14 +227,16 @@
             </div>
         </div>
         {{-- Toast --}}
-    <div id="toast" class="fixed top-6 right-6 z-50 hidden" style="min-width: 320px;">
-        <div id="toast-inner" class="flex items-center gap-3 px-5 py-3 rounded-xl shadow-lg border-l-4 border border-white/5 bg-[#0f1f38]">
-            <div id="toast-icon" class="shrink-0"></div>
-            <span id="toast-message" class="text-sm flex-1"></span>
-            <button onclick="hideToast()" id="toast-close" class="shrink-0 opacity-50 hover:opacity-100 ml-2">✕</button>
+        <div id="toast" class="fixed top-6 right-6 z-50 hidden" style="min-width: 320px;">
+            <div id="toast-inner"
+                class="flex items-center gap-3 px-5 py-3 rounded-xl shadow-lg border-l-4 border border-white/5 bg-[#0f1f38]">
+                <div id="toast-icon" class="shrink-0"></div>
+                <span id="toast-message" class="text-sm flex-1"></span>
+                <button onclick="hideToast()" id="toast-close"
+                    class="shrink-0 opacity-50 hover:opacity-100 ml-2">✕</button>
+            </div>
         </div>
-    </div>
-            @php $firstError = $errors->any() ? $errors->first() : null; @endphp
+        @php $firstError = $errors->any() ? $errors->first() : null; @endphp
 
 
     </div>

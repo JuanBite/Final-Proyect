@@ -96,9 +96,13 @@ SCOPE PRINCIPAL: modales editar/eliminar proyecto
                         'DELAYED' => 'Retrasado',
                         default => ucwords(str_replace('_', ' ', strtolower((string) $__sv))),
                         };
+                        $__statusClass = match (strtoupper((string) $__sv)) {
+                        'COMPLETED' => 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+                        'DELAYED' => 'bg-red-500/15 text-red-400 border-red-500/30',
+                        default => 'bg-yellow-400/15 text-yellow-400 border-yellow-400/30',
+                        };
                         @endphp
-                        <span
-                            class="px-3 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                        <span class="px-3 py-0.5 rounded-full text-xs font-medium border {{ $__statusClass }}">
                             ● {{ $__statusText }}
                         </span>
                         <span

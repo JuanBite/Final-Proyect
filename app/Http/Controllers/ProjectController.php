@@ -28,7 +28,7 @@ class ProjectController extends Controller
         }
 
         $projects = $query->orderBy('id', 'desc')->paginate(9)->withQueryString();
-        $users    = $this->usersForUser($user); // ✅
+        $users    = $this->usersForUser($user);
 
         return view('projects.index', compact('projects', 'users'));
     }
@@ -38,7 +38,7 @@ class ProjectController extends Controller
         $this->authorize('create', Project::class);
 
         $user    = auth()->user();
-        $users   = $this->usersForUser($user);   // ✅
+        $users   = $this->usersForUser($user);
         $cohorts = $this->cohortsForUser($user);
 
         return view('modals.create.project', compact('users', 'cohorts'));
@@ -123,13 +123,16 @@ class ProjectController extends Controller
         $project  = Project::with(['leader', 'team'])->findOrFail($id);
         $this->authorize('view', $project);
 
+        // ← NUEVO: recalcular status cada vez que se abre el proyecto
+        $project->recalculateStatus();
+
         $authUser = auth()->user();
-        $users    = $this->usersForUser($authUser); // ✅
+        $users    = $this->usersForUser($authUser);
 
         $filterYear  = (int) $request->get('filter_year',  now()->year);
         $filterMonth = (int) $request->get('filter_month', now()->month);
 
-        $tasks  = ProjectTask::where('project_id', $project->id)
+        $tasks = ProjectTask::where('project_id', $project->id)
             ->orderBy('phase')
             ->orderBy('sort_order')
             ->get();
@@ -157,7 +160,7 @@ class ProjectController extends Controller
         $this->authorize('update', $project);
 
         $user    = auth()->user();
-        $users   = $this->usersForUser($user);   // ✅
+        $users   = $this->usersForUser($user);
         $cohorts = $this->cohortsForUser($user);
 
         return view('modals.edit.project', compact('project', 'users', 'cohorts'));
@@ -216,6 +219,9 @@ class ProjectController extends Controller
             }
 
             DB::commit();
+
+            // ← NUEVO: corregir status después de guardar cambios de fechas
+            $project->recalculateStatus();
 
             return redirect()->route('projects.show', $project->id)
                 ->with('success', 'Proyecto actualizado correctamente');
