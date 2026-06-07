@@ -9,15 +9,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            RegionSeeder::class,
-            CenterSeeder::class,
-            CohortSeeder::class,
+            // RegionSeeder::class,
+            // CenterSeeder::class,
+            // CohortSeeder::class,
             UserSeeder::class,
-            ProjectSeeder::class,
-            ProjectMemberSeeder::class,
-            ProjectTaskSeeder::class,
-            SubmissionSeeder::class,
-            ProjectHistorySeeder::class,
+            // ProjectSeeder::class,
+            // ProjectMemberSeeder::class,
+            // ProjectTaskSeeder::class,
+            // SubmissionSeeder::class,
+            // ProjectHistorySeeder::class,
         ]);
     }
 }

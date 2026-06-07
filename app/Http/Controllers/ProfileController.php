@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\Region;
+use App\Models\Center;
+use App\Models\Cohort;
+use App\Models\Project;
 
 class ProfileController extends Controller
 {
@@ -15,11 +19,15 @@ class ProfileController extends Controller
      * Display the user's profile form.
      */
     public function edit(Request $request): View
-    {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
-    }
+{
+    return view('profile.edit', [
+        'user'     => $request->user(),
+        'regions'  => \App\Models\Region::orderBy('name')->get(),
+        'centers'  => \App\Models\Center::orderBy('name')->get(),
+        'cohorts'  => \App\Models\Cohort::orderBy('cohort_number')->get(),
+        'projects' => \App\Models\Project::orderBy('name')->get(),
+    ]);
+}
 
     /**
      * Update the user's profile information.

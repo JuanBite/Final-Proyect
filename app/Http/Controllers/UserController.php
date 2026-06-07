@@ -65,7 +65,7 @@ class UserController extends Controller
         )
             ->when(
                 $authUser->isInstructor(),
-                fn($q) =>           // ✅ mismo filtro para los stats
+                fn($q) =>           
                 $q->whereIn('cohort_id', $instructorCohortIds)
             );
 
@@ -213,7 +213,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $this->authorize('view', $user); // ← NUEVO
+        $this->authorize('view', $user);
 
         $user->load(['projects.members', 'projectMembers']);
 
@@ -228,9 +228,18 @@ class UserController extends Controller
             ->filter(fn($m) => $m->id !== $user->id)
             ->unique('id');
 
-        $authUser = auth()->user(); // ← NUEVO
-        $projects = Project::visibleTo($authUser)->get(); // ← NUEVO: era Project::all()
-        $cohorts = $this->cohortsForUser($authUser);     // ← NUEVO: era Cohort::all()
+        $authUser = auth()->user(); 
+        $projects = Project::visibleTo($authUser)->get(); 
+        $cohorts = $this->cohortsForUser($authUser);     
+
+
+         $regions = $authUser->isAdmin() ? Region::orderBy('name')->get() : collect();
+        $centers = ($authUser->isAdmin() || $authUser->isRegionalAdmin())
+            ? Center::with('region')
+            ->when($authUser->isRegionalAdmin(), fn($q) => $q->where('region_id', $authUser->region_id))
+            ->orderBy('name')->get()
+            : collect();
+
 
         return view('users.detail', compact(
             'user',
@@ -238,7 +247,10 @@ class UserController extends Controller
             'cohorts',
             'assignedProjects',
             'ledProjects',
-            'teammates'
+            'teammates',
+            'regions',
+            'centers',
+            
         ));
     }
 

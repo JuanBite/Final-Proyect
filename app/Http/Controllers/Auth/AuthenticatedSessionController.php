@@ -15,9 +15,13 @@ class AuthenticatedSessionController extends Controller
      * Display the login view.
      */
     public function create(): View
-    {
-        return view('auth.login');
-    }
+{
+    return view('auth.login', [
+        'totalProjects' => \App\Models\Project::count(),
+        'totalUsers'    => \App\Models\User::count(),
+        'avgProgress'   => round(\App\Models\Project::avg('progress') ?? 0),
+    ]);
+}
 
     /**
      * Handle an incoming authentication request.
